@@ -81,17 +81,28 @@ Play.prototype = {
 		game.physics.arcade.enable(this.ground);
 		this.ground.body.immovable = true;
 
-		this.switch = new Switch(game, 'atlas', 'apple', 2	200, 400);
+		this.switches = game.add.group();
+		this.switches.enableBody = true;
+		this.switch = new Switch(game, 'atlas', 'apple', 200, 400);
+		this.switches.add(this.switch);
+		this.switch.body.immovable = true;
+		
 	},
 	update: function() {
-		console.log(this.player.facing);
+		// console.log(this.player.facing);
 		this.checkCamBounds();
 		// enable player collision
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);
-		this.solidBox = game.physics.arcade.collide(this.player, this.box);
+		this.hitBox = game.physics.arcade.collide(this.player, this.box);
+		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches);
 
 		this.box.body.velocity.x = 0;
+
+		if(this.hitSwitch && this.player.y + this.player.height/2 < this.switch.y - this.switch.height) {
+			console.log('pressed');
+			this.switch.scale.setTo(0.25, this.switch.scale.y - 0.02);
+		}
 
 		// enable Phaser's Keyboard Manager
 		this.cursors = game.input.keyboard.createCursorKeys();
@@ -159,7 +170,7 @@ Play.prototype = {
 			}
 		}
 		// jump if the player is grounded
-		if(this.cursors.up.isDown && this.player.body.touching.down && this.hitPlatform) {
+		if(this.cursors.up.isDown && this.player.body.touching.down && (this.hitPlatform || this.hitBox || this.hitSwitch)) {
 			this.player.body.velocity.y = -300;
 			// this.player.animations.play('jump');
 		}

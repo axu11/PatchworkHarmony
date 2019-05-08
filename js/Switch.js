@@ -14,7 +14,7 @@ Switch.prototype = Object.create(Phaser.Sprite.prototype);
 Switch.prototype.constructor = Switch;
 
 Switch.prototype.update = function() {
-	if(this.body.blocked.top) {
-		console.log(pressed);
-	}
+	// if(this.body.blocked.top) {
+	// 	console.log(pressed);
+	// }
 }
