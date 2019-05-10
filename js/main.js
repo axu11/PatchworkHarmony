@@ -14,6 +14,11 @@ MainMenu.prototype = {
 
 		this.load.path = 'assets/';
 		game.load.image('bg', 'img/bg.jpg');
+		game.load.image('patches', 'img/patches.png');
+		game.load.image('platform1', 'img/Platform-1.png');
+		game.load.image('platform2', 'img/Platform-2.png');
+		game.load.image('platform3', 'img/Platform-3.png');
+		game.load.image('platform4', 'img/Platform-4.png');
 		this.load.atlas('atlas', 'img/spritesheet.png', 'img/sprites.json');
 
 
@@ -44,7 +49,7 @@ Play.prototype = {
 		this.bg = game.add.image(0, 0, 'bg');
 		game.world.setBounds(0, 0, this.bg.width, this.bg.height);
 		// create player
-		this.player = game.add.sprite(40, 400, 'atlas', 'furretWalk0001');
+		this.player = game.add.sprite(40, 400, 'patches');
 		this.player.anchor.set(0.5);
 		this.player.facing = "RIGHT";
 
@@ -55,10 +60,10 @@ Play.prototype = {
 		this.player.body.gravity.y = 300;
 		this.player.body.collideWorldBounds = true;
 
-		this.player.animations.add('right', Phaser.Animation.generateFrameNames('furretWalk', 1, 4, '', 4), 10, true);
-		this.player.animations.add('left', Phaser.Animation.generateFrameNames('furretWalk', 5, 8, '', 4), 10, true);
-		this.player.animations.add('idleRight', ['furretWalk0001'], 30, false);
-		this.player.animations.add('idleLeft', ['furretWalk0005'], 30, false);
+		// this.player.animations.add('right', Phaser.Animation.generateFrameNames('furretWalk', 1, 4, '', 4), 10, true);
+		// this.player.animations.add('left', Phaser.Animation.generateFrameNames('furretWalk', 5, 8, '', 4), 10, true);
+		// this.player.animations.add('idleRight', ['furretWalk0001'], 30, false);
+		// this.player.animations.add('idleLeft', ['furretWalk0005'], 30, false);
 	
 		// create box
 		this.box = game.add.sprite(300, 300, 'atlas', 'sky');
@@ -160,23 +165,23 @@ Play.prototype = {
 		if(this.cursors.left.isDown) {
 			// move left
 			this.player.body.velocity.x = -250;
-			this.player.animations.play('left');
+			// this.player.animations.play('left');
 			this.player.facing = "LEFT";
 		}
 		else if(this.cursors.right.isDown) {
 			// move right
 			this.player.body.velocity.x = 250;
-			this.player.animations.play('right');
+			// this.player.animations.play('right');
 			this.player.facing = "RIGHT";
 		}
 		else { // stand "still"
 			this.player.body.velocity.x = 0;
-			this.player.animations.stop();
+			// this.player.animations.stop();
 			if(this.player.facing == 'RIGHT') {
-				this.player.animations.play('idleRight');
+				// this.player.animations.play('idleRight');
 			}
 			else {
-				this.player.animations.play('idleLeft');
+				// this.player.animations.play('idleLeft');
 			}
 		}
 
