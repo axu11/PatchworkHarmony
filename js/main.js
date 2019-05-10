@@ -98,16 +98,31 @@ Play.prototype = {
 		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches);
 		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches);
 
+		// box does't glide when pushed
 		this.box.body.velocity.x = 0;
-		console.log('boxhitswitch: ' + this.boxHitSwitch);
-		// switch physics
-		if((this.hitSwitch && this.player.y + this.player.height/2 < this.switch.y - this.switch.height) || (this.boxHitSwitch && this.box.y + this.box.height/2 < this.switch.y - this.switch.height)) {	// if colliding with top of switch
+
+		// switch logic for player on switch
+		if(this.hitSwitch && this.player.y + this.player.height/2 < this.switch.y - this.switch.height) {	// if colliding with top of switch
 			console.log('pressed');
+			this.playerOnSwitch = true;
 			this.switchPressed = true;
 		}
-		else if(!this.hitSwitch && (this.player.x + this.player.width/2 < this.switch.x - this.switch.width/2 || this.player.x - this.player.width/2 > this.switch.x + this.switch.width/2))  {
+		if(this.playerOnSwitch && !this.hitSwitch && (this.player.x + this.player.width/2 < this.switch.x - this.switch.width/2 || this.player.x - this.player.width/2 > this.switch.x + this.switch.width/2))  {
+			this.playerOnSwitch = false;
 			this.switchPressed = false;
 		}
+		// switch logic for box on switch
+		if(this.boxHitSwitch && this.box.y + this.box.height/2 < this.switch.y - this.switch.height) {
+			console.log('pressed');
+			this.boxOnSwitch = true;
+			this.switchPressed = true;
+		}
+		if(this.boxOnSwitch && !this.boxHitSwitch && (this.box.x + this.box.width/2 < this.switch.x - this.switch.width/2 || this.box.x - this.box.width/2 > this.switch.x + this.switch.width/2)) {
+			this.boxOnSwitch = false;
+			this.switchPressed = false;
+		}
+
+		// when switch is pressed, it goes down
 		if(this.switchPressed) {
 			if(this.switch.scale.y > 0) {
 				this.switch.scale.setTo(0.25, this.switch.scale.y - 0.01);
