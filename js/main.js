@@ -66,7 +66,7 @@ Play.prototype = {
 		game.physics.arcade.enable(this.player);
 
 		// adjust physics properties for the player
-		this.player.body.gravity.y = 800;
+		this.player.body.gravity.y = 300;
 		this.player.body.collideWorldBounds = true;
 
 		// this.player.animations.add('right', Phaser.Animation.generateFrameNames('furretWalk', 1, 4, '', 4), 10, true);
@@ -207,7 +207,7 @@ Play.prototype = {
 
 			// spawn platform
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed()) { 
-				this.createdPlatform = new Platform(game, 'atlas', 'sky', this.player.x, this.player.y + this.player.height/2 + 20);
+				this.createdPlatform = new Platform(game, ['platform1', 'platform2', 'platform3', 'platform4'], this.player.x, this.player.y + this.player.height/2 + 20);
 				platforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.immovable = true;
