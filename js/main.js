@@ -63,7 +63,7 @@ Play.prototype = {
 		// create box
 		this.box = game.add.sprite(300, 300, 'atlas', 'sky');
 		this.box.anchor.set(0.5);
-		this.box.scale.set(0.5);
+		this.box.scale.set(0.25);
 		game.physics.arcade.enable(this.box);
 		this.box.body.gravity.y = 300;
 		this.box.body.collideWorldBounds = true;
@@ -83,9 +83,15 @@ Play.prototype = {
 
 		this.switches = game.add.group();
 		this.switches.enableBody = true;
-		this.switch = new Switch(game, 'atlas', 'apple', 200, 400);
+		this.switch = new Switch(game, 'atlas', 'apple', 300, 400);
 		this.switches.add(this.switch);
 		this.switch.body.immovable = true;
+
+		this.activatedPlatformStartX = -190;
+		this.activatedPlatform = platforms.create(this.activatedPlatformStartX, 220, 'atlas', 'sky');
+		this.activatedPlatform.scale.setTo(1.5, 0.25);
+		game.physics.arcade.enable(this.activatedPlatform);
+		this.activatedPlatform.body.immovable = true;
 		
 	},
 	update: function() {
@@ -134,6 +140,17 @@ Play.prototype = {
 			}
 		}
 
+		// switch activation consequnce
+		if(this.switchPressed) {
+			if(this.activatedPlatform.x < 0) {
+				this.activatedPlatform.x += 5;
+			}
+		}
+		else{
+			if(this.activatedPlatform.x > this.activatedPlatformStartX) {
+				this.activatedPlatform.x -= 5;
+			}
+		}
 		// enable Phaser's Keyboard Manager
 		this.cursors = game.input.keyboard.createCursorKeys();
  		
