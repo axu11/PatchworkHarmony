@@ -29,7 +29,16 @@ MainMenu.prototype = {
 	}
 }
 
-var Play = function(game) {};
+var Play = function(game) {
+	// define constants
+	this.HALFSCALE = 0.5;
+	this.MAX_X_VELOCITY = 500;	// measured in pixels/second
+	this.MAX_Y_VELOCITY = 5000;
+	this.ACCELERATION = 1500;
+	this.DRAG = 600;			// note that DRAG < ACCELERATION (to create sliding)
+	this.GRAVITY = 2600;
+	this.JUMP_SPEED = -700;	// negative y-values jump up
+};
 Play.prototype = {
 	init: function() {
 		// reset score on each playthrough
@@ -52,7 +61,7 @@ Play.prototype = {
 		game.physics.arcade.enable(this.player);
 
 		// adjust physics properties for the player
-		this.player.body.gravity.y = 300;
+		this.player.body.gravity.y = 800;
 		this.player.body.collideWorldBounds = true;
 
 		this.player.animations.add('right', Phaser.Animation.generateFrameNames('furretWalk', 1, 4, '', 4), 10, true);
