@@ -228,11 +228,11 @@ Play.prototype = {
 	},
 	checkCamBounds: function() {
 		// some funky, funky logic to check camera bounds for player movement
-		if(this.player.x + Math.abs(this.player.width/2) > game.width + game.camera.x && !this.player.body.blocked.right /*&& this.player.facing === "RIGHT"*/) {
+		if(this.player.x + Math.abs(this.player.width/2) > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
 			// move camera, then player
 			game.camera.x += game.width;
 			this.player.x = game.camera.x + Math.abs(this.player.width/2);	
-		} else if(this.player.x - Math.abs(this.player.width/2) < game.camera.x && !this.player.body.blocked.left /*&& this.player.facing === "LEFT"*/) {
+		} else if(this.player.x - Math.abs(this.player.width/2) < game.camera.x && !this.player.body.blocked.left && this.player.facing === "LEFT") {
 			// move camera, then player
 			game.camera.x -= game.width;
 			this.player.x = game.camera.x + game.width - Math.abs(this.player.width/2);	
