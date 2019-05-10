@@ -96,12 +96,27 @@ Play.prototype = {
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);
 		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches);
+		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches);
 
 		this.box.body.velocity.x = 0;
-
-		if(this.hitSwitch && this.player.y + this.player.height/2 < this.switch.y - this.switch.height) {
+		console.log('boxhitswitch: ' + this.boxHitSwitch);
+		// switch physics
+		if((this.hitSwitch && this.player.y + this.player.height/2 < this.switch.y - this.switch.height) || (this.boxHitSwitch && this.box.y + this.box.height/2 < this.switch.y - this.switch.height)) {	// if colliding with top of switch
 			console.log('pressed');
-			this.switch.scale.setTo(0.25, this.switch.scale.y - 0.02);
+			this.switchPressed = true;
+		}
+		else if(!this.hitSwitch && (this.player.x + this.player.width/2 < this.switch.x - this.switch.width/2 || this.player.x - this.player.width/2 > this.switch.x + this.switch.width/2))  {
+			this.switchPressed = false;
+		}
+		if(this.switchPressed) {
+			if(this.switch.scale.y > 0) {
+				this.switch.scale.setTo(0.25, this.switch.scale.y - 0.01);
+			}
+		}
+		else {
+			if(this.switch.scale.y < 0.25) {
+				this.switch.scale.setTo(0.25, this.switch.scale.y + 0.01);
+			}
 		}
 
 		// enable Phaser's Keyboard Manager
