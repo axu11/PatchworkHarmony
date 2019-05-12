@@ -10,19 +10,19 @@ function Patches(game, frame, x, y) {
 	this.MAX_Y_VELOCITY = 5000;
 	this.ACCELERATION = 1500;
 	this.DRAG = 600;			// note that DRAG < ACCELERATION (to create sliding)
-	this.GRAVITY = 2000;
-	this.JUMP_SPEED = -550;	// negative y-values jump up
+	this.GRAVITY = 1500;
+	this.JUMP_SPEED = -630;	// negative y-values jump up
 	// adjust physics properties for the player
 	game.physics.enable(this, Phaser.Physics.ARCADE);
 	this.body.collideWorldBounds = true;
 	this.x = x;
 	this.y = y;
 	this.body.gravity.y = this.GRAVITY;
-
+	this.body.bounce.set(0.3);
 	this.body.maxVelocity.x = this.MAX_X_VELOCITY;
 	this.body.maxVelocity.y = this.MAX_Y_VELOCITY;
 	this.body.drag.setTo(this.DRAG, 0);
-
+	this.scale.setTo(0.75, 0.75);
 
 }
 

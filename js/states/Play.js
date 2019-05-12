@@ -56,40 +56,44 @@ Play.prototype = {
 
 		this.switches = game.add.group();
 		this.switches.enableBody = true;
-		this.switch = new Switch(game, 'atlas', 'apple', 250, 500);
+		this.switch = new Switch(game, 'atlas', 'apple', 1150, 500);
 		this.switches.add(this.switch);
 		this.switch.body.immovable = true;
 		this.switch.scale.setTo(2.0, 0.5);
 		this.switch.body.allowGravity = false;
 
-		this.activatedPlatformStartX = 290;
-		this.activatedPlatform = platforms.create(this.activatedPlatformStartX, 220, 'atlas', 'sky');
-		this.activatedPlatform.scale.setTo(1.5, 0.25);
+		this.activatedPlatformStartX = 800;
+		this.activatedPlatform = platforms.create(this.activatedPlatformStartX, 350, 'atlas', 'sky');
+		this.activatedPlatform.scale.setTo(1.5, 0.15);
 		this.activatedPlatform.angle += 270
+		this.xSize = 10;
+		this.ySize = 1280;
+		this.xOffset = 0;
+		this.yOffset = -1280;
 		game.physics.arcade.enable(this.activatedPlatform);
 		this.activatedPlatform.body.immovable = true;
 		this.activatedPlatform.body.allowGravity = false;
 
 	},
 	update: function() {
-		//game.debug.body(this.box);
-		// game.debug.body(this.ground);
-
+		
+		/***** DEBUG STUFF *****/
+		game.debug.body(this.box);
+		//game.debug.body(this.ground);
+		game.debug.body(this.activatedPlatform);
 		// console.log(this.player.facing);
 		this.checkCamBounds();
-		// enable player collision
-		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);
-		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);
-		this.hitBox = game.physics.arcade.collide(this.player, this.box);
-		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches);
-		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches);
 
-		// box does't glide when pushed
-		this.box.body.velocity.x = 0;
-
+		/***** COLLISIONS *****/
+		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   // player vs platforms
+		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
+		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches); // player vs switch
+		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
+		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches); // box vs switch
 		
-		// switch logic for player on switch
-		if(this.hitSwitch && this.player.y + this.player.height/2 < this.switch.y - this.switch.height) {	// if colliding with top of switch
+		/***** SWITCH STUFF *****/
+		// Switch logic for player pressing down on switch 
+		if(this.hitSwitch && this.player.y + this.player.height/2 < this.switch.y - this.switch.height) {
 			console.log('pressed');
 			this.playerOnSwitch = true;
 			this.switchPressed = true;
@@ -98,7 +102,8 @@ Play.prototype = {
 			this.playerOnSwitch = false;
 			this.switchPressed = false;
 		}
-		// switch logic for box on switch
+
+		// Switch logic for box pressing down on switch
 		if(this.boxHitSwitch && this.box.y + this.box.height/2 < this.switch.y - this.switch.height) {
 			console.log('pressed');
 			this.boxOnSwitch = true;
@@ -109,7 +114,7 @@ Play.prototype = {
 			this.switchPressed = false;
 		}
 
-		// when switch is pressed, it goes down
+		// When the switch is pressed, it will visibly shrink down (y scale decreases)
 		if(this.switchPressed) {
 			if(this.switch.scale.y > 0) {
 				this.switch.scale.setTo(2, this.switch.scale.y - 0.01);
@@ -120,6 +125,7 @@ Play.prototype = {
 				this.switch.scale.setTo(2, this.switch.scale.y + 0.01);
 			}
 		}
+
 		/*
 		// switch activation consequnce
 		if(this.switchPressed) {
@@ -132,29 +138,47 @@ Play.prototype = {
 				this.activatedPlatform.x -= 5;
 			}
 		}*/
+		//console.log(this.activatedPlatform.angle);
+
+		// When the switch is pressed, platform is lowered, otherwise will go back to being raised
 		if(this.switchPressed) {
-			if(this.activatedPlatform.angle != 0){
+			if(this.activatedPlatform.angle < 0) { 
 				this.activatedPlatform.angle += 1;
+				this.xSize += 1.333333333333;
+				this.ySize -= 12.22222222;
+				this.yOffset += 14.11111111111;
 			}
 		}
 		else{
-			if(this.activatedPlatform.angle != 270){
+			if(this.activatedPlatform.angle > -90){
 				this.activatedPlatform.angle -= 1;
+				this.xSize -= 1.33333333333;
+				this.ySize += 12.222222222;
+				this.yOffset -= 14.11111111111;
 			}
 		}
+		this.activatedPlatform.body.setSize(this.xSize, this.ySize, this.xOffset, this.yOffset);
 
-		// when holding the box
+		/***** BOX STUFF *****/
+		this.box.body.velocity.x = 0; // Box won't glide when pushed by player
+
+		// When holding the box...
 		if(this.attached) {
-			if(this.player.facing == "RIGHT") { // when facing right, the box is immediately to the player's right
+			// When facing right, the box moves immediately to the player's right
+			this.box.body.checkCollision.none = true;
+			if(this.player.facing == "RIGHT") { 
 				this.box.x = this.player.x + this.player.width/2 + this.box.width/2 + 1;
 			}
-			else{ // when facing left, the box is immediately to the player's left
-				this.box.x = this.player.x - this.player.width/2 - this.box.width/2 + 1;	
+
+			// When facing left, the box moves immediately to the player's left
+			else{ 
+				this.box.x = this.player.x - this.player.width/2 - this.box.width/2 - 1;	
 			}
-			this.box.y = this.player.y;	// the box is off the ground
+
+			this.box.y = this.player.y;	 // the box is off the ground and with the player
 			this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
-			// spawn platform
+			// Spawn platform directly under by pressing SPACEBAR
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed()) { 
 				this.createdPlatform = new Platform(game, ['platform1'/*, 'platform2', 'platform3', 'platform4'*/], this.player.x, this.player.y + this.player.height/2 + 30);
 				platforms.add(this.createdPlatform); 
@@ -162,24 +186,26 @@ Play.prototype = {
 				this.createdPlatform.body.immovable = true;
 			}
 
-			// drop the box
+			// Drop the box by pressing SHIFT
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SHIFT).justPressed()) {
 				this.attached = false;
+				this.box.body.checkCollision.none = false;
 			}
 		}
-		// when not holding the box
+
+		// When not holding the box...
 		else {
-			this.box.body.gravity.y = 300;	// box falls
-			// pick up box from left
+			this.box.body.gravity.y = 300;	// Box has gravity, will fall
+
+			// When picked up from left of box...
 			if(game.input.keyboard.addKey(this.player.facing == 'RIGHT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x + this.player.width/2) - (this.box.x - this.box.width/2)) <= 5) {
 				this.attached = true;
 			}
-			// pick up box from right
+			// When picked up from right of box... 
 			if(game.input.keyboard.addKey(this.player.facing == 'LEFT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x - this.player.width/2) - (this.box.x + this.box.width/2)) <= 5) {
 				this.attached = true;
 			}
 		}
-		
 	},
 	render: function() {
 		game.debug.cameraInfo(game.camera, 32, 32);
