@@ -59,17 +59,18 @@ Play.prototype = {
 		this.switch = new Switch(game, 'atlas', 'apple', 1150, 500);
 		this.switches.add(this.switch);
 		this.switch.body.immovable = true;
-		this.switch.scale.setTo(2.0, 0.5);
+		this.switch.scale.setTo(2.0, 0.25);
 		this.switch.body.allowGravity = false;
 
 		this.activatedPlatformStartX = 800;
 		this.activatedPlatform = platforms.create(this.activatedPlatformStartX, 350, 'atlas', 'sky');
 		this.activatedPlatform.scale.setTo(1.5, 0.15);
-		this.activatedPlatform.angle += 270
+		this.activatedPlatform.angle += 270;
 		this.xSize = 10;
 		this.ySize = 1280;
 		this.xOffset = 0;
 		this.yOffset = -1280;
+		this.activatedPlatform.body.setSize(this.xSize, this.ySize, this.xOffset, this.yOffset);
 		game.physics.arcade.enable(this.activatedPlatform);
 		this.activatedPlatform.body.immovable = true;
 		this.activatedPlatform.body.allowGravity = false;
@@ -93,12 +94,17 @@ Play.prototype = {
 		
 		/***** SWITCH STUFF *****/
 		// Switch logic for player pressing down on switch 
+		console.log('player.y:' + (this.player.y + this.player.height/2));
+		console.log('switch.y:' + (this.switch.y - this.switch.height - 20));
+		console.log('playerOnSwitch: ' + this.playerOnSwitch);
+		console.log('hitSwitch:' + this.hitSwitch);
+		console.log('-------');
 		if(this.hitSwitch && this.player.y + this.player.height/2 < this.switch.y - this.switch.height) {
 			console.log('pressed');
 			this.playerOnSwitch = true;
 			this.switchPressed = true;
 		}
-		if(this.playerOnSwitch && !this.hitSwitch && (this.player.x + this.player.width/2 < this.switch.x - this.switch.width/2 || this.player.x - this.player.width/2 > this.switch.x + this.switch.width/2))  {
+		if(this.playerOnSwitch && !this.hitSwitch && (this.player.x + this.player.width/2 < this.switch.x - this.switch.width/2 || this.player.x - this.player.width/2 > this.switch.x + this.switch.width/2 || this.player.y + this.player.height/2 < this.switch.y + this.switch.height - 50))  {
 			this.playerOnSwitch = false;
 			this.switchPressed = false;
 		}
@@ -116,7 +122,7 @@ Play.prototype = {
 
 		// When the switch is pressed, it will visibly shrink down (y scale decreases)
 		if(this.switchPressed) {
-			if(this.switch.scale.y > 0) {
+			if(this.switch.scale.y > 0.01) {
 				this.switch.scale.setTo(2, this.switch.scale.y - 0.01);
 			}
 		}
@@ -144,17 +150,17 @@ Play.prototype = {
 		if(this.switchPressed) {
 			if(this.activatedPlatform.angle < 0) { 
 				this.activatedPlatform.angle += 1;
-				this.xSize += 1.333333333333;
-				this.ySize -= 12.22222222;
-				this.yOffset += 14.11111111111;
+				this.xSize += 12/9;
+				this.ySize -= 110/9;
+				this.yOffset += 127/9;
 			}
 		}
 		else{
 			if(this.activatedPlatform.angle > -90){
 				this.activatedPlatform.angle -= 1;
-				this.xSize -= 1.33333333333;
-				this.ySize += 12.222222222;
-				this.yOffset -= 14.11111111111;
+				this.xSize -= 12/9;
+				this.ySize += 110/9;
+				this.yOffset -= 127/9;
 			}
 		}
 		this.activatedPlatform.body.setSize(this.xSize, this.ySize, this.xOffset, this.yOffset);
