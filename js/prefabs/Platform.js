@@ -2,7 +2,8 @@ function Platform(game, frame, x, y) {
 	Phaser.Sprite.call(this, game, 0, 0, frame);
 
 	this.anchor.set(0.5);
-	this.scale.y = 0.25;
+	this.scale.y = 0.1;
+	this.scale.x = 0.1;
 	this.x = x;
 	this.y = y;
 	this.lifetime = 100;
@@ -16,4 +17,5 @@ Platform.prototype.update = function() {
 	if(this.lifetime <= 0 ) {
 		this.kill();
 	}
+	game.debug.body(this);
 }

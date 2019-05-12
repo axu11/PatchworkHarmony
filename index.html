@@ -2,16 +2,22 @@
 <html lang="en"> 
 <head> 
 	<meta charset="UTF-8" />
-	<title>Phaser</title>
+	<title>Patchwork Harmony</title>
 	<script type="text/javascript" src="../framework/phaser.min.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
-	<script type="text/javascript" src="js/Platform.js"></script>
-	<script type="text/javascript" src="js/Switch.js"></script>
+	<script type="text/javascript" src="js/states/Boot.js"></script>
+	<script type="text/javascript" src="js/states/Load.js"></script>
+	<script type="text/javascript" src="js/states/MainMenu.js"></script>
+	<script type="text/javascript" src="js/states/Play.js"></script>
+	<script type="text/javascript" src="js/states/GameOver.js"></script>
+	<script type="text/javascript" src="js/prefabs/Platform.js"></script>
+	<script type="text/javascript" src="js/prefabs/Patches.js"></script>
+	<script type="text/javascript" src="js/prefabs/Switch.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 <body>
-	<!-- We don't need anything in the <body> -->
-	<!-- Phaser will make the <canvas> element for us 👍 -->
+	<h1 id="gameTitle">Patchwork Harmony</h1>
+	<div id="myGame"></div>
 </body>
 </html>
 
