@@ -7,10 +7,13 @@ MainMenu.prototype = {
 	
 	create: function() {
 		game.stage.backgroundColor = "#facade";
-		instructions = game.add.text(100,200, 'PATCHWORK HARMONY', { fontSize: '48px', fill: '#000' });
-		instructions = game.add.text(100,270, 'You are a toy bunny! Reunite the magic music box with its owner!', { fontSize: '16px', fill: '#000' });
-		instructions = game.add.text(100,300, 'Press SPACEBAR to play!', { fontSize: '16px', fill: '#000' });
-		instructions = game.add.text(100,330, 'Use the arrow keys to move!', { fontSize: '16px', fill: '#000' });
+		this.title = game.add.text(game.world.centerX, 200, 'PATCHWORK HARMONY', { fontSize: '48px', fill: '#000' });
+		this.title.anchor.set(0.5);
+		this.description = game.add.text(game.world.centerX, 270, 'You are a toy bunny! Reunite the magic music box with its owner!', { fontSize: '16px', fill: '#000' });
+		this.description.anchor.set(0.5);
+		this.startInstructions = game.add.text(game.world.centerX,300, 'Press SPACEBAR to play!', { fontSize: '16px', fill: '#000' });
+		this.startInstructions.anchor.set(0.5);
+		// this.instructions = game.add.text(100,330, 'Use the arrow keys to move!', { fontSize: '16px', fill: '#000' });
 	},
 	update: function() {
 		// go to next state

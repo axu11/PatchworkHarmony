@@ -10,6 +10,9 @@ Load.prototype = {
 		game.load.image('bg', 'img/bg.jpg');
 		game.load.image('box', 'img/box.png');
 		game.load.image('patches', 'img/patches.png');
+		game.load.image('bg1', 'img/bg-lvl-1.png');
+		game.load.image('shelf', 'img/shelf-platform.png');
+		game.load.image('window', 'img/window.png');
 		game.load.image('platform1', 'img/Platform-1.png');
 		game.load.image('platform2', 'img/Platform-2.png');
 		game.load.image('platform3', 'img/Platform-3.png');

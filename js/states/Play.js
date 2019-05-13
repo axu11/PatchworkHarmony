@@ -17,6 +17,16 @@ Play.prototype = {
 		this.bg = game.add.image(0, 0, 'bg');
 		game.world.setBounds(0, 0, this.bg.width, this.bg.height);
 		
+		this.moveInstructions = game.add.text(150, 230, 'Use the arrow keys to move!', { fontSize: '16px', fill: '#000' });
+		this.moveInstructions.anchor.set(0.5);
+		this.jumpInstructions = game.add.text(350, 330, 'Press SPACEBAR to jump!', { fontSize: '16px', fill: '#000' });
+		this.jumpInstructions.anchor.set(0.5);
+		this.pickupInstrucctions = game.add.text(550, 430, 'Press SHIFT next to the box to pick it up!', { fontSize: '16px', fill: '#000' });
+		this.pickupInstrucctions.anchor.set(0.5);
+
+
+		this.platformInstructions = game.add.text(1200, 300, 'Press SPACEBAR when holding the box to make a temporary platform!', { fontSize: '16px', fill: '#000' });
+		this.platformInstructions.anchor.set(0.5);
 		// create player
 		this.players = game.add.group();
 		this.player = new Patches(game, 'patches', 100, 400);
@@ -62,6 +72,15 @@ Play.prototype = {
 		this.switch.scale.setTo(2.0, 0.25);
 		this.switch.body.allowGravity = false;
 
+		this.window = game.add.sprite(1350, 70, 'window');
+		this.window.scale.setTo(0.5, 0.5);
+
+		this.shelf = platforms.create(1400, 250, 'shelf');
+		this.shelf.scale.setTo(0.55, 0.55);
+		game.physics.arcade.enable(this.shelf);
+		this.shelf.body.immovable = true;
+		this.shelf.body.allowGravity = false;
+
 		this.activatedPlatformStartX = 800;
 		this.activatedPlatform = platforms.create(this.activatedPlatformStartX, 350, 'atlas', 'sky');
 		this.activatedPlatform.scale.setTo(1.5, 0.15);
@@ -82,7 +101,6 @@ Play.prototype = {
 		game.debug.body(this.box);
 		//game.debug.body(this.ground);
 		game.debug.body(this.activatedPlatform);
-		// console.log(this.player.facing);
 		this.checkCamBounds();
 
 		/***** COLLISIONS *****/
@@ -94,13 +112,7 @@ Play.prototype = {
 		
 		/***** SWITCH STUFF *****/
 		// Switch logic for player pressing down on switch 
-		console.log('player.y:' + (this.player.y + this.player.height/2));
-		console.log('switch.y:' + (this.switch.y - this.switch.height - 20));
-		console.log('playerOnSwitch: ' + this.playerOnSwitch);
-		console.log('hitSwitch:' + this.hitSwitch);
-		console.log('-------');
 		if(this.hitSwitch && this.player.y + this.player.height/2 < this.switch.y - this.switch.height) {
-			console.log('pressed');
 			this.playerOnSwitch = true;
 			this.switchPressed = true;
 		}
@@ -111,7 +123,6 @@ Play.prototype = {
 
 		// Switch logic for box pressing down on switch
 		if(this.boxHitSwitch && this.box.y + this.box.height/2 < this.switch.y - this.switch.height) {
-			console.log('pressed');
 			this.boxOnSwitch = true;
 			this.switchPressed = true;
 		}
@@ -130,6 +141,10 @@ Play.prototype = {
 			if(this.switch.scale.y < 0.25) {
 				this.switch.scale.setTo(2, this.switch.scale.y + 0.01);
 			}
+		}
+
+		if(this.player.x > 1400 && this.player.y < 240){
+			game.state.start('GameOver');
 		}
 
 		/*
@@ -164,6 +179,8 @@ Play.prototype = {
 			}
 		}
 		this.activatedPlatform.body.setSize(this.xSize, this.ySize, this.xOffset, this.yOffset);
+
+
 
 		/***** BOX STUFF *****/
 		this.box.body.velocity.x = 0; // Box won't glide when pushed by player
