@@ -81,6 +81,12 @@ Play.prototype = {
 		this.shelf.body.immovable = true;
 		this.shelf.body.allowGravity = false;
 
+		this.gear = game.add.sprite(820, 200, 'atlas', 'apple');
+		game.physics.arcade.enable(this.gear);
+		this.gear.body.immovable = true;
+		this.gear.body.allowGravity = false;
+		this.gear.scale.setTo(0.5,0.5);
+
 		this.activatedPlatformStartX = 800;
 		this.activatedPlatform = platforms.create(this.activatedPlatformStartX, 350, 'atlas', 'sky');
 		this.activatedPlatform.scale.setTo(1.5, 0.15);
@@ -101,6 +107,7 @@ Play.prototype = {
 		game.debug.body(this.box);
 		//game.debug.body(this.ground);
 		game.debug.body(this.activatedPlatform);
+			console.log(numPlatforms);
 		this.checkCamBounds();
 
 		/***** COLLISIONS *****/
@@ -109,6 +116,7 @@ Play.prototype = {
 		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches); // player vs switch
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
 		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches); // box vs switch
+		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
 		
 		/***** SWITCH STUFF *****/
 		// Switch logic for player pressing down on switch 
@@ -202,11 +210,12 @@ Play.prototype = {
 			this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
-			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed()) { 
+			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) { 
 				this.createdPlatform = new Platform(game, ['platform1'/*, 'platform2', 'platform3', 'platform4'*/], this.player.x, this.player.y + this.player.height/2 + 30);
 				platforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.immovable = true;
+				numPlatforms--;
 			}
 
 			// Drop the box by pressing SHIFT
@@ -255,4 +264,9 @@ Play.prototype = {
 		// 	this.player.y = game.camera.y + game.height - Math.abs(this.player.height/2);	
 		// }
 	}
+}
+
+function collectGear(Patches, gear){
+	gear.kill();
+	numPlatforms++;
 }

@@ -15,7 +15,9 @@ Platform.prototype.constructor = Platform;
 Platform.prototype.update = function() {
 	this.lifetime -= 0.5;
 	if(this.lifetime <= 0 ) {
-		this.kill();
+		this.destroy();
+		numPlatforms++;
 	}
 	game.debug.body(this);
+
 }

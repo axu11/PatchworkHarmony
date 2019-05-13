@@ -1,7 +1,7 @@
 "use strict";
 
 // define globals
-var platforms;
+var numPlatforms = 0;
 var game;
 
 // wait for browser to load before creating Phaser game
