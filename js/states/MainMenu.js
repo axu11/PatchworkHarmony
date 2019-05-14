@@ -1,11 +1,9 @@
+// MainMenu state used to display the game premise and title
 var MainMenu = function(game) {};
 MainMenu.prototype = {
-	init: function() {
-		// initialize score to 0
-		this.score = 0;
-	},
 	
 	create: function() {
+		// Temp background and placeholder text instructions
 		game.stage.backgroundColor = "#facade";
 		this.title = game.add.text(game.world.centerX, 200, 'PATCHWORK HARMONY', { fontSize: '48px', fill: '#000' });
 		this.title.anchor.set(0.5);
@@ -13,10 +11,10 @@ MainMenu.prototype = {
 		this.description.anchor.set(0.5);
 		this.startInstructions = game.add.text(game.world.centerX,300, 'Press SPACEBAR to play!', { fontSize: '16px', fill: '#000' });
 		this.startInstructions.anchor.set(0.5);
-		// this.instructions = game.add.text(100,330, 'Use the arrow keys to move!', { fontSize: '16px', fill: '#000' });
 	},
+
 	update: function() {
-		// go to next state
+		// Go to Play state once SPACEBAR pressed
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
 			game.state.start('Play');
 		}
