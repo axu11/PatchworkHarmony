@@ -13,7 +13,7 @@ Platform.prototype = Object.create(Phaser.Sprite.prototype);
 Platform.prototype.constructor = Platform;
 
 Platform.prototype.update = function() {
-	this.lifetime -= 0.5;
+	this.lifetime -= 2;
 	if(this.lifetime <= 0 ) {
 		this.destroy();
 		numPlatforms++;

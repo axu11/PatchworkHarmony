@@ -22,7 +22,7 @@ function Patches(game, frame, x, y) {
 	this.body.maxVelocity.x = this.MAX_X_VELOCITY;
 	this.body.maxVelocity.y = this.MAX_Y_VELOCITY;
 	this.body.drag.setTo(this.DRAG, 0);
-	this.scale.setTo(0.75, 0.75);
+	this.scale.set(0.75);
 
 }
 
@@ -32,7 +32,7 @@ Patches.prototype = Object.create(Phaser.Sprite.prototype);
 Patches.prototype.constructor = Patches;
 
 Patches.prototype.update = function() {
-	game.debug.body(this);
+	//game.debug.body(this);
 	// enable Phaser's Keyboard Manager
 	this.cursors = game.input.keyboard.createCursorKeys();
 

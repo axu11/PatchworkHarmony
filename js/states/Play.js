@@ -8,25 +8,49 @@ var Play = function(game) {
 	this.GRAVITY = 2600;
 	this.JUMP_SPEED = -700;	// negative y-values jump up
 
-	// define other variables
-	this.numPlatforms = 0;
 };
 Play.prototype = {
 	create: function() {
 		// create background, set bounds to image resolution
-		this.bg = game.add.image(0, 0, 'bg');
-		game.world.setBounds(0, 0, this.bg.width, this.bg.height);
+		this.bg = game.add.image(0, 0, 'bg1');
+		this.bg2 = game.add.image(800, 0, 'bg1');
+		this.bgm = game.add.audio('bgm', 0.1, true);
+		this.bgm.play();
+		// this.bgm.loop = true;
+
+		this.numberPosition = 16;
+		this.number0 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number0');
+		this.number0.scale.set(0.5);
+		this.number0.fixedToCamera = true;
+		this.number1 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number1');
+		this.number1.scale.set(0);
+		this.number1.fixedToCamera = true;
+		this.number2 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number2');
+		this.number2.scale.set(0);
+		this.number2.fixedToCamera = true;
+		this.number3 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number3');
+		this.number3.scale.set(0);
+		this.number3.fixedToCamera = true;
+		this.number4 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number4');
+		this.number4.scale.set(0);
+		this.number4.fixedToCamera = true;
+
+		game.world.setBounds(0, 0, this.bg.width+800, this.bg.height);
 		
-		this.moveInstructions = game.add.text(150, 230, 'Use the arrow keys to move!', { fontSize: '16px', fill: '#000' });
+		this.moveInstructions = game.add.text(150, 230, 'Use the arrow keys to move and jump!', { fontSize: '16px', fill: '#000' });
 		this.moveInstructions.anchor.set(0.5);
-		this.jumpInstructions = game.add.text(350, 330, 'Press SPACEBAR to jump!', { fontSize: '16px', fill: '#000' });
-		this.jumpInstructions.anchor.set(0.5);
-		this.pickupInstrucctions = game.add.text(550, 430, 'Press SHIFT next to the box to pick it up!', { fontSize: '16px', fill: '#000' });
+		//this.jumpInstructions = game.add.text(350, 330, 'Press SPACEBAR to jump!', { fontSize: '16px', fill: '#000' });
+		//this.jumpInstructions.anchor.set(0.5);
+		this.pickupInstrucctions = game.add.text(350, 330, 'Press SHIFT next to the box to pick it up and put it down!', { fontSize: '16px', fill: '#000' });
 		this.pickupInstrucctions.anchor.set(0.5);
 
 
-		this.platformInstructions = game.add.text(1200, 300, 'Press SPACEBAR when holding the box to make a temporary platform!', { fontSize: '16px', fill: '#000' });
+		this.gearInstructions = game.add.text(1200, 50, 'Collect the apple!', { fontSize: '16px', fill: '#000' });
+		this.gearInstructions.anchor.set(0.5);
+		this.platformInstructions = game.add.text(1200, 50, 'Press SPACEBAR when holding the box to make a temporary platform!', { fontSize: '16px', fill: '#000' });
 		this.platformInstructions.anchor.set(0.5);
+		this.platformInstructions.visible = false;
+
 		// create player
 		this.players = game.add.group();
 		this.player = new Patches(game, 'patches', 100, 400);
@@ -58,62 +82,86 @@ Play.prototype = {
 		platforms.enableBody = true;
 		// platforms.body.immovable = true;
 
-		this.ground = platforms.create(-64, 500, 'atlas', 'sky');
+		this.ground = platforms.create(-64, 550, 'atlas', 'sky');
 		this.ground.scale.setTo(13, 1);
 		game.physics.arcade.enable(this.ground);
 		this.ground.body.immovable = true;
 		this.ground.body.allowGravity = false;
+		this.ground.visible = false;
+
+		this.drawer = platforms.create(1020, 380, 'atlas','sky');
+		game.physics.arcade.enable(this.drawer);
+		this.drawer.scale.setTo(0.75, 0.075);
+		this.drawer.body.immovable = true;
+		this.drawer.body.allowGravity = false;
+		this.drawer.body.checkCollision.down = false;
+		this.drawer.body.checkCollision.left = false;
+		this.drawer.body.checkCollision.right = false;
+		this.drawer.alpha = 0;
+
+		this.table = platforms.create(820, 430, 'atlas','sky');
+		game.physics.arcade.enable(this.drawer);
+		this.table.scale.setTo(1.35, 0.075);
+		this.table.body.immovable = true;
+		this.table.body.allowGravity = false;
+		this.table.body.checkCollision.down = false;
+		this.table.body.checkCollision.left = false;
+		this.table.body.checkCollision.right = false;
+		this.table.alpha = 0;
 
 		this.switches = game.add.group();
 		this.switches.enableBody = true;
-		this.switch = new Switch(game, 'atlas', 'apple', 1150, 500);
+		this.switch = new Switch(game, 'atlas', 'apple', 1250, 550);
 		this.switches.add(this.switch);
 		this.switch.body.immovable = true;
 		this.switch.scale.setTo(2.0, 0.25);
 		this.switch.body.allowGravity = false;
 
-		this.window = game.add.sprite(1350, 70, 'window');
+		this.window = game.add.sprite(1320, 70, 'window');
 		this.window.scale.setTo(0.5, 0.5);
 
-		this.shelf = platforms.create(1400, 250, 'shelf');
-		this.shelf.scale.setTo(0.55, 0.55);
-		game.physics.arcade.enable(this.shelf);
-		this.shelf.body.immovable = true;
-		this.shelf.body.allowGravity = false;
+		// this.shelf = platforms.create(1400, 250, 'shelf');
+		// this.shelf.scale.setTo(0.55, 0.55);
+		// game.physics.arcade.enable(this.shelf);
+		// this.shelf.body.immovable = true;
+		// this.shelf.body.allowGravity = false;
 
-		this.gear = game.add.sprite(820, 200, 'atlas', 'apple');
+		this.gear = game.add.sprite(820, 100, 'atlas', 'apple');
 		game.physics.arcade.enable(this.gear);
 		this.gear.body.immovable = true;
 		this.gear.body.allowGravity = false;
 		this.gear.scale.setTo(0.5,0.5);
 
 		this.activatedPlatformStartX = 800;
-		this.activatedPlatform = platforms.create(this.activatedPlatformStartX, 350, 'atlas', 'sky');
-		this.activatedPlatform.scale.setTo(1.5, 0.15);
+		this.activatedPlatform = platforms.create(this.activatedPlatformStartX, 300, 'shelf');
+		this.activatedPlatform.scale.setTo(0.55, 0.55);
 		this.activatedPlatform.angle += 270;
-		this.xSize = 10;
-		this.ySize = 1280;
-		this.xOffset = 0;
-		this.yOffset = -1280;
-		this.activatedPlatform.body.setSize(this.xSize, this.ySize, this.xOffset, this.yOffset);
+		this.activatedPlatformXSize = 10;
+		this.activatedPlatformYSize = 1280;
+		this.activatedPlatformXOffset = 0;
+		this.activatedPlatformYOffset = -1280;
+
+		this.activatedPlatform.body.setSize(this.activatedPlatformXSize, this.activatedPlatformYSize, this.activatedPlatformXOffset, this.activatedPlatformYOffset);
 		game.physics.arcade.enable(this.activatedPlatform);
 		this.activatedPlatform.body.immovable = true;
 		this.activatedPlatform.body.allowGravity = false;
-
 	},
 	update: function() {
 		
 		/***** DEBUG STUFF *****/
-		game.debug.body(this.box);
+		//game.debug.body(this.box);
 		//game.debug.body(this.ground);
-		game.debug.body(this.activatedPlatform);
-			console.log(numPlatforms);
+		//game.debug.body(this.activatedPlatform);
+		//game.debug.body(this.drawer);
+		//console.log(numPlatforms);
 		this.checkCamBounds();
 
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   // player vs platforms
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
 		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches); // player vs switch
+		this.hitDrawer = game.physics.arcade.collide(this.player, this.drawer); // box vs switch
+		this.hitTable = game.physics.arcade.collide(this.player, this.table); // box vs switch
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
 		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches); // box vs switch
 		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
@@ -153,6 +201,7 @@ Play.prototype = {
 
 		if(this.player.x > 1400 && this.player.y < 240){
 			game.state.start('GameOver');
+			this.bgm.destroy();
 		}
 
 		/*
@@ -173,20 +222,20 @@ Play.prototype = {
 		if(this.switchPressed) {
 			if(this.activatedPlatform.angle < 0) { 
 				this.activatedPlatform.angle += 1;
-				this.xSize += 12/9;
-				this.ySize -= 110/9;
-				this.yOffset += 127/9;
+				this.activatedPlatformXSize += 38/9;
+				this.activatedPlatformYSize -= 122/9;
+				this.activatedPlatformYOffset += 128/9;
 			}
 		}
 		else{
 			if(this.activatedPlatform.angle > -90){
 				this.activatedPlatform.angle -= 1;
-				this.xSize -= 12/9;
-				this.ySize += 110/9;
-				this.yOffset -= 127/9;
+				this.activatedPlatformXSize -= 38/9;
+				this.activatedPlatformYSize += 122/9;
+				this.activatedPlatformYOffset -= 128/9;
 			}
 		}
-		this.activatedPlatform.body.setSize(this.xSize, this.ySize, this.xOffset, this.yOffset);
+		this.activatedPlatform.body.setSize(this.activatedPlatformXSize, this.activatedPlatformYSize, this.activatedPlatformXOffset, this.activatedPlatformYOffset);
 
 
 
@@ -210,10 +259,19 @@ Play.prototype = {
 			this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
-			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) { 
+			// this.createdPlatformXSize = 10;
+			// this.createdPlatformYSize = 1280;
+			// this.createdPlatformXOffset = 400;
+			this.createdPlatformYOffset = 0;
+
+			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
+			this.platform1audio = game.add.audio('platform1audio');
+			this.platform1audio.play();
+
 				this.createdPlatform = new Platform(game, ['platform1'/*, 'platform2', 'platform3', 'platform4'*/], this.player.x, this.player.y + this.player.height/2 + 30);
 				platforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
+				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
 				this.createdPlatform.body.immovable = true;
 				numPlatforms--;
 			}
@@ -238,9 +296,46 @@ Play.prototype = {
 				this.attached = true;
 			}
 		}
+		console.log(numPlatforms);
+		// top-left number updates with numPlatforms
+		if(numPlatforms == 0) {
+			this.number0.scale.set(0.5);
+			this.number1.scale.set(0);
+			this.number2.scale.set(0);
+			this.number3.scale.set(0);
+			this.number4.scale.set(0);
+		}
+		else if(numPlatforms == 1) {
+			this.number0.scale.set(0);
+			this.number1.scale.set(0.5);
+			this.number2.scale.set(0);
+			this.number3.scale.set(0);
+			this.number4.scale.set(0);
+		}
+		else if(numPlatforms == 2) {
+			this.number0.scale.set(0);
+			this.number1.scale.set(0);
+			this.number2.scale.set(0.5);
+			this.number3.scale.set(0);
+			this.number4.scale.set(0);
+		}
+		else if(numPlatforms == 3) {
+			this.number0.scale.set(0);
+			this.number1.scale.set(0);
+			this.number2.scale.set(0);
+			this.number3.scale.set(0.5);
+			this.number4.scale.set(0);
+		}
+		else {
+			this.number0.scale.set(0);
+			this.number1.scale.set(0);
+			this.number2.scale.set(0);
+			this.number3.scale.set(0);
+			this.number4.scale.set(0.5);
+		}
 	},
 	render: function() {
-		game.debug.cameraInfo(game.camera, 32, 32);
+		//game.debug.cameraInfo(game.camera, 32, 32);
 		//game.debug.rectangle({x:game.camera.bounds.x, y:game.camera.bounds.y, width:game.camera.bounds.width, height:game.camera.bounds.height});
 	},
 	checkCamBounds: function() {
@@ -269,4 +364,6 @@ Play.prototype = {
 function collectGear(Patches, gear){
 	gear.kill();
 	numPlatforms++;
+	this.gearInstructions.visible = false;
+	this.platformInstructions.visible = true;
 }

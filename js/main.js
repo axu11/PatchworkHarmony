@@ -3,7 +3,7 @@
 // define globals
 var numPlatforms = 0;
 var game;
-
+var style1 = { fontSize: '32px', fill: '#000' };
 // wait for browser to load before creating Phaser game
 window.onload = function() {
 	// uncomment the following line if you need to purge local storage data

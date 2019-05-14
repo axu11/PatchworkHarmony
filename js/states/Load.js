@@ -17,7 +17,13 @@ Load.prototype = {
 		game.load.image('platform2', 'img/Platform-2.png');
 		game.load.image('platform3', 'img/Platform-3.png');
 		game.load.image('platform4', 'img/Platform-4.png');
+		game.load.audio('bgm', 'audio/bg-loop-temp.ogg');
+		game.load.audio('platform1audio', 'audio/platform-1.ogg');
+		game.load.audio('platform2audio', 'audio/platform-2.ogg');
+		game.load.audio('platform3audio', 'audio/platform-3.ogg');
+		game.load.audio('platform4audio', 'audio/platform-4.ogg');
 		this.load.atlas('atlas', 'img/spritesheet.png', 'img/sprites.json');
+		this.load.atlas('numbers', 'img/numbersheet.png', 'img/numbers.json');
 	},
 
 	create: function() {
