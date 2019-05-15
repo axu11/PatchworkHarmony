@@ -26,15 +26,6 @@ Play.prototype = {
 		this.number1 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number1');
 		this.number1.scale.set(0);
 		this.number1.fixedToCamera = true;
-		this.number2 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number2');
-		this.number2.scale.set(0);
-		this.number2.fixedToCamera = true;
-		this.number3 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number3');
-		this.number3.scale.set(0);
-		this.number3.fixedToCamera = true;
-		this.number4 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number4');
-		this.number4.scale.set(0);
-		this.number4.fixedToCamera = true;
 
 		/***** INSTRUCTION TEXT *****/
 		// Create instructions for player movement and pickup, overlaid on screen for now
