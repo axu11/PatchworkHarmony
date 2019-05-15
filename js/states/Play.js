@@ -2,6 +2,10 @@
 var Play = function(game) {};
 Play.prototype = {
 
+	init: function() {
+		numPlatforms = 0;
+	},
+
 	create: function() {
 		
 		/***** BG, BGM, AND NUMBER CIRCLE *****/
@@ -120,11 +124,15 @@ Play.prototype = {
 		/***** SWITCH MECHANIC *****/
 		this.switches = game.add.group();
 		this.switches.enableBody = true;
-		this.switch = new Switch(game, 'atlas', 'apple', 1250, 550); // Temp sprite
+		this.switch = new Switch(game, 'switch-button', 1250, 525); // Temp sprite
 		this.switches.add(this.switch);
 		this.switch.body.immovable = true;
-		this.switch.scale.setTo(2.0, 0.25);
+		this.switch.scale.setTo(0.2, 0.001);
 		this.switch.body.allowGravity = false;
+		this.switchHolder = game.add.sprite(1160, 500, 'switch-holder')
+		this.switches.add(this.switchHolder)
+		this.switchHolder.scale.setTo(0.2, 0.25);
+		this.switchHolder.body.immovable = true;
 
 		/***** MISC COLLECTIBLES AND SPRITES *****/
 		// Creates a window for player to get to in order to clear level
@@ -132,7 +140,7 @@ Play.prototype = {
 		this.window.scale.setTo(0.5, 0.5);
 
 		// Creates a collectible "gear" that will enable player to unlock an ability
-		this.gear = game.add.sprite(820, 100, 'atlas', 'apple'); // Temp sprite
+		this.gear = game.add.sprite(820, 80, 'gear'); 
 		game.physics.arcade.enable(this.gear);
 		this.gear.body.immovable = true;
 		this.gear.body.allowGravity = false;
@@ -184,12 +192,12 @@ Play.prototype = {
 		// When the switch is pressed, it will visibly shrink down (y scale decreases)
 		if(this.switchPressed) {
 			if(this.switch.scale.y > 0.01) {
-				this.switch.scale.setTo(2, this.switch.scale.y - 0.01);
+				this.switch.scale.setTo(0.2, this.switch.scale.y - 0.01);
 			}
 		}
 		else {
 			if(this.switch.scale.y < 0.25) {
-				this.switch.scale.setTo(2, this.switch.scale.y + 0.01);
+				this.switch.scale.setTo(0.2, this.switch.scale.y + 0.01);
 			}
 		}
 

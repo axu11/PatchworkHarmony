@@ -20,6 +20,10 @@ Load.prototype = {
 		game.load.image('platform2', 'img/Platform-2.png');
 		game.load.image('platform3', 'img/Platform-3.png');
 		game.load.image('platform4', 'img/Platform-4.png');
+		game.load.image('switch-holder', 'img/switch-holder.png');
+		game.load.image('switch-button', 'img/switch-button.png');
+		game.load.image('gear', 'img/gear.png');
+
 		this.load.atlas('atlas', 'img/spritesheet.png', 'img/sprites.json');
 		this.load.atlas('numbers', 'img/numbersheet.png', 'img/numbers.json');
 

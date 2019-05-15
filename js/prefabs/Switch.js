@@ -1,7 +1,7 @@
 // Prefab for any switch mechanics we implement in the game
-function Switch(game, key, frame, x, y) {
+function Switch(game, frame, x, y) {
 	// Switch constructor
-	Phaser.Sprite.call(this, game, 0, 0, key, frame);
+	Phaser.Sprite.call(this, game, 0, 0, frame);
 	this.anchor.setTo(0.5, 1);
 
 	// Physics and scale of switch
