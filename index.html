@@ -1,17 +1,29 @@
+<!--LINK to our github repository: https://github.com/axu11/PatchworkHarmony
+    PATCHWORK HARMONY
+    Team 11: Anfernee Lai, Andrew Xu, Michael Sim, Veenna San Felipe
+    Last Edit: 5/13/19
+    Current Submission: First Playable Prototype
+-->
+
 <!DOCTYPE html> 
 <html lang="en"> 
 <head> 
-	<meta charset="UTF-8" />
-	<title>Phaser</title>
-	<script type="text/javascript" src="../framework/phaser.min.js"></script>
-	<script type="text/javascript" src="js/main.js"></script>
-	<script type="text/javascript" src="js/Platform.js"></script>
-	<script type="text/javascript" src="js/Switch.js"></script>
-	<link rel="stylesheet" type="text/css" href="css/styles.css">
+    <meta charset="UTF-8" />
+    <title>Patchwork Harmony</title>
+    <script type="text/javascript" src="../framework/phaser.min.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/states/Boot.js"></script>
+    <script type="text/javascript" src="js/states/Load.js"></script>
+    <script type="text/javascript" src="js/states/MainMenu.js"></script>
+    <script type="text/javascript" src="js/states/Play.js"></script>
+    <script type="text/javascript" src="js/states/GameOver.js"></script>
+    <script type="text/javascript" src="js/prefabs/Platform.js"></script>
+    <script type="text/javascript" src="js/prefabs/Patches.js"></script>
+    <script type="text/javascript" src="js/prefabs/Switch.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 <body>
-	<!-- We don't need anything in the <body> -->
-	<!-- Phaser will make the <canvas> element for us 👍 -->
+    <h1 id="gameTitle">Patchwork Harmony</h1>
+    <div id="myGame"></div>
 </body>
 </html>
-
