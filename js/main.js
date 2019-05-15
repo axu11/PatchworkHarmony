@@ -1,11 +1,16 @@
 'use strict'
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Define global variables to be used in the game
 // var numPlatforms = 0;
 var game;
 var style1 = { fontSize: '32px', fill: '#000' };
 var style2 = { fontSize: '16px', fill: '#000' };
+=======
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser');
+var platforms;
+>>>>>>> parent of 3ccee91... Merge pull request #5 from AnferneeLai/master
 =======
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser');
 var platforms;
@@ -21,6 +26,7 @@ MainMenu.prototype = {
 		console.log('MainMenu: preload');
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	// Define game
 	game = new Phaser.Game(800, 600, Phaser.AUTO, 'myGame');
 	
@@ -34,6 +40,8 @@ MainMenu.prototype = {
 	// Start the game in the boot state
 	game.state.start('Boot');
 =======
+=======
+>>>>>>> parent of 3ccee91... Merge pull request #5 from AnferneeLai/master
 		this.load.path = 'assets/';
 		game.load.image('bg', 'img/bg.jpg');
 		game.load.image('patches', 'img/patches.png');
@@ -54,6 +62,9 @@ MainMenu.prototype = {
 			game.state.start('Play');
 		}
 	}
+<<<<<<< HEAD
+>>>>>>> parent of 3ccee91... Merge pull request #5 from AnferneeLai/master
+=======
 >>>>>>> parent of 3ccee91... Merge pull request #5 from AnferneeLai/master
 }
 
