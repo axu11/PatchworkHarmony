@@ -1,7 +1,9 @@
 // First level state for the game, shows our tutorial and core mechanics
 var Tutorial = function(game) {};
 Tutorial.prototype = {
-
+	init: function() {
+		this.numPlatforms = 0;
+	}
 	create: function() {
 		
 		/***** BG, BGM, AND NUMBER CIRCLE *****/
@@ -147,7 +149,7 @@ Tutorial.prototype = {
 		//game.debug.body(this.activatedPlatform);
 		//game.debug.body(this.drawer);
 		//console.log(this.activatedPlatform.angle);
-		//console.log(numPlatforms);
+		//console.log(this.numPlatforms);
 		this.checkCamBounds(); // Keep checking camera bounds
 
 		/***** COLLISIONS *****/
@@ -238,7 +240,7 @@ Tutorial.prototype = {
 			this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
-			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
+			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
 				this.createdPlatform = new Platform(game, ['platform1'/*, 'platform2', 'platform3', 'platform4'*/], this.player.x, this.player.y + this.player.height/2 + 30);
@@ -246,7 +248,7 @@ Tutorial.prototype = {
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
 				this.createdPlatform.body.immovable = true;
-				numPlatforms--;
+				this.numPlatforms--;
 			}
 
 			// Drop the box by pressing SHIFT
@@ -270,29 +272,29 @@ Tutorial.prototype = {
 			}
 		}
 
-		// Top-left number updates with numPlatforms
-		if(numPlatforms == 0) {
+		// Top-left number updates with this.numPlatforms
+		if(this.numPlatforms == 0) {
 			this.number0.scale.set(0.5);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 1) {
+		else if(this.numPlatforms == 1) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0.5);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 2) {
+		else if(this.numPlatforms == 2) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0.5);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 3) {
+		else if(this.numPlatforms == 3) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
@@ -339,7 +341,7 @@ Tutorial.prototype = {
 // Function for collecting "gears"
 function collectGear(Patches, gear){
 	gear.kill();
-	numPlatforms++;
+	this.numPlatforms++;
 	this.gearInstructions.visible = false;
 	this.platformInstructions.visible = true;
 }

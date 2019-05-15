@@ -14,7 +14,7 @@ MainMenu.prototype = {
 	},
 
 	update: function() {
-		// Go to Play state once SPACEBAR pressed
+		// Go to Tutorial state once SPACEBAR pressed
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
 			game.state.start('Tutorial');
 		}

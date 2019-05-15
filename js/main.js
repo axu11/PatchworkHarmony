@@ -1,7 +1,7 @@
 "use strict";
 
 // Define global variables to be used in the game
-var numPlatforms = 0;
+// var numPlatforms = 0;
 var game;
 var style1 = { fontSize: '32px', fill: '#000' };
 var style2 = { fontSize: '16px', fill: '#000' };
