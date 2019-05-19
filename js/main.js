@@ -41,6 +41,7 @@ window.onload = function() {
 	game.state.add('Load', Load);
 	game.state.add('MainMenu', MainMenu);
 	game.state.add('Play', Play);
+	game.state.add('Level2', Level2);
 	game.state.add('GameOver', GameOver);
 
 	// Start the game in the boot state
