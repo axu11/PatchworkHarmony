@@ -2,15 +2,17 @@
 var Play = function(game) {};
 Play.prototype = {
 
+
 	init: function() {
 		numPlatforms = 0;
 	},
 
+	
 	create: function() {
 		
 		/***** BG, BGM, AND NUMBER CIRCLE *****/
 		// Create backgrounds for both scenes, set bounds to image resolution (800 x 600)
-		this.bg = game.add.image(0, 0, 'bg1');
+		this.bg = game.add.image(0, 0, 'bg0');
 		this.bg2 = game.add.image(800, 0, 'bg1');
 		game.world.setBounds(0, 0, this.bg.width+800, this.bg.height);
 
@@ -21,7 +23,7 @@ Play.prototype = {
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
 		this.number0 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number0');
-		this.number0.scale.set(0.5);
+		this.number0.scale.set(0.65);
 		this.number0.fixedToCamera = true;
 		this.number1 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number1');
 		this.number1.scale.set(0);
@@ -38,17 +40,20 @@ Play.prototype = {
 
 		/***** INSTRUCTION TEXT *****/
 		// Create instructions for player movement and pickup, overlaid on screen for now
-		this.moveInstructions = game.add.text(150, 230, 'Use the arrow keys to move and jump!', style2);
+		this.moveInstructions = game.add.text(350, 230, 'Use the arrow keys to move and jump!', textStyle);
 		this.moveInstructions.anchor.set(0.5);
-		this.pickupInstrucctions = game.add.text(350, 330, 'Press SHIFT next to the box to pick it up and put it down!', style2);
+		this.pickupInstrucctions = game.add.text(375, 330, 'Press SHIFT next to the box to pick it up and put it down!', textStyle);
 		this.pickupInstrucctions.anchor.set(0.5);
 
 		// Create instructions for collecting the "apple" and ability gained afterwards (initially invisible)
-		this.gearInstructions = game.add.text(1200, 50, 'Collect the apple!', style2);
+		this.gearInstructions = game.add.text(1200, 245, 'Collect the gear!', style2);
 		this.gearInstructions.anchor.set(0.5);
-		this.platformInstructions = game.add.text(1200, 50, 'Press SPACEBAR when holding the box to make a temporary platform!', style2);
+		this.platformInstructions = game.add.text(1200, 245, 'Press SPACEBAR when holding the box to make a temporary platform!', style2);
 		this.platformInstructions.anchor.set(0.5);
 		this.platformInstructions.visible = false;
+		this.exitInstructions = game.add.text(1200, 265, 'Exit through the window!', style2);
+		this.exitInstructions.anchor.set(0.5);
+		this.exitInstructions.visible = false;
 
 		/***** PLAYER SPRITE *****/ 
 		this.players = game.add.group();
@@ -86,9 +91,9 @@ Play.prototype = {
 		this.ground.visible = false;
 
 		// Create invisible platform on top of drawer, only collides on top (scene 2)
-		this.drawer = platforms.create(1020, 380, 'atlas','sky');
+		this.drawer = platforms.create(1020, 400, 'atlas','sky');
 		game.physics.arcade.enable(this.drawer);
-		this.drawer.scale.setTo(0.75, 0.075);
+		this.drawer.scale.setTo(0.65, 0.075);
 		this.drawer.body.immovable = true;
 		this.drawer.body.allowGravity = false;
 		this.drawer.body.checkCollision.down = false;
@@ -280,7 +285,7 @@ Play.prototype = {
 
 		// Top-left number updates with numPlatforms
 		if(numPlatforms == 0) {
-			this.number0.scale.set(0.5);
+			this.number0.scale.set(0.65);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
@@ -288,7 +293,7 @@ Play.prototype = {
 		}
 		else if(numPlatforms == 1) {
 			this.number0.scale.set(0);
-			this.number1.scale.set(0.5);
+			this.number1.scale.set(0.65);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
@@ -296,7 +301,7 @@ Play.prototype = {
 		else if(numPlatforms == 2) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
-			this.number2.scale.set(0.5);
+			this.number2.scale.set(0.65);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
@@ -304,7 +309,7 @@ Play.prototype = {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
-			this.number3.scale.set(0.5);
+			this.number3.scale.set(0.65);
 			this.number4.scale.set(0);
 		}
 		else {
@@ -312,7 +317,7 @@ Play.prototype = {
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
-			this.number4.scale.set(0.5);
+			this.number4.scale.set(0.65);
 		}
 	},
 
@@ -348,6 +353,9 @@ Play.prototype = {
 function collectGear(Patches, gear){
 	gear.kill();
 	numPlatforms++;
+	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
+	this.gearAudio.play();
 	this.gearInstructions.visible = false;
 	this.platformInstructions.visible = true;
+	this.exitInstructions.visible = true;
 }
