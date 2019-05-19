@@ -10,7 +10,7 @@ Play.prototype = {
 		
 		/***** BG, BGM, AND NUMBER CIRCLE *****/
 		// Create backgrounds for both scenes, set bounds to image resolution (800 x 600)
-		this.bg = game.add.image(0, 0, 'bg1');
+		this.bg = game.add.image(0, 0, 'bg0');
 		this.bg2 = game.add.image(800, 0, 'bg1');
 		game.world.setBounds(0, 0, this.bg.width+800, this.bg.height);
 
@@ -42,7 +42,7 @@ Play.prototype = {
 		this.platformInstructions.visible = false;
 	
 		/***** MUSIC BOX *****/
-		this.box = game.add.sprite(350, 250, 'box');
+		this.box = game.add.sprite(350, 250, 'assets', 'box');
 		game.physics.arcade.enable(this.box);
 		this.box.anchor.set(0.50);
 		this.box.scale.set(0.75);
@@ -54,7 +54,7 @@ Play.prototype = {
 			/***** SWITCH MECHANIC *****/
 		this.switches = game.add.group();
 		this.switches.enableBody = true;
-		this.switch = new Switch(game, 'switch-button', 1250, 525); // Temp sprite
+		this.switch = new Switch(game, 'assets', 'switch-button', 1250, 525); // Temp sprite
 		this.switches.add(this.switch);
 		this.switch.body.immovable = true;
 		this.switch.scale.setTo(0.2, 0.001);
@@ -65,7 +65,7 @@ Play.prototype = {
 		this.platforms = game.add.group();
 		this.platforms.enableBody = true;
 
-		this.switchHolder = game.add.sprite(1250, 525, 'switch-holder');
+		this.switchHolder = game.add.sprite(1250, 525, 'assets', 'switch-holder');
 		this.switchHolder.anchor.set(0.5, 1);
 		this.platforms.add(this.switchHolder);
 		this.switchHolder.scale.setTo(0.2, 0.25);
@@ -103,7 +103,7 @@ Play.prototype = {
 
 		// Creates a visible platform that lowers once switch is activated
 		this.activatedPlatformStartX = 800;
-		this.activatedPlatform = this.platforms.create(this.activatedPlatformStartX, 300, 'shelf');
+		this.activatedPlatform = this.platforms.create(this.activatedPlatformStartX, 300, 'assets', 'shelf-platform');
 		this.activatedPlatform.scale.setTo(0.55, 0.55);
 		this.activatedPlatform.angle += 270;
 		this.activatedPlatformXSize = 10;
@@ -117,18 +117,21 @@ Play.prototype = {
 
 		/***** MISC COLLECTIBLES AND SPRITES *****/
 		// Creates a window for player to get to in order to clear level
-		this.window = game.add.sprite(1320, 70, 'window');
+		this.window = game.add.sprite(1320, 70, 'windowAni', 'window0');
 		this.window.scale.setTo(0.5, 0.5);
+		this.window.animations.add('windowBillow', Phaser.Animation.generateFrameNames('windowAni', 'window', 0, 2), 4, true);
+		this.window.animations.play('windowBillow');
+
 
 		// Creates a collectible "gear" that will enable player to unlock an ability
-		this.gear = game.add.sprite(820, 80, 'gear'); 
+		this.gear = game.add.sprite(820, 80, 'assets', 'gear'); 
 		game.physics.arcade.enable(this.gear);
 		this.gear.body.immovable = true;
 		this.gear.body.allowGravity = false;
-		this.gear.scale.setTo(0.5,0.5);	
+		this.gear.scale.setTo(0.5, 0.5);	
 
 		/***** PLAYER SPRITE *****/ 
-		this.player = new Patches(game, 'patches', 100, 400, 1);
+		this.player = new Patches(game, 'patchesAtlas', '0', 100, 400, 1);
 		this.player.enableBody = true;
 		game.add.existing(this.player);
 		
@@ -149,6 +152,7 @@ Play.prototype = {
 		//console.log(this.activatedPlatform.angle);
 		//console.log(numPlatforms);
 		this.checkCamBounds(); // Keep checking camera bounds
+		// this.window.animations.play('windowBillow');
 
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, this.platforms);   // player vs this.platforms
@@ -162,29 +166,22 @@ Play.prototype = {
 		
 		/***** SWITCH STUFF *****/
 		// Switch logic for player pressing down on switch 
-		if(this.hitSwitch && this.player.x > this.switch.x - this.switch.width/2 && this.player.x < this.switch.x + this.switch.width/2/*this.player.y + this.player.height/2 < this.switch.y - this.switch.height*/) {
+		if(this.hitSwitch && this.player.x > this.switch.x - this.switch.width/2 && this.player.x < this.switch.x + this.switch.width/2) {
 			this.playerOnSwitch = true;
 			this.switchPressed = true;
 		}
 		if(this.playerOnSwitch && !this.hitSwitch && (this.player.x + this.player.width/2 < this.switch.x - this.switch.width/2 || this.player.x - this.player.width/2 > this.switch.x + this.switch.width/2 || this.player.y + this.player.height/2 < this.switch.y - this.switch.height - 30))  {
 			this.playerOnSwitch = false;
-			// this.switchPressed = false;
 		}
 
 		// Switch logic for box pressing down on switch
-		if(this.boxHitSwitch && this.box.x > this.switch.x - this.switch.width/2 && this.box.x < this.switch.x + this.switch.width/2/*this.box.y + this.box.height/2 < this.switch.y - this.switch.height*/) {
+		if(this.boxHitSwitch && this.box.x > this.switch.x - this.switch.width/2 && this.box.x < this.switch.x + this.switch.width/2) {
 			this.boxOnSwitch = true;
 			this.switchPressed = true;
 		}
 		if(this.boxOnSwitch && !this.boxHitSwitch && (this.box.x + this.box.width/2 < this.switch.x - this.switch.width/2 || this.box.x - this.box.width/2 > this.switch.x + this.switch.width/2)) {
 			this.boxOnSwitch = false;
-			// this.switchPressed = false;
 		}
-
-		// if(this.switchPressed) {
-		// 	this.playerOnSwitch = true;
-		// 	this.boxOnSwitch = ;
-		// }
 
 		if(this.switchPressed && !this.playerOnSwitch && !this.boxOnSwitch) {
 			this.switchPressed = false;
@@ -194,6 +191,8 @@ Play.prototype = {
 		if(this.switchPressed) {
 			if(this.switch.scale.y > 0.01) {
 				this.switch.scale.setTo(0.2, this.switch.scale.y - 0.01);
+				this.switchTrigger = game.add.audio('switchTrigger');
+				this.switchTrigger.play('', 0, 0.1, false);
 			}
 		}
 		else {
@@ -250,7 +249,7 @@ Play.prototype = {
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
-				this.createdPlatform = new Platform(game, ['platform1'/*, 'platform2', 'platform3', 'platform4'*/], this.player.x, this.player.y + this.player.height/2 + 30);
+				this.createdPlatform = new Platform(game, 'assets', 'Platform-1'/*, 'Platform-2', 'Platform-3', 'Platform-4'*/, this.player.x, this.player.y + this.player.height/2 + 30);
 				this.platforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
