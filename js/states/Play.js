@@ -2,11 +2,9 @@
 var Play = function(game) {};
 Play.prototype = {
 
-
 	init: function() {
 		numPlatforms = 0;
 	},
-
 	
 	create: function() {
 		
@@ -46,18 +44,6 @@ Play.prototype = {
 		this.exitInstructions = game.add.text(1200, 265, 'Exit through the window!', style2);
 		this.exitInstructions.anchor.set(0.5);
 		this.exitInstructions.visible = false;
-
-		/***** PLAYER SPRITE *****/ 
-		this.players = game.add.group();
-		this.player = new Patches(game, 'patches', 100, 400);
-		this.player.enableBody = true;
-		this.players.add(this.player);
-		
-		// Set up future player animations
-		// this.player.animations.add('right', Phaser.Animation.generateFrameNames('furretWalk', 1, 4, '', 4), 10, true);
-		// this.player.animations.add('left', Phaser.Animation.generateFrameNames('furretWalk', 5, 8, '', 4), 10, true);
-		// this.player.animations.add('idleRight', ['furretWalk0001'], 30, false);
-		// this.player.animations.add('idleLeft', ['furretWalk0005'], 30, false);
 	
 		/***** MUSIC BOX *****/
 		this.box = game.add.sprite(350, 250, 'assets', 'box');
@@ -98,7 +84,7 @@ Play.prototype = {
 		this.ground.visible = false;
 
 		// Create invisible platform on top of drawer, only collides on top (scene 2)
-		this.drawer = this.platforms.create(1020, 380, 'atlas','sky');
+		this.drawer = this.platforms.create(1020, 400, 'atlas','sky');
 		game.physics.arcade.enable(this.drawer);
 		this.drawer.scale.setTo(0.65, 0.075);
 		this.drawer.body.immovable = true;
@@ -300,6 +286,7 @@ Play.prototype = {
 		if(numPlatforms == 0) {
 			this.number0.scale.set(0.65);
 			this.number1.scale.set(0);
+		}
 		else {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0.5);

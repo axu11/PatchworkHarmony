@@ -28,8 +28,8 @@ function Patches(game, key, frame, x, y, levelScale) {
 	// Animations
 	// this.animations.add('right', Phaser.Animation.generateFrameNames('', 1, 4, '', 4), 10, true);
 	// this.animations.add('left', Phaser.Animation.generateFrameNames('', 5, 8, '', 4), 10, true);
-	this.animations.add('idleRight', ['patches', '5'], 30, false);
-	this.animations.add('idleLeft', ['patches', '0'], 30, false);
+	this.animations.add('idleRight', ['patchesAtlas', '5'], 30, false);
+	this.animations.add('idleLeft', ['patchesAtlas', '0'], 30, false);
 }
 
 Patches.prototype = Object.create(Phaser.Sprite.prototype);
