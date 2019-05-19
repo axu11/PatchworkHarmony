@@ -1,7 +1,7 @@
 // Prefab for our player character, Patches
-function Patches(game, frame, x, y, levelScale) {
+function Patches(game, key, frame, x, y, levelScale) {
 	// Player constructor
-	Phaser.Sprite.call(this, game, 0, 0, frame);
+	Phaser.Sprite.call(this, game, 0, 0, key, frame);
 	this.anchor.set(0.5,0.5);
 	this.facing = "RIGHT";
 	this.scale.set(0.75);
@@ -24,6 +24,12 @@ function Patches(game, frame, x, y, levelScale) {
 	this.body.maxVelocity.x = this.MAX_X_VELOCITY;
 	this.body.maxVelocity.y = this.MAX_Y_VELOCITY;
 	this.body.drag.setTo(this.DRAG, 0);
+
+	// Animations
+	// this.animations.add('right', Phaser.Animation.generateFrameNames('', 1, 4, '', 4), 10, true);
+	// this.animations.add('left', Phaser.Animation.generateFrameNames('', 5, 8, '', 4), 10, true);
+	// this.animations.add('idleRight', ['patches', '0'], 30, false);
+	// this.animations.add('idleLeft', ['patches', '1'], 30, false);
 }
 
 Patches.prototype = Object.create(Phaser.Sprite.prototype);
@@ -41,14 +47,14 @@ Patches.prototype.update = function() {
  	// Move left and right with arrow keys
  	if(this.cursors.left.isDown) {
 		this.body.velocity.x = -this.VELOCITY_X; // Move left
-		// this.player.animations.play('left');
 		this.facing = "LEFT";
+		// this.animations.play('idleLeft');
 	}
 
 	else if(this.cursors.right.isDown) {
 		this.body.velocity.x = this.VELOCITY_X; // Move right
-		// this.player.animations.play('right');
 		this.facing = "RIGHT";
+		// this.animations.play('idleRight');
 	}
 
 	else { // Stand "still"
