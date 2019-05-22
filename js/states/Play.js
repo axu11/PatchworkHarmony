@@ -62,7 +62,7 @@ Play.prototype = {
 		this.switch = new Switch(game, 'assets', 'switch-button', 1250, 525); // Temp sprite
 		this.switches.add(this.switch);
 		this.switch.body.immovable = true;
-		this.switch.scale.setTo(0.2, 0.001);
+		this.switch.scale.setTo(0.2, 0.25);
 		this.switch.body.allowGravity = false;
 
 		/***** PLATFORMS *****/
@@ -160,11 +160,12 @@ Play.prototype = {
 		/***** DEBUG STUFF *****/
 		//game.debug.body(this.box);
 		//game.debug.body(this.ground);
-		game.debug.body(this.wall);
+		//game.debug.body(this.wall);
 		//game.debug.body(this.activatedPlatform);
 		//game.debug.body(this.drawer);
 		//console.log(this.activatedPlatform.angle);
 		//console.log(numPlatforms);
+		console.log(this.switch.scale.y);
 		this.checkCamBounds(); // Keep checking camera bounds
 		// this.window.animations.play('windowBillow');
 
@@ -203,11 +204,12 @@ Play.prototype = {
 
 		// When the switch is pressed, it will visibly shrink down (y scale decreases)
 		if(this.switchPressed) {
-			this.switchTrigger = game.add.audio('switchTrigger');
-			this.switchTrigger.play('', 0, 0.1, false);
 			if(this.switch.scale.y > 0.01) {
 				this.switch.scale.setTo(0.2, this.switch.scale.y - 0.01);
-				
+				if(this.switch.scale.y >= 0.24){
+					this.switchTrigger = game.add.audio('switchTrigger');
+					this.switchTrigger.play('', 0, 0.5, false);
+				}
 				
 			}
 		}
