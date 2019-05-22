@@ -206,7 +206,7 @@ Play.prototype = {
 		}
 
 		if(this.player.x > 1400 && this.player.y < 240){
-			game.state.start('GameOver');
+			game.state.start('Level2');
 			this.bgm.destroy();
 		}
 
@@ -289,7 +289,7 @@ Play.prototype = {
 		}
 		else {
 			this.number0.scale.set(0);
-			this.number1.scale.set(0.5);
+			this.number1.scale.set(0.65);
 
 		}
 	},
