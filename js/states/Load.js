@@ -42,6 +42,7 @@ Load.prototype = {
 		this.load.atlas('numbers', 'img/numbersheet.png', 'img/numbers.json');
 		this.load.atlas('windowAni', 'img/windowAni.png', 'img/windowAni.json');
 		this.load.atlas('patchesAtlas', 'img/patches.png', 'img/patches.json');
+		this.load.atlas('patchesAtlas2', 'img/patches2.png', 'img/patches2.json');
 
 		game.load.audio('bgm', 'audio/bg-loop-temp.ogg');
 		game.load.audio('collectGear', 'audio/collect-gear.ogg');

@@ -18,6 +18,7 @@ Play.prototype = {
 		this.bgm = game.add.audio('bgm', 0.1, true);
 		this.bgm.play();
 
+
 		// Create number circle at top left of screen to indicate this.platforms remaining
 		this.numberPosition = 16;
 		this.number0 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number0');
@@ -83,6 +84,14 @@ Play.prototype = {
 		this.ground.body.allowGravity = false;
 		this.ground.visible = false;
 
+		this.wall = this.platforms.create(700, 0, 'atlas', 'sky');
+		this.wall.scale.setTo(0.75,10);
+		game.physics.arcade.enable(this.wall);
+		this.wall.body.immovable = true;
+		this.wall.body.allowGravity = false;
+		this.wall.alpha = 0;
+		this.wall.body.checkCollision.left = false;
+
 		// Create invisible platform on top of drawer, only collides on top (scene 2)
 		this.drawer = this.platforms.create(1020, 400, 'atlas','sky');
 		game.physics.arcade.enable(this.drawer);
@@ -135,7 +144,7 @@ Play.prototype = {
 		this.gear.scale.setTo(0.5, 0.5);	
 
 		/***** PLAYER SPRITE *****/ 
-		this.player = new Patches(game, 'patchesAtlas', '0', 100, 400, 1);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 100, 400, 1);
 		this.player.enableBody = true;
 		game.add.existing(this.player);
 		
@@ -151,6 +160,7 @@ Play.prototype = {
 		/***** DEBUG STUFF *****/
 		//game.debug.body(this.box);
 		//game.debug.body(this.ground);
+		game.debug.body(this.wall);
 		//game.debug.body(this.activatedPlatform);
 		//game.debug.body(this.drawer);
 		//console.log(this.activatedPlatform.angle);
@@ -193,10 +203,12 @@ Play.prototype = {
 
 		// When the switch is pressed, it will visibly shrink down (y scale decreases)
 		if(this.switchPressed) {
+			this.switchTrigger = game.add.audio('switchTrigger');
+			this.switchTrigger.play('', 0, 0.1, false);
 			if(this.switch.scale.y > 0.01) {
 				this.switch.scale.setTo(0.2, this.switch.scale.y - 0.01);
-				this.switchTrigger = game.add.audio('switchTrigger');
-				this.switchTrigger.play('', 0, 0.1, false);
+				
+				
 			}
 		}
 		else {
@@ -305,11 +317,12 @@ Play.prototype = {
 			// move camera, then player
 			game.camera.x += game.width;
 			this.player.x = game.camera.x + Math.abs(this.player.width/2);	
-		} else if(this.player.x - Math.abs(this.player.width/2) < game.camera.x && !this.player.body.blocked.left && this.player.facing === "LEFT") {
-			// move camera, then player
-			game.camera.x -= game.width;
-			this.player.x = game.camera.x + game.width - Math.abs(this.player.width/2);	
 		} 
+		//else if(this.player.x - Math.abs(this.player.width/2) < game.camera.x && !this.player.body.blocked.left && this.player.facing === "LEFT") {
+		// 	// move camera, then player
+		// 	game.camera.x -= game.width;
+		// 	this.player.x = game.camera.x + game.width - Math.abs(this.player.width/2);	
+		// } 
 		// else if(this.player.y + Math.abs(this.player.height/2) > game.height + game.camera.y && !this.player.body.blocked.down /*&& this.player.facing === "DOWN"*/) {
 		// 	// move camera, then player
 		// 	game.camera.y += game.height;
