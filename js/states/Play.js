@@ -5,7 +5,7 @@ Play.prototype = {
 	init: function() {
 		numPlatforms = 0;
 	},
-
+	
 	create: function() {
 		
 		/***** BG, BGM, AND NUMBER CIRCLE *****/
@@ -18,10 +18,11 @@ Play.prototype = {
 		this.bgm = game.add.audio('bgm', 0.1, true);
 		this.bgm.play();
 
+
 		// Create number circle at top left of screen to indicate this.platforms remaining
 		this.numberPosition = 16;
 		this.number0 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number0');
-		this.number0.scale.set(0.5);
+		this.number0.scale.set(0.65);
 		this.number0.fixedToCamera = true;
 		this.number1 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number1');
 		this.number1.scale.set(0);
@@ -29,17 +30,21 @@ Play.prototype = {
 
 		/***** INSTRUCTION TEXT *****/
 		// Create instructions for player movement and pickup, overlaid on screen for now
-		this.moveInstructions = game.add.text(150, 230, 'Use the arrow keys to move and jump!', style2);
+		this.moveInstructions = game.add.text(350, 230, 'Use the arrow keys to move and jump!', textStyle);
 		this.moveInstructions.anchor.set(0.5);
-		this.pickupInstrucctions = game.add.text(350, 330, 'Press SHIFT next to the box to pick it up and put it down!', style2);
+		this.pickupInstrucctions = game.add.text(375, 330, 'Press SHIFT next to the box to pick it up and put it down!', textStyle);
 		this.pickupInstrucctions.anchor.set(0.5);
 
 		// Create instructions for collecting the "apple" and ability gained afterwards (initially invisible)
-		this.gearInstructions = game.add.text(1200, 50, 'Collect the apple!', style2);
+		this.gearInstructions = game.add.text(1200, 245, 'Collect the gear!', style2);
 		this.gearInstructions.anchor.set(0.5);
-		this.platformInstructions = game.add.text(1200, 50, 'Press SPACEBAR when holding the box to make a temporary platform!', style2);
+		this.platformInstructions = game.add.text(1200, 245, 'Press SPACEBAR when holding the box to make a temporary platform!', style2);
 		this.platformInstructions.anchor.set(0.5);
 		this.platformInstructions.visible = false;
+
+		this.exitInstructions = game.add.text(1200, 265, 'Exit through the window!', style2);
+		this.exitInstructions.anchor.set(0.5);
+		this.exitInstructions.visible = false;
 	
 		/***** MUSIC BOX *****/
 		this.box = game.add.sprite(350, 250, 'assets', 'box');
@@ -79,10 +84,18 @@ Play.prototype = {
 		this.ground.body.allowGravity = false;
 		this.ground.visible = false;
 
+		this.wall = this.platforms.create(700, 0, 'atlas', 'sky');
+		this.wall.scale.setTo(0.75,10);
+		game.physics.arcade.enable(this.wall);
+		this.wall.body.immovable = true;
+		this.wall.body.allowGravity = false;
+		this.wall.alpha = 0;
+		this.wall.body.checkCollision.left = false;
+
 		// Create invisible platform on top of drawer, only collides on top (scene 2)
-		this.drawer = this.platforms.create(1020, 380, 'atlas','sky');
+		this.drawer = this.platforms.create(1020, 400, 'atlas','sky');
 		game.physics.arcade.enable(this.drawer);
-		this.drawer.scale.setTo(0.75, 0.075);
+		this.drawer.scale.setTo(0.65, 0.075);
 		this.drawer.body.immovable = true;
 		this.drawer.body.allowGravity = false;
 		this.drawer.body.checkCollision.down = false;
@@ -131,7 +144,7 @@ Play.prototype = {
 		this.gear.scale.setTo(0.5, 0.5);	
 
 		/***** PLAYER SPRITE *****/ 
-		this.player = new Patches(game, 'patchesAtlas', '0', 100, 400, 1);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 100, 400, 1);
 		this.player.enableBody = true;
 		game.add.existing(this.player);
 		
@@ -147,6 +160,7 @@ Play.prototype = {
 		/***** DEBUG STUFF *****/
 		//game.debug.body(this.box);
 		//game.debug.body(this.ground);
+		game.debug.body(this.wall);
 		//game.debug.body(this.activatedPlatform);
 		//game.debug.body(this.drawer);
 		//console.log(this.activatedPlatform.angle);
@@ -189,10 +203,12 @@ Play.prototype = {
 
 		// When the switch is pressed, it will visibly shrink down (y scale decreases)
 		if(this.switchPressed) {
+			this.switchTrigger = game.add.audio('switchTrigger');
+			this.switchTrigger.play('', 0, 0.1, false);
 			if(this.switch.scale.y > 0.01) {
 				this.switch.scale.setTo(0.2, this.switch.scale.y - 0.01);
-				this.switchTrigger = game.add.audio('switchTrigger');
-				this.switchTrigger.play('', 0, 0.1, false);
+				
+				
 			}
 		}
 		else {
@@ -202,7 +218,7 @@ Play.prototype = {
 		}
 
 		if(this.player.x > 1400 && this.player.y < 240){
-			game.state.start('GameOver');
+			game.state.start('Level2');
 			this.bgm.destroy();
 		}
 
@@ -280,12 +296,13 @@ Play.prototype = {
 
 		// Top-left number updates with numPlatforms
 		if(numPlatforms == 0) {
-			this.number0.scale.set(0.5);
+			this.number0.scale.set(0.65);
 			this.number1.scale.set(0);
 		}
 		else {
 			this.number0.scale.set(0);
-			this.number1.scale.set(0.5);
+			this.number1.scale.set(0.65);
+
 		}
 	},
 
@@ -300,11 +317,12 @@ Play.prototype = {
 			// move camera, then player
 			game.camera.x += game.width;
 			this.player.x = game.camera.x + Math.abs(this.player.width/2);	
-		} else if(this.player.x - Math.abs(this.player.width/2) < game.camera.x && !this.player.body.blocked.left && this.player.facing === "LEFT") {
-			// move camera, then player
-			game.camera.x -= game.width;
-			this.player.x = game.camera.x + game.width - Math.abs(this.player.width/2);	
 		} 
+		//else if(this.player.x - Math.abs(this.player.width/2) < game.camera.x && !this.player.body.blocked.left && this.player.facing === "LEFT") {
+		// 	// move camera, then player
+		// 	game.camera.x -= game.width;
+		// 	this.player.x = game.camera.x + game.width - Math.abs(this.player.width/2);	
+		// } 
 		// else if(this.player.y + Math.abs(this.player.height/2) > game.height + game.camera.y && !this.player.body.blocked.down /*&& this.player.facing === "DOWN"*/) {
 		// 	// move camera, then player
 		// 	game.camera.y += game.height;
@@ -321,6 +339,9 @@ Play.prototype = {
 function collectGear(Patches, gear){
 	gear.kill();
 	numPlatforms++;
+	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
+	this.gearAudio.play();
 	this.gearInstructions.visible = false;
 	this.platformInstructions.visible = true;
+	this.exitInstructions.visible = true;
 }

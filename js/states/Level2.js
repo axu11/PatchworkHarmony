@@ -8,7 +8,7 @@ Level2.prototype = {
 
 	create: function() {
 
-	// Create number circle at top left of screen to indicate platforms remaining
+		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
 		this.number0 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number0');
 		this.number0.scale.set(0.5);
@@ -22,13 +22,13 @@ Level2.prototype = {
 
 		/***** PLAYER SPRITE *****/ 
 		this.players = game.add.group();
-		this.player = new Patches(game, 'patches', 50, 500, 0.4);
+		this.player = new Patches(game, 'patchesAtlas', '0', 50, 450, 0.4);
 		this.player.scale.set(0.4);
 		this.player.enableBody = true;
 		this.players.add(this.player);
 
 		/***** MUSIC BOX *****/
-		this.box = game.add.sprite(350, 250, 'box');
+		this.box = game.add.sprite(350, 250, 'assets','box');
 		game.physics.arcade.enable(this.box);
 		this.box.anchor.set(0.50);
 		this.box.scale.set(0.75 * 0.4);
@@ -83,7 +83,7 @@ Level2.prototype = {
 		this.tower.visible = true;
 
 		// Creates a collectible "gear" that will enable player to unlock an ability
-		this.gear = game.add.sprite(820, 80, 'gear'); 
+		this.gear = game.add.sprite(820, 80, 'assets', 'gear'); 
 		game.physics.arcade.enable(this.gear);
 		this.gear.body.immovable = true;
 		this.gear.body.allowGravity = false;
@@ -129,7 +129,7 @@ Level2.prototype = {
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
-				this.createdPlatform = new Platform(game, ['platform1'/*, 'platform2', 'platform3', 'platform4'*/], this.player.x, this.player.y + this.player.height/2 + 30);
+				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30);
 				platforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);

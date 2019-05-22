@@ -5,11 +5,12 @@ MainMenu.prototype = {
 	create: function() {
 		// Temp background and placeholder text instructions
 		game.stage.backgroundColor = "#facade";
-		this.title = game.add.text(game.world.centerX, 200, 'PATCHWORK HARMONY', { fontSize: '48px', fill: '#000' });
+		game.add.image(-800, -800, 'bg');
+		this.title = game.add.text(game.world.centerX, 200, 'PATCHWORK HARMONY', textStyle2);
 		this.title.anchor.set(0.5);
-		this.description = game.add.text(game.world.centerX, 270, 'You are a toy bunny! Reunite the magic music box with its owner!', { fontSize: '16px', fill: '#000' });
+		this.description = game.add.text(game.world.centerX, 270, 'You are a toy bunny! Reunite the magic music box with its owner!', textStyle3);
 		this.description.anchor.set(0.5);
-		this.startInstructions = game.add.text(game.world.centerX,300, 'Press SPACEBAR to play!', { fontSize: '16px', fill: '#000' });
+		this.startInstructions = game.add.text(game.world.centerX,300, 'Press SPACEBAR to play!', textStyle3);
 		this.startInstructions.anchor.set(0.5);
 	},
 

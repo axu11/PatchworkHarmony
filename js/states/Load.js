@@ -1,3 +1,13 @@
+//  The Google WebFont Loader will look for this object, so create it before loading the script.
+WebFontConfig = {
+
+    //  The Google Fonts we want to load (specify as many as you like in the array)
+    google: {
+      families: ['Indie Flower']
+    }
+
+};
+
 // Load state preloads all assets used in the game
 var Load = function(game) {};
 Load.prototype = {
@@ -25,11 +35,14 @@ Load.prototype = {
 		// game.load.image('switch-button', 'img/switch-button.png');
 		// game.load.image('gear', 'img/gear.png');
 
+		game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+
 		this.load.atlas('atlas', 'img/spritesheet.png', 'img/sprites.json');
 		this.load.atlas('assets', 'img/assetsheet.png', 'img/assets.json')
 		this.load.atlas('numbers', 'img/numbersheet.png', 'img/numbers.json');
 		this.load.atlas('windowAni', 'img/windowAni.png', 'img/windowAni.json');
 		this.load.atlas('patchesAtlas', 'img/patches.png', 'img/patches.json');
+		this.load.atlas('patchesAtlas2', 'img/patches2.png', 'img/patches2.json');
 
 		game.load.audio('bgm', 'audio/bg-loop-temp.ogg');
 		game.load.audio('collectGear', 'audio/collect-gear.ogg');
@@ -40,6 +53,11 @@ Load.prototype = {
 		game.load.audio('platform2audio', 'audio/platform-2.ogg');
 		game.load.audio('platform3audio', 'audio/platform-3.ogg');
 		game.load.audio('platform4audio', 'audio/platform-4.ogg');
+		game.load.audio('collect-gear', 'audio/collect-gear.ogg');
+		game.load.audio('collision', 'audio/collision.ogg');
+		game.load.audio('jump', 'audio/jump.ogg');
+		game.load.audio('switch-trigger', 'audio/switch-trigger.ogg');
+
 		
 	},
 

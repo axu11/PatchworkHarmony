@@ -5,6 +5,30 @@ var numPlatforms = 0;
 var game;
 var style1 = { fontSize: '32px', fill: '#000' };
 var style2 = { fontSize: '16px', fill: '#000' };
+var palette = ['#1B1B3A', '#693668', '#A74482', '#F84AA7', '#FF3562', '#000'];
+var textStyle = {
+			font: 'Pacifico',
+			fontSize: 24,
+			wordWrap: true,
+			wordWrapWidth: 586,
+			fill: palette[4]
+		};
+
+var textStyle2 = {
+			font: 'Indie Flower',
+			fontSize: 48,
+			wordWrap: true,
+			wordWrapWidth: 586,
+			fill: palette[5]
+		};
+
+var textStyle3 = {
+			font: 'Fira Sans',
+			fontSize: 20,
+			wordWrap: true,
+			wordWrapWidth: 586,
+			fill: palette[5]
+		};
 
 // Wait for browser to load before creating Phaser game
 window.onload = function() {
