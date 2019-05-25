@@ -4,6 +4,7 @@ Level2.prototype = {
 
 	init: function() {
 		numPlatforms = 1;
+		this.levelScale = 0.4;
 	},
 
 	create: function() {
@@ -22,7 +23,7 @@ Level2.prototype = {
 
 		/***** PLAYER SPRITE *****/ 
 		this.players = game.add.group();
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 50, 450, 0.4);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 50, 450, this.levelScale);
 		this.player.enableBody = true;
 		this.players.add(this.player);
 
@@ -30,7 +31,7 @@ Level2.prototype = {
 		this.box = game.add.sprite(350, 250, 'assets','box');
 		game.physics.arcade.enable(this.box);
 		this.box.anchor.set(0.50);
-		this.box.scale.set(0.75 * 0.4);
+		this.box.scale.set(0.75 * this.levelScale);
 		this.box.body.collideWorldBounds = true;
 		this.box.body.gravity.y = 300; // Has gravity while not held by player
 		this.box.body.drag = 0.5;
@@ -42,7 +43,7 @@ Level2.prototype = {
 		platforms.enableBody = true;
 
 		// Create invisible ground platform for player to stand on (both scenes)
-		this.ground = platforms.create(60, 530, 'atlas', 'sky'); 
+		this.ground = platforms.create(0, 530, 'lvl2', 'exterior'); 
 		this.ground.scale.setTo(0.5, 0.25);
 		game.physics.arcade.enable(this.ground);
 		this.ground.body.immovable = true;
@@ -50,7 +51,7 @@ Level2.prototype = {
 		this.ground.visible = true;
 
 		// billboard
-		this.billboard = platforms.create(260, 500, 'atlas', 'sky');
+		this.billboard = platforms.create(200, 500, 'atlas', 'sky');
 		this.billboard.scale.setTo(1.2, 0.6);
 		game.physics.arcade.enable(this.billboard);
 		this.billboard.body.immovable = true;
@@ -58,15 +59,15 @@ Level2.prototype = {
 		this.billboard.visible = true;
 
 		// building
-		this.building = platforms.create(540, 470, 'atlas', 'sky');
-		this.building.scale.setTo(1.5, 0.2);
+		this.building = platforms.create(440, 490, 'lvl2', 'rooftop');
+		this.building.scale.setTo(0.4, 0.4);
 		game.physics.arcade.enable(this.building);
 		this.building.body.immovable = true;
 		this.building.body.allowGravity = false;
 		this.building.visible = true;
 
 		// ledge
-		this.ledge = platforms.create(620, 230, 'atlas', 'sky');
+		this.ledge = platforms.create(560, 230, 'atlas', 'sky');
 		this.ledge.scale.setTo(1, 0.2);
 		game.physics.arcade.enable(this.ledge);
 		this.ledge.body.immovable = true;
@@ -74,8 +75,8 @@ Level2.prototype = {
 		this.ledge.visible = true;
 
 		// big ass tower
-		this.tower = platforms.create(700, 100, 'atlas', 'sky');
-		this.tower.scale.setTo(2, 5);
+		this.tower = platforms.create(650, 100, 'lvl2', 'clocktower');
+		this.tower.scale.setTo(1, 1);
 		game.physics.arcade.enable(this.tower);
 		this.tower.body.immovable = true;
 		this.tower.body.allowGravity = false;
@@ -96,7 +97,7 @@ Level2.prototype = {
 		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
 		
 		// reset state when player falls
-		if(this.player.y + this.player.height/2 == this.world.height) {
+		if(this.player.y + this.player.height/2 >= this.world.height - 1) {
 			game.state.start('Level2');
 		}
 		
@@ -128,7 +129,7 @@ Level2.prototype = {
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
-				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30);
+				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30, this.levelScale);
 				platforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);

@@ -1,7 +1,35 @@
+/*Team 11
+  Patchwork Harmony
+  styles.css*/
+
 body {
 	font-family: Helvetica;
+	font-size: 16px;
+	color: #6d0024;
+	width: 50%;
+	margin: 0 auto;
+	background-color: #ffb3b3;
+	padding: 10px;
+	overflow: visible;
 }
 
 canvas {
-	border: 1px solid black;
+	border: 2px solid black;
+	margin: 0 auto;
+	overflow: visible;
+}
+
+#gameTitle {
+	color: #fff;
+	font-size: 3em;
+	margin-bottom: 10px;
+	margin-top: 1em;
+	stroke: 10px;
+	text-align: center;
+	text-shadow: 2px 2px 4px #000000;
+}
+
+#myGame{
+	margin: 0 auto;
+	overflow: visible;
 }

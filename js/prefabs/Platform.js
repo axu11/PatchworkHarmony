@@ -1,12 +1,12 @@
 // Prefab for music box generated platforms in the game
-function Platform(game, key, frame, x, y) {
+function Platform(game, key, frame, x, y, levelScale) {
 	// Constructor for music platforms
 	Phaser.Sprite.call(this, game, 0, 0, key, frame);
 
 	// Set size and lifetime of platforms
 	this.anchor.set(0.5);
-	this.scale.y = 0.1;
-	this.scale.x = 0.1;
+	this.scale.y = 0.1 * levelScale;
+	this.scale.x = 0.1 * levelScale;
 	this.x = x;
 	this.y = y;
 	this.lifetime = 100;
