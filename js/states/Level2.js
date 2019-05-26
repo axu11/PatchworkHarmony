@@ -9,6 +9,8 @@ Level2.prototype = {
 
 	create: function() {
 
+		this.bg = game.add.image(0, 0, 'bg2');
+
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
 		this.number0 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number0');
@@ -76,7 +78,7 @@ Level2.prototype = {
 		this.ledge.visible = true;
 
 		// big ass tower
-		this.tower = platforms.create(650, 100, 'lvl2', 'clocktower');
+		this.tower = platforms.create(680, 100, 'lvl2', 'clocktower');
 		this.tower.scale.setTo(1, 1);
 		game.physics.arcade.enable(this.tower);
 		this.tower.body.immovable = true;
