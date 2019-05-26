@@ -25,6 +25,8 @@ Load.prototype = {
 		// game.load.image('patches', 'img/patches.png');
 		game.load.image('bg0', 'img/bg-lvl-0.png');
 		game.load.image('bg1', 'img/bg-lvl-1.png');
+		game.load.image('bg2', 'img/bg-lvl-2.png');
+		game.load.image('bg3', 'img/bg-lvl-3.png');
 		// game.load.image('shelf', 'img/shelf-platform.png');
 		// game.load.image('window', 'img/window.png');
 		// game.load.image('platform1', 'img/Platform-1.png');

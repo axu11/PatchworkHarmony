@@ -9,6 +9,11 @@ Level2.prototype = {
 
 	create: function() {
 
+		this.bg = game.add.image(0, 0, 'bg2');
+		this.bg.alpha = 1;
+		this.bg2 = game.add.image(800, 0, 'bg3');
+		game.world.setBounds(0, 0, this.bg.width+800, this.bg.height);
+
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
 		this.number0 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number0');
@@ -51,16 +56,17 @@ Level2.prototype = {
 		this.ground.visible = true;
 
 		// billboard
-		this.billboard = platforms.create(200, 500, 'atlas', 'sky');
-		this.billboard.scale.setTo(1.2, 0.6);
+		this.billboard = platforms.create(150, 450, 'lvl2', 'billboard');
+		this.billboard.scale.setTo(0.25, 0.3);
 		game.physics.arcade.enable(this.billboard);
+		this.billboard.body.setSize(500, 350, 150, 65);
 		this.billboard.body.immovable = true;
 		this.billboard.body.allowGravity = false;
 		this.billboard.visible = true;
 
 		// building
-		this.building = platforms.create(440, 490, 'lvl2', 'rooftop');
-		this.building.scale.setTo(0.4, 0.4);
+		this.building = platforms.create(500, 490, 'lvl2', 'rooftop');
+		this.building.scale.setTo(0.6, 0.4);
 		game.physics.arcade.enable(this.building);
 		this.building.body.immovable = true;
 		this.building.body.allowGravity = false;
@@ -90,6 +96,7 @@ Level2.prototype = {
 		this.gear.scale.setTo(0.5,0.5);	
 	},
 	update: function(){
+		game.debug.body(this.billboard);
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   // player vs platforms
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
@@ -129,7 +136,7 @@ Level2.prototype = {
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
-				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30, this.levelScale);
+				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
 				platforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
