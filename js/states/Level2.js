@@ -103,7 +103,7 @@ Level2.prototype = {
 		this.library.body.immovable = true;
 
 		// trampoline
-		this.trampoline = game.add.sprite(100, 400, 'assets', 'shelf-platform');
+		this.trampoline = game.add.sprite(100, 375, 'assets', 'shelf-platform');
 		this.trampoline.anchor.setTo(0.5, 1);
 		this.trampoline.scale.setTo(0.3, 0.3);
 		game.physics.arcade.enable(this.trampoline);
@@ -133,7 +133,7 @@ Level2.prototype = {
 		game.physics.arcade.enable(this.box);
 		this.box.anchor.set(0.50);
 		this.box.scale.set(0.75 * this.levelScale);
-		this.box.body.collideWorldBounds = true;
+		this.box.body.collideWorldBounds = false;
 		this.box.body.gravity.y = 300; // Has gravity while not held by player
 		this.box.body.drag = 0.5;
 		this.attached = true; // Held from last level
