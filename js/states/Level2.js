@@ -52,7 +52,7 @@ Level2.prototype = {
 		this.ground.visible = true;
 
 		// billboard
-		this.billboard = platforms.create(150, 450, 'lvl2', 'billboard');
+		this.billboard = platforms.create(170, 430, 'lvl2', 'billboard');
 		this.billboard.scale.setTo(0.25, 0.3);
 		game.physics.arcade.enable(this.billboard);
 		this.billboard.body.setSize(500, 350, 150, 65);
@@ -116,9 +116,8 @@ Level2.prototype = {
 		// Creates a collectible "gear" that will enable player to unlock an ability
 		this.gear = game.add.sprite(20, 80, 'assets', 'gear'); 
 		game.physics.arcade.enable(this.gear);
-		this.gear.body.immovable = false;
-		this.gear.body.allowGravity = false;
-		this.gear.scale.setTo(0.5,0.5);	
+		this.gear.body.immovable = true;
+		this.gear.scale.setTo(0.5, 0.5);	
 
 		/***** PLAYER SPRITE *****/ 
 		this.players = game.add.group();
