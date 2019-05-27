@@ -32,12 +32,14 @@ Play.prototype = {
 		// Create instructions for player movement and pickup, overlaid on screen for now
 		this.moveInstructions = game.add.text(350, 230, 'Use the arrow keys to move and jump!', textStyle);
 		this.moveInstructions.anchor.set(0.5);
+
 		this.pickupInstrucctions = game.add.text(375, 330, 'Press SHIFT next to the box to pick it up and put it down!', textStyle);
 		this.pickupInstrucctions.anchor.set(0.5);
 
 		// Create instructions for collecting the "apple" and ability gained afterwards (initially invisible)
 		this.gearInstructions = game.add.text(1200, 245, 'Collect the gear!', style2);
 		this.gearInstructions.anchor.set(0.5);
+
 		this.platformInstructions = game.add.text(1200, 245, 'Press SPACEBAR when holding the box to make a temporary platform!', style2);
 		this.platformInstructions.anchor.set(0.5);
 		this.platformInstructions.visible = false;
@@ -62,19 +64,13 @@ Play.prototype = {
 		this.switch = new Switch(game, 'assets', 'switch-button', 1250, 525); // Temp sprite
 		this.switches.add(this.switch);
 		this.switch.body.immovable = true;
-		this.switch.scale.setTo(0.2, 0.001);
+		this.switch.scale.setTo(0.2, 0.25);
 		this.switch.body.allowGravity = false;
 
 		/***** PLATFORMS *****/
 		// Create this.platforms group
 		this.platforms = game.add.group();
 		this.platforms.enableBody = true;
-
-		this.switchHolder = game.add.sprite(1250, 525, 'assets', 'switch-holder');
-		this.switchHolder.anchor.set(0.5, 1);
-		this.platforms.add(this.switchHolder);
-		this.switchHolder.scale.setTo(0.2, 0.25);
-		this.switchHolder.body.immovable = true;
 
 		// Create invisible ground platform for player to stand on (both scenes)
 		this.ground = this.platforms.create(-64, 550, 'atlas', 'sky'); 
@@ -84,6 +80,7 @@ Play.prototype = {
 		this.ground.body.allowGravity = false;
 		this.ground.visible = false;
 
+		// Create invisible wall preventing player from returning to first screen
 		this.wall = this.platforms.create(700, 0, 'atlas', 'sky');
 		this.wall.scale.setTo(0.75,10);
 		game.physics.arcade.enable(this.wall);
@@ -135,7 +132,6 @@ Play.prototype = {
 		this.window.animations.add('windowBillow', Phaser.Animation.generateFrameNames('windowAni', 'window', 0, 2), 4, true);
 		this.window.animations.play('windowBillow');
 
-
 		// Creates a collectible "gear" that will enable player to unlock an ability
 		this.gear = game.add.sprite(820, 80, 'assets', 'gear'); 
 		game.physics.arcade.enable(this.gear);
@@ -143,16 +139,17 @@ Play.prototype = {
 		this.gear.body.allowGravity = false;
 		this.gear.scale.setTo(0.5, 0.5);	
 
+		this.switchHolder = game.add.sprite(1250, 525, 'assets', 'switch-holder');
+		this.switchHolder.anchor.set(0.5, 1);
+		this.platforms.add(this.switchHolder);
+		this.switchHolder.scale.setTo(0.2, 0.25);
+		this.switchHolder.body.immovable = true;
+
 		/***** PLAYER SPRITE *****/ 
 		this.player = new Patches(game, 'patchesAtlas2', 'right1', 100, 400, 1);
 		this.player.enableBody = true;
 		game.add.existing(this.player);
 		
-		// Set up future player animations
-		// this.player.animations.add('right', Phaser.Animation.generateFrameNames('furretWalk', 1, 4, '', 4), 10, true);
-		// this.player.animations.add('left', Phaser.Animation.generateFrameNames('furretWalk', 5, 8, '', 4), 10, true);
-		// this.player.animations.add('idleRight', ['furretWalk0001'], 30, false);
-		// this.player.animations.add('idleLeft', ['furretWalk0005'], 30, false);
 	},
 
 	update: function() {
@@ -160,11 +157,13 @@ Play.prototype = {
 		/***** DEBUG STUFF *****/
 		//game.debug.body(this.box);
 		//game.debug.body(this.ground);
-		game.debug.body(this.wall);
+		//game.debug.body(this.wall);
 		//game.debug.body(this.activatedPlatform);
 		//game.debug.body(this.drawer);
+		//game.debug.body(this.switch);
 		//console.log(this.activatedPlatform.angle);
 		//console.log(numPlatforms);
+		//console.log(this.switch.scale.y);
 		this.checkCamBounds(); // Keep checking camera bounds
 		// this.window.animations.play('windowBillow');
 
@@ -209,6 +208,12 @@ Play.prototype = {
 					this.switchTrigger.play('', 0, 0.1, false);
 				}
 				this.switch.scale.setTo(0.2, this.switch.scale.y - 0.01);
+
+				if(this.switch.scale.y >= 0.24){
+					this.switchTrigger = game.add.audio('switchTrigger');
+					this.switchTrigger.play('', 0, 0.5, false);
+				}
+
 			}
 		}
 		else {
@@ -265,7 +270,7 @@ Play.prototype = {
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
-				this.createdPlatform = new Platform(game, 'assets', 'Platform-1'/*, 'Platform-2', 'Platform-3', 'Platform-4'*/, this.player.x, this.player.y + this.player.height/2 + 30);
+				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30, 1);
 				this.platforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
@@ -339,11 +344,12 @@ Play.prototype = {
 
 // Function for collecting "gears"
 function collectGear(Patches, gear){
+	this.gearInstructions.visible = false;
+	this.platformInstructions.visible = true;
+	this.exitInstructions.visible = true;
 	gear.kill();
 	numPlatforms++;
 	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
 	this.gearAudio.play();
-	this.gearInstructions.visible = false;
-	this.platformInstructions.visible = true;
-	this.exitInstructions.visible = true;
+	
 }

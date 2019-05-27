@@ -9,7 +9,7 @@ function Platform(game, key, frame, x, y, levelScale) {
 	this.scale.x = 0.1 * levelScale;
 	this.x = x;
 	this.y = y;
-	this.lifetime = 100;
+	this.lifetime = 300;
 }
 
 Platform.prototype = Object.create(Phaser.Sprite.prototype);

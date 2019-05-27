@@ -43,6 +43,7 @@ window.onload = function() {
 	game.state.add('Play', Play);
 	game.state.add('Level2', Level2);
 	game.state.add('GameOver', GameOver);
+	game.state.add('TestingRealm', TestingRealm);
 
 	// Start the game in the boot state
 	game.state.start('Boot');
