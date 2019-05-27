@@ -203,12 +203,17 @@ Play.prototype = {
 		// When the switch is pressed, it will visibly shrink down (y scale decreases)
 		if(this.switchPressed) {
 			if(this.switch.scale.y > 0.01) {
+				if(this.switch.scale.y >= 0.25) {
+					this.switchTrigger = game.add.audio('switchTrigger');
+					this.switchTrigger.play('', 0, 0.1, false);
+				}
 				this.switch.scale.setTo(0.2, this.switch.scale.y - 0.01);
+
 				if(this.switch.scale.y >= 0.24){
 					this.switchTrigger = game.add.audio('switchTrigger');
 					this.switchTrigger.play('', 0, 0.5, false);
 				}
-				
+
 			}
 		}
 		else {
@@ -271,6 +276,8 @@ Play.prototype = {
 				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
 				this.createdPlatform.body.immovable = true;
 				numPlatforms--;
+				console.log(this.player.x + ', ' + this.player.y);
+				console.log(this.createdPlatform.body.x + ", " + this.createdPlatform.body.y);
 			}
 
 			// Drop the box by pressing SHIFT

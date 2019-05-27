@@ -41,9 +41,8 @@ Patches.prototype = Object.create(Phaser.Sprite.prototype);
 Patches.prototype.constructor = Patches;
 
 Patches.prototype.update = function() {
-	//game.debug.body(this);
-	//console.log("x: " + this.scale.x);
-	//console.log("y: " + this.scale.y);
+
+	game.debug.body(this);
 
 	// Enable Phaser's Keyboard Manager
 	this.cursors = game.input.keyboard.createCursorKeys();

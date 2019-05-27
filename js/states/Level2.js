@@ -9,6 +9,7 @@ Level2.prototype = {
 
 	create: function() {
 
+
 		/***** BG, BGM, AND NUMBER CIRCLE *****/
 		// Create backgrounds for both scenes, set bounds to image resolution (800 x 600)
 		this.bg = game.add.image(0, 0, 'bg2');
@@ -19,6 +20,7 @@ Level2.prototype = {
 		this.bgm = game.add.audio('bgm', 0.1, true);
 		//this.bgm.play();
 		
+
 
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
@@ -75,6 +77,7 @@ Level2.prototype = {
 		this.ledge.visible = true;
 
 		// big ass tower
+
 		this.secondRooftop = platforms.create(700, 490, 'lvl2', 'rooftop');
 		this.secondRooftop.scale.setTo(0.6, 0.4);
 		game.physics.arcade.enable(this.secondRooftop);
@@ -85,6 +88,7 @@ Level2.prototype = {
 
 		// big ass tower
 		this.tower = platforms.create(630, 100, 'lvl2', 'clocktower');
+
 		this.tower.scale.setTo(1, 1);
 		game.physics.arcade.enable(this.tower);
 		this.tower.body.setSize(170, 500, 0, 140);
