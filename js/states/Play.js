@@ -65,7 +65,6 @@ Play.prototype = {
 		this.switches.add(this.switch);
 		this.switch.body.immovable = true;
 		this.switch.scale.setTo(0.2, 0.25);
-		this.switch.body.allowGravity = false;
 
 		/***** PLATFORMS *****/
 		// Create this.platforms group
@@ -77,7 +76,6 @@ Play.prototype = {
 		this.ground.scale.setTo(13, 1);
 		game.physics.arcade.enable(this.ground);
 		this.ground.body.immovable = true;
-		this.ground.body.allowGravity = false;
 		this.ground.visible = false;
 
 		// Create invisible wall preventing player from returning to first screen
@@ -85,7 +83,6 @@ Play.prototype = {
 		this.wall.scale.setTo(0.75,10);
 		game.physics.arcade.enable(this.wall);
 		this.wall.body.immovable = true;
-		this.wall.body.allowGravity = false;
 		this.wall.alpha = 0;
 		this.wall.body.checkCollision.left = false;
 
@@ -94,7 +91,6 @@ Play.prototype = {
 		game.physics.arcade.enable(this.drawer);
 		this.drawer.scale.setTo(0.65, 0.075);
 		this.drawer.body.immovable = true;
-		this.drawer.body.allowGravity = false;
 		this.drawer.body.checkCollision.down = false;
 		this.drawer.body.checkCollision.left = false;
 		this.drawer.body.checkCollision.right = false;
@@ -105,11 +101,16 @@ Play.prototype = {
 		game.physics.arcade.enable(this.drawer);
 		this.table.scale.setTo(1.35, 0.075);
 		this.table.body.immovable = true;
-		this.table.body.allowGravity = false;
 		this.table.body.checkCollision.down = false;
 		this.table.body.checkCollision.left = false;
 		this.table.body.checkCollision.right = false;
 		this.table.alpha = 0;
+
+		// Create platform right below window
+		this.shelf = this.platforms.create(1470, 240, 'assets', 'shelf-platform');
+		this.shelf.anchor.set(0.5);
+		this.shelf.scale.setTo(0.6, 0.4);
+		this.shelf.body.immovable = true;
 
 		// Creates a visible platform that lowers once switch is activated
 		this.activatedPlatformStartX = 800;
@@ -123,7 +124,6 @@ Play.prototype = {
 		this.activatedPlatform.body.setSize(this.activatedPlatformXSize, this.activatedPlatformYSize, this.activatedPlatformXOffset, this.activatedPlatformYOffset);
 		game.physics.arcade.enable(this.activatedPlatform);
 		this.activatedPlatform.body.immovable = true;
-		this.activatedPlatform.body.allowGravity = false;
 
 		/***** MISC COLLECTIBLES AND SPRITES *****/
 		// Creates a window for player to get to in order to clear level
@@ -136,7 +136,6 @@ Play.prototype = {
 		this.gear = game.add.sprite(820, 80, 'assets', 'gear'); 
 		game.physics.arcade.enable(this.gear);
 		this.gear.body.immovable = true;
-		this.gear.body.allowGravity = false;
 		this.gear.scale.setTo(0.5, 0.5);	
 
 		this.switchHolder = game.add.sprite(1250, 525, 'assets', 'switch-holder');
