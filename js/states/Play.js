@@ -155,15 +155,15 @@ Play.prototype = {
 	update: function() {
 		
 		/***** DEBUG STUFF *****/
-		game.debug.body(this.box);
+		//game.debug.body(this.box);
 		//game.debug.body(this.ground);
 		//game.debug.body(this.wall);
 		//game.debug.body(this.activatedPlatform);
 		//game.debug.body(this.drawer);
-		game.debug.body(this.switch);
+		//game.debug.body(this.switch);
 		//console.log(this.activatedPlatform.angle);
 		//console.log(numPlatforms);
-		console.log(this.switch.scale.y);
+		//console.log(this.switch.scale.y);
 		this.checkCamBounds(); // Keep checking camera bounds
 		// this.window.animations.play('windowBillow');
 

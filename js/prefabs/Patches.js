@@ -42,7 +42,7 @@ Patches.prototype.constructor = Patches;
 
 Patches.prototype.update = function() {
 
-	game.debug.body(this);
+	//game.debug.body(this);
 
 	// Enable Phaser's Keyboard Manager
 	this.cursors = game.input.keyboard.createCursorKeys();

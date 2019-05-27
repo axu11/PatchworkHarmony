@@ -122,8 +122,8 @@ Level2.prototype = {
 
 		/***** PLAYER SPRITE *****/ 
 		this.players = game.add.group();
-		//this.player = new Patches(game, 'patchesAtlas2', 'right1', 50, 450, this.levelScale);
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 850, 300, this.levelScale);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 50, 450, this.levelScale);
+		//this.player = new Patches(game, 'patchesAtlas2', 'right1', 850, 300, this.levelScale);
 		this.player.enableBody = true;
 		this.players.add(this.player);
 
@@ -140,10 +140,10 @@ Level2.prototype = {
 
 	update: function(){
 		//game.debug.body(this.billboard);
-		game.debug.body(this.tower);
-		game.debug.body(this.secondRooftop);
-		game.debug.body(this.library);
-		game.debug.body(this.droppedPlatform);
+		//game.debug.body(this.tower);
+		//game.debug.body(this.secondRooftop);
+		//game.debug.body(this.library);
+		//game.debug.body(this.droppedPlatform);
 
 		this.checkCamBounds();
 
@@ -203,7 +203,7 @@ Level2.prototype = {
 				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
 				platforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
-				game.debug.body(this.createdPlatform);
+				//game.debug.body(this.createdPlatform);
 
 				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
 				this.createdPlatform.body.immovable = true;
