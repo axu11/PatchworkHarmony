@@ -27,6 +27,8 @@ Load.prototype = {
 		game.load.image('bg1', 'img/bg-lvl-1.png');
 		game.load.image('bg2', 'img/bg-lvl-2.png');
 		game.load.image('bg3', 'img/bg-lvl-3.png');
+		game.load.image('library', 'img/library.png');
+		game.load.image('crane-platform', 'img/crane-platform.png');
 		// game.load.image('shelf', 'img/shelf-platform.png');
 		// game.load.image('window', 'img/window.png');
 		// game.load.image('platform1', 'img/Platform-1.png');
@@ -48,6 +50,8 @@ Load.prototype = {
 		this.load.atlas('lvl2', 'img/lvl2-spritesheet.png', 'img/lvl2-spritesheet.json');
 
 		game.load.audio('bgm', 'audio/bg-loop-temp.ogg');
+		game.load.audio('intro', 'audio/intro-music.mp3');
+		game.load.audio('menu', 'audio/menu-music.mp3');
 		game.load.audio('collectGear', 'audio/collect-gear.ogg');
 		game.load.audio('collision', 'audio/collision.ogg');
 		game.load.audio('jump', 'audio/jump.ogg');
