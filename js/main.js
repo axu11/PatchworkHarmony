@@ -3,6 +3,8 @@
 // Define global variables to be used in the game
 var numPlatforms = 0;
 var game;
+var self;
+var reloadOnGround = 0;
 var style1 = { fontSize: '32px', fill: '#000' };
 var style2 = { fontSize: '16px', fill: '#000' };
 var palette = ['#1B1B3A', '#693668', '#A74482', '#F84AA7', '#FF3562', '#000'];

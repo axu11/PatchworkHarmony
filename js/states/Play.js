@@ -4,6 +4,7 @@ Play.prototype = {
 
 	init: function() {
 		numPlatforms = 0;
+		self = this;
 	},
 	
 	create: function() {
@@ -279,6 +280,12 @@ Play.prototype = {
 				console.log(this.createdPlatform.body.x + ", " + this.createdPlatform.body.y);
 			}
 
+			// numPlatforms doesn't refresh until the player hits the ground
+			if(reloadOnGround > 0 && this.player.body.touching.down) {
+				numPlatforms++;
+				reloadOnGround--;	
+			}
+
 			// Drop the box by pressing SHIFT
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SHIFT).justPressed()) {
 				this.attached = false;
@@ -302,13 +309,39 @@ Play.prototype = {
 
 		// Top-left number updates with numPlatforms
 		if(numPlatforms == 0) {
-			this.number0.scale.set(0.65);
+			this.number0.scale.set(0.5);
 			this.number1.scale.set(0);
+			this.number2.scale.set(0);
+			this.number3.scale.set(0);
+			this.number4.scale.set(0);
+		}
+		else if(numPlatforms == 1) {
+			this.number0.scale.set(0);
+			this.number1.scale.set(0.5);
+			this.number2.scale.set(0);
+			this.number3.scale.set(0);
+			this.number4.scale.set(0);
+		}
+		else if(numPlatforms == 2) {
+			this.number0.scale.set(0);
+			this.number1.scale.set(0);
+			this.number2.scale.set(0.5);
+			this.number3.scale.set(0);
+			this.number4.scale.set(0);
+		}
+		else if(numPlatforms == 3) {
+			this.number0.scale.set(0);
+			this.number1.scale.set(0);
+			this.number2.scale.set(0);
+			this.number3.scale.set(0.5);
+			this.number4.scale.set(0);
 		}
 		else {
 			this.number0.scale.set(0);
-			this.number1.scale.set(0.65);
-
+			this.number1.scale.set(0);
+			this.number2.scale.set(0);
+			this.number3.scale.set(0);
+			this.number4.scale.set(0.5);
 		}
 	},
 

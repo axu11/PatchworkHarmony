@@ -5,10 +5,10 @@ Level2.prototype = {
 	init: function() {
 		numPlatforms = 1;
 		this.levelScale = 0.4;
+		self = this;
 	},
 
 	create: function() {
-
 
 		/***** BG, BGM, AND NUMBER CIRCLE *****/
 		// Create backgrounds for both scenes, set bounds to image resolution (800 x 600)
@@ -33,6 +33,12 @@ Level2.prototype = {
 		this.number2 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number2');
 		this.number2.scale.set(0);
 		this.number2.fixedToCamera = true;
+		this.number3 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number3');
+		this.number3.scale.set(0);
+		this.number3.fixedToCamera = true;
+		this.number4 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number4');
+		this.number4.scale.set(0);
+		this.number4.fixedToCamera = true;
 
 
 
@@ -48,8 +54,6 @@ Level2.prototype = {
 		this.ground.scale.setTo(0.5, 0.25);
 		game.physics.arcade.enable(this.ground);
 		this.ground.body.immovable = true;
-		this.ground.body.allowGravity = false;
-		this.ground.visible = true;
 
 		// billboard
 		this.billboard = platforms.create(170, 430, 'lvl2', 'billboard');
@@ -57,24 +61,18 @@ Level2.prototype = {
 		game.physics.arcade.enable(this.billboard);
 		this.billboard.body.setSize(500, 350, 150, 65);
 		this.billboard.body.immovable = true;
-		this.billboard.body.allowGravity = false;
-		this.billboard.visible = true;
 
 		// building
 		this.building = platforms.create(500, 490, 'lvl2', 'rooftop');
 		this.building.scale.setTo(0.6, 0.4);
 		game.physics.arcade.enable(this.building);
 		this.building.body.immovable = true;
-		this.building.body.allowGravity = false;
-		this.building.visible = true;
 
 		// ledge
 		this.ledge = platforms.create(600, 350, 'assets', 'shelf-platform');
 		this.ledge.scale.setTo(0.15, 0.3);
 		game.physics.arcade.enable(this.ledge);
 		this.ledge.body.immovable = true;
-		this.ledge.body.allowGravity = false;
-		this.ledge.visible = true;
 
 		// big ass tower
 
@@ -83,8 +81,6 @@ Level2.prototype = {
 		game.physics.arcade.enable(this.secondRooftop);
 		//this.tower.body.setSize(200, 500, 0, 140);
 		this.secondRooftop.body.immovable = true;
-		this.secondRooftop.body.allowGravity = false;
-		this.secondRooftop.visible = true;
 
 		// big ass tower
 		this.tower = platforms.create(630, 100, 'lvl2', 'clocktower');
@@ -93,28 +89,34 @@ Level2.prototype = {
 		game.physics.arcade.enable(this.tower);
 		this.tower.body.setSize(170, 500, 0, 140);
 		this.tower.body.immovable = true;
-		this.tower.body.allowGravity = false;
-		this.tower.visible = true;
 
 		this.droppedPlatform = platforms.create(985, 245, 'crane-platform'); 
 		this.droppedPlatform.scale.setTo(1.5, 1);
 		game.physics.arcade.enable(this.droppedPlatform);
 		this.droppedPlatform.body.immovable = false;
-		this.droppedPlatform.body.allowGravity = true;
-		this.droppedPlatform.visible = true;
 	
-
 		// big ass tower
 		this.library = platforms.create(1400, 300, 'library');
 		this.library.scale.setTo(1, 1);
 		game.physics.arcade.enable(this.library);
 		this.library.body.setSize(200, 200, 0, 170);
 		this.library.body.immovable = true;
-		this.library.body.allowGravity = false;
-		this.library.visible = true;
+
+		// trampoline
+		this.trampoline = game.add.sprite(100, 400, 'assets', 'shelf-platform');
+		this.trampoline.anchor.setTo(0.5, 1);
+		this.trampoline.scale.setTo(0.3, 0.3);
+		game.physics.arcade.enable(this.trampoline);
+		this.trampoline.body.immovable = true;
+		this.trampoline.body.checkCollision.down = false;
+		this.trampoline.body.checkCollision.left = false;
+		this.trampoline.body.checkCollision.right = false;
+
+		// create bounce sound
+		this.jump = game.add.audio('jump', 0.1, false);
 
 		// Creates a collectible "gear" that will enable player to unlock an ability
-		this.gear = game.add.sprite(20, 80, 'assets', 'gear'); 
+		this.gear = game.add.sprite(120, 80, 'assets', 'gear'); 
 		game.physics.arcade.enable(this.gear);
 		this.gear.body.immovable = true;
 		this.gear.scale.setTo(0.5, 0.5);	
@@ -156,10 +158,29 @@ Level2.prototype = {
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
 		this.hitMusicPlatform = game.physics.arcade.collide(this.droppedPlatform, this.createdPlatform);   // box vs platforms
+		this.hitTrampoline = game.physics.arcade.collide(this.player, this.trampoline);
 		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
 		
-		this.gear.body.velocity.y += 10;
+		// trampoline bounce logic
+		if(this.player.x + this.player.width/2 >= (this.trampoline.x - this.trampoline.width/2 - 2) && this.player.x - this.player.width/2 <= (this.trampoline.x + this.trampoline.width/2 + 2)) {
+			if(((this.player.y + this.player.height/2) >= (this.trampoline.y - this.trampoline.height - 15)) && this.player.y + this.player.height/2 <= this.trampoline.y - this.trampoline.height + 1) {
+				// if(this.hitTrampoline) {
+					console.log('bounce');
+					this.player.body.bounce.y = 1;
+				// }
+			}
+			// else {
+			// 	this.player.body.bounce.y = 0;
+			// }
+		}
+		else {
+				this.player.body.bounce.y = 0;
+			}
 
+		// play bounce sound on bounce
+		if(this.hitTrampoline) {
+			this.jump.play();
+		}
 
 		if(this.hitMusicPlatform){
 			console.log('hit');
@@ -208,6 +229,13 @@ Level2.prototype = {
 				this.createdPlatform.body.immovable = true;
 				numPlatforms--;
 			}
+			// numPlatforms doesn't refresh until the player hits the ground
+			if(reloadOnGround > 0 && this.player.body.touching.down) {
+				numPlatforms++;
+				reloadOnGround--;	
+			}
+
+			console.log(reloadOnGround); 
 
 			// Drop the box by pressing SHIFT
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SHIFT).justPressed()) {
@@ -235,16 +263,36 @@ Level2.prototype = {
 			this.number0.scale.set(0.5);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
+			this.number3.scale.set(0);
+			this.number4.scale.set(0);
 		}
 		else if(numPlatforms == 1) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0.5);
 			this.number2.scale.set(0);
+			this.number3.scale.set(0);
+			this.number4.scale.set(0);
+		}
+		else if(numPlatforms == 2) {
+			this.number0.scale.set(0);
+			this.number1.scale.set(0);
+			this.number2.scale.set(0.5);
+			this.number3.scale.set(0);
+			this.number4.scale.set(0);
+		}
+		else if(numPlatforms == 3) {
+			this.number0.scale.set(0);
+			this.number1.scale.set(0);
+			this.number2.scale.set(0);
+			this.number3.scale.set(0.5);
+			this.number4.scale.set(0);
 		}
 		else {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
-			this.number2.scale.set(0.5);
+			this.number2.scale.set(0);
+			this.number3.scale.set(0);
+			this.number4.scale.set(0.5);
 		}
 	},
 	render: function() {

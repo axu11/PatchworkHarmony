@@ -1,7 +1,6 @@
 // MainMenu state used to display the game premise and title
 var MainMenu = function(game) {};
 MainMenu.prototype = {
-	
 	create: function() {
 		// Temp background and placeholder text instructions
 		//game.stage.backgroundColor = "#facade";
