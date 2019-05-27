@@ -223,16 +223,12 @@ Level2.prototype = {
 				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
 				platforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
-				//game.debug.body(this.createdPlatform);
-
+				this.createdPlatform.body.checkCollision.down = false;
+				this.createdPlatform.body.checkCollision.left = false;
+				this.createdPlatform.body.checkCollision.right = false;
 				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
 				this.createdPlatform.body.immovable = true;
 				numPlatforms--;
-			}
-			// numPlatforms doesn't refresh until the player hits the ground
-			if(reloadOnGround > 0 && this.player.body.touching.down) {
-				numPlatforms++;
-				reloadOnGround--;	
 			}
 
 			console.log(reloadOnGround); 
@@ -258,6 +254,11 @@ Level2.prototype = {
 			}
 		}
 
+		// numPlatforms doesn't refresh until the player hits the ground
+			if(reloadOnGround > 0 && this.player.body.touching.down) {
+				numPlatforms++;
+				reloadOnGround--;	
+			}
 		// Top-left number updates with numPlatforms
 		if(numPlatforms == 0) {
 			this.number0.scale.set(0.5);

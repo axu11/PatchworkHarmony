@@ -273,6 +273,9 @@ Play.prototype = {
 				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30, 1);
 				this.platforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
+				this.createdPlatform.body.checkCollision.down = false;
+				this.createdPlatform.body.checkCollision.left = false;
+				this.createdPlatform.body.checkCollision.right = false;
 				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
 				this.createdPlatform.body.immovable = true;
 				numPlatforms--;
