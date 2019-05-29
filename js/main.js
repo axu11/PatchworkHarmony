@@ -44,6 +44,7 @@ window.onload = function() {
 	game.state.add('MainMenu', MainMenu);
 	game.state.add('Play', Play);
 	game.state.add('Level2', Level2);
+	game.state.add('Level3', Level3);
 	game.state.add('GameOver', GameOver);
 	game.state.add('TestingRealm', TestingRealm);
 

@@ -49,6 +49,10 @@ Level2.prototype = {
 		platforms = game.add.group();
 		platforms.enableBody = true;
 
+		//Create createdPlatforms group
+		this.createdPlatforms = game.add.group();
+		this.createdPlatforms.enableBody = true;
+
 		// Create invisible ground platform for player to stand on (both scenes)
 		this.ground = platforms.create(0, 530, 'lvl2', 'exterior'); 
 		this.ground.scale.setTo(0.5, 0.25);
@@ -155,6 +159,7 @@ Level2.prototype = {
 
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   // player vs platforms
+		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); // player vs created platforms
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
 		this.hitMusicPlatform = game.physics.arcade.collide(this.droppedPlatform, this.createdPlatform);   // box vs platforms
@@ -221,7 +226,7 @@ Level2.prototype = {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
 				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
-				platforms.add(this.createdPlatform); 
+				this.createdPlatforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.checkCollision.down = false;
 				this.createdPlatform.body.checkCollision.left = false;
@@ -255,7 +260,7 @@ Level2.prototype = {
 		}
 
 		// numPlatforms doesn't refresh until the player hits the ground
-			if(reloadOnGround > 0 && this.player.body.touching.down) {
+			if(reloadOnGround > 0 && this.player.body.touching.down && this.hitPlatform) {
 				numPlatforms++;
 				reloadOnGround--;	
 			}

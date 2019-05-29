@@ -28,6 +28,15 @@ Play.prototype = {
 		this.number1 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number1');
 		this.number1.scale.set(0);
 		this.number1.fixedToCamera = true;
+		this.number2 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number2');
+		this.number2.scale.set(0);
+		this.number2.fixedToCamera = true;
+		this.number3 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number3');
+		this.number3.scale.set(0);
+		this.number3.fixedToCamera = true;
+		this.number4 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number4');
+		this.number4.scale.set(0);
+		this.number4.fixedToCamera = true;
 
 		/***** INSTRUCTION TEXT *****/
 		// Create instructions for player movement and pickup, overlaid on screen for now
@@ -71,6 +80,10 @@ Play.prototype = {
 		// Create this.platforms group
 		this.platforms = game.add.group();
 		this.platforms.enableBody = true;
+
+		//Create createdPlatforms group
+		this.createdPlatforms = game.add.group();
+		this.createdPlatforms.enableBody = true;
 
 		// Create invisible ground platform for player to stand on (both scenes)
 		this.ground = this.platforms.create(-64, 550, 'atlas', 'sky'); 
@@ -168,12 +181,13 @@ Play.prototype = {
 		// this.window.animations.play('windowBillow');
 
 		/***** COLLISIONS *****/
-		this.hitPlatform = game.physics.arcade.collide(this.player, this.platforms);   // player vs this.platforms
+		this.hitPlatform = game.physics.arcade.collide(this.player, this.platforms);   // player vs platforms
+		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); // player vs created platforms
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
 		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches); // player vs switch
 		this.hitDrawer = game.physics.arcade.collide(this.player, this.drawer); // box vs switch
 		this.hitTable = game.physics.arcade.collide(this.player, this.table); // box vs switch
-		this.hitPlatformBox = game.physics.arcade.collide(this.box, this.platforms);   // box vs this.platforms
+		this.hitPlatformBox = game.physics.arcade.collide(this.box, this.platforms);   // box vs platforms
 		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches); // box vs switch
 		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
 		
@@ -271,7 +285,7 @@ Play.prototype = {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
 				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30, 1);
-				this.platforms.add(this.createdPlatform); 
+				this.createdPlatforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.checkCollision.down = false;
 				this.createdPlatform.body.checkCollision.left = false;
@@ -284,7 +298,7 @@ Play.prototype = {
 			}
 
 			// numPlatforms doesn't refresh until the player hits the ground
-			if(reloadOnGround > 0 && this.player.body.touching.down) {
+			if(reloadOnGround > 0 && this.player.body.touching.down && this.hitPlatform) {
 				numPlatforms++;
 				reloadOnGround--;	
 			}
