@@ -167,8 +167,8 @@ Level2.prototype = {
 		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
 		
 		// trampoline bounce logic
-		if(this.player.x + this.player.width/2 >= (this.trampoline.x - this.trampoline.width/2 - 2) && this.player.x - this.player.width/2 <= (this.trampoline.x + this.trampoline.width/2 + 2)) {
-			if(((this.player.y + this.player.height/2) >= (this.trampoline.y - this.trampoline.height - 15)) && this.player.y + this.player.height/2 <= this.trampoline.y - this.trampoline.height + 1) {
+		if((this.player.x + this.player.width/2 >= (this.trampoline.x - this.trampoline.width/2 - 2) && this.player.x - this.player.width/2 <= (this.trampoline.x + this.trampoline.width/2 + 2)) &&
+			(((this.player.y + this.player.height/2) >= (this.trampoline.y - this.trampoline.height - 15)) && this.player.y + this.player.height/2 <= this.trampoline.y - this.trampoline.height + 1)) {
 				// if(this.hitTrampoline) {
 					console.log('bounce');
 					this.player.body.bounce.y = 1;
@@ -260,7 +260,7 @@ Level2.prototype = {
 		}
 
 		// numPlatforms doesn't refresh until the player hits the ground
-			if(reloadOnGround > 0 && this.player.body.touching.down && this.hitPlatform) {
+			if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform || this.hitTrampoline)) {
 				numPlatforms++;
 				reloadOnGround--;	
 			}
