@@ -4,6 +4,7 @@ Level2.prototype = {
 
 	init: function() {
 		numPlatforms = 1;
+		reloadOnGround = 0;
 		this.levelScale = 0.4;
 		self = this;
 	},
@@ -177,7 +178,7 @@ Level2.prototype = {
 			// else {
 			// 	this.player.body.bounce.y = 0;
 			// }
-		}
+		// }
 		else {
 				this.player.body.bounce.y = 0;
 			}

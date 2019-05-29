@@ -4,6 +4,7 @@ Play.prototype = {
 
 	init: function() {
 		numPlatforms = 0;
+		reloadOnGround = 0;
 		self = this;
 	},
 	
