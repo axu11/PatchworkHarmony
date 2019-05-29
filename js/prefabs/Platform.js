@@ -9,7 +9,7 @@ function Platform(game, key, frame, x, y, levelScale) {
 	this.scale.x = 0.1 * levelScale;
 	this.x = x;
 	this.y = y;
-	this.lifetime = 300;
+	this.lifetime = 200;
 }
 
 Platform.prototype = Object.create(Phaser.Sprite.prototype);
@@ -17,6 +17,7 @@ Platform.prototype.constructor = Platform;
 
 Platform.prototype.update = function() {
 	this.lifetime -= 2;
+	this.alpha -= 0.01;
 
 	// After some time, destroy the platform and enable player to create another
 	if(this.lifetime <= 0 ) {
