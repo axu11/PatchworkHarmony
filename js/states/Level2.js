@@ -3,7 +3,7 @@ var Level2 = function(game) {};
 Level2.prototype = {
 
 	init: function() {
-		numPlatforms = 1;
+		numPlatforms = 2;
 		reloadOnGround = 0;
 		this.levelScale = 0.4;
 		self = this;
@@ -98,7 +98,7 @@ Level2.prototype = {
 		this.droppedPlatform = platforms.create(985, 245, 'crane-platform'); 
 		this.droppedPlatform.scale.setTo(1.5, 1);
 		game.physics.arcade.enable(this.droppedPlatform);
-		this.droppedPlatform.body.immovable = false;
+		this.droppedPlatform.body.immovable = true;
 	
 		// big ass tower
 		this.library = platforms.create(1400, 300, 'library');
@@ -128,7 +128,7 @@ Level2.prototype = {
 
 		/***** PLAYER SPRITE *****/ 
 		this.players = game.add.group();
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 50, 450, this.levelScale);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 850, 450, this.levelScale);
 		//this.player = new Patches(game, 'patchesAtlas2', 'right1', 850, 300, this.levelScale);
 		this.player.enableBody = true;
 		this.players.add(this.player);
