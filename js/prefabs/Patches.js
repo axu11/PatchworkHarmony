@@ -2,9 +2,9 @@
 function Patches(game, key, frame, x, y, levelScale) {
 	// Player constructor
 	Phaser.Sprite.call(this, game, 0, 0, key, frame);
-	this.anchor.set(0.5,0.5);
+	this.anchor.set(0.5, 0.5);
 	this.facing = "RIGHT";
-	this.scale.set(0.4);
+	this.scale.set(0.4 * levelScale);
 
 	// Define some constants for character movement
 	this.MAX_X_VELOCITY = 500 * levelScale;	// measured in pixels/second
@@ -41,7 +41,8 @@ Patches.prototype = Object.create(Phaser.Sprite.prototype);
 Patches.prototype.constructor = Patches;
 
 Patches.prototype.update = function() {
-	game.debug.body(this);
+
+	//game.debug.body(this);
 
 	// Enable Phaser's Keyboard Manager
 	this.cursors = game.input.keyboard.createCursorKeys();
