@@ -17,7 +17,7 @@ Play.prototype = {
 		game.world.setBounds(0, 0, this.bg.width+800, this.bg.height);
 
 		// Create bgm for game, looped and played
-		this.bgm = game.add.audio('bgm', 0.1, true);
+		this.bgm = game.add.audio('lvl1', 0.25, true);
 		this.bgm.play();
 
 
@@ -47,7 +47,7 @@ Play.prototype = {
 		this.pickupInstrucctions = game.add.text(375, 330, 'Press SHIFT next to the box to pick it up and put it down!', textStyle);
 		this.pickupInstrucctions.anchor.set(0.5);
 
-		// Create instructions for collecting the "apple" and ability gained afterwards (initially invisible)
+		// Create instructions for collecting the gear and ability gained afterwards (initially invisible)
 		this.gearInstructions = game.add.text(1200, 245, 'Collect the gear!', style2);
 		this.gearInstructions.anchor.set(0.5);
 
@@ -148,10 +148,11 @@ Play.prototype = {
 		this.window.animations.play('windowBillow');
 
 		// Creates a collectible "gear" that will enable player to unlock an ability
-		this.gear = game.add.sprite(820, 80, 'assets', 'gear'); 
+		this.gear = game.add.sprite(920, 95, 'assets', 'gear'); 
 		game.physics.arcade.enable(this.gear);
 		this.gear.body.immovable = true;
 		this.gear.scale.setTo(0.5, 0.5);	
+		this.gear.anchor.set(0.5, 0.5);
 
 		this.switchHolder = game.add.sprite(1250, 525, 'assets', 'switch-holder');
 		this.switchHolder.anchor.set(0.5, 1);
@@ -355,6 +356,9 @@ Play.prototype = {
 			this.number3.scale.set(0);
 			this.number4.scale.set(0.5);
 		}
+
+		// Animate Gear
+		this.gear.angle += 1;
 	},
 
 	render: function() {
