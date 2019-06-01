@@ -175,11 +175,7 @@ Play.prototype = {
 		//game.debug.body(this.activatedPlatform);
 		//game.debug.body(this.drawer);
 		//game.debug.body(this.switch);
-		//console.log(this.activatedPlatform.angle);
-		//console.log(numPlatforms);
-		//console.log(this.switch.scale.y);
 		this.checkCamBounds(); // Keep checking camera bounds
-		// this.window.animations.play('windowBillow');
 
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, this.platforms);   // player vs platforms
@@ -294,8 +290,6 @@ Play.prototype = {
 				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
 				this.createdPlatform.body.immovable = true;
 				numPlatforms--;
-				console.log(this.player.x + ', ' + this.player.y);
-				console.log(this.createdPlatform.body.x + ", " + this.createdPlatform.body.y);
 			}
 
 			// numPlatforms doesn't refresh until the player hits the ground
