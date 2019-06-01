@@ -10,8 +10,8 @@ Level3.prototype = {
 		this.bg = game.add.image(0, 0, 'bg3');
 
 		// Create bgm for game, looped and played
-		this.bgm = game.add.audio('bgm', 0.1, true);
-
+		this.bgm = game.add.audio('lvl2', 0.25, true);
+		this.bgm.play();
 
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
@@ -104,6 +104,9 @@ Level3.prototype = {
 
 		// reset state when player falls
 		if(this.player.y + this.player.height/2 >= this.world.height - 1) {
+			// stop music
+			this.bgm.stop();
+			
 			game.state.start('Level3');
 		}
 
