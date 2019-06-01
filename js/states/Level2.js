@@ -273,6 +273,9 @@ Level2.prototype = {
 
 	checkCamBounds: function() {
 	if(this.player.x + Math.abs(this.player.width/2) > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
+		// Stop music
+		this.bgm.stop();
+
 		game.state.start('Level3');
 		// move camera, then player
 		// game.camera.x += game.width;
