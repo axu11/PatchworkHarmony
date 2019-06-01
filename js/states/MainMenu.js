@@ -1,7 +1,6 @@
 // MainMenu state used to display the game premise and title
 var MainMenu = function(game) {};
 MainMenu.prototype = {
-	
 	create: function() {
 		// Temp background and placeholder text instructions
 		//game.stage.backgroundColor = "#facade";
@@ -20,7 +19,9 @@ MainMenu.prototype = {
 		// Go to Play state once SPACEBAR pressed
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
 			this.bgm.destroy();
-			game.state.start('Level2');
+			// game.state.start('Play');
+			// game.state.start('Level2');
+			game.state.start('Level3');
 		}
 	}
 }

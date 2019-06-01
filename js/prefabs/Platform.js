@@ -9,19 +9,29 @@ function Platform(game, key, frame, x, y, levelScale) {
 	this.scale.x = 0.1 * levelScale;
 	this.x = x;
 	this.y = y;
-	this.lifetime = 300;
+	this.lifetime = 200;
+	this.decaying = true;
 }
 
 Platform.prototype = Object.create(Phaser.Sprite.prototype);
 Platform.prototype.constructor = Platform;
 
 Platform.prototype.update = function() {
-	this.lifetime -= 2;
+	if(this.decaying) {
+		this.lifetime -= 2;
+		this.alpha = this.lifetime/200;
+	}
 
+	// if the platform is carrying the dropped platform, it will not disappear
+	if(self.carryDroppedPlatform) {
+		this.decaying = false;
+	}
+	else {
+		this.decaying = true;
+	}
 	// After some time, destroy the platform and enable player to create another
 	if(this.lifetime <= 0 ) {
 		this.destroy();
-		numPlatforms++;
+		reloadOnGround++;
 	}
-	//game.debug.body(this);
 }
