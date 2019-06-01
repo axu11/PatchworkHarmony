@@ -102,7 +102,7 @@ Level2.prototype = {
 		this.droppedPlatform.body.immovable = false;
 		this.droppedPlatform.body.allowGravity = true;
 		this.droppedPlatform.visible = true;
-	
+		this.droppedPlatform.body.setSize(260, 20, 0, 75);
 
 		// big ass tower
 		this.library = platforms.create(1400, 300, 'library');
@@ -122,7 +122,7 @@ Level2.prototype = {
 
 		/***** PLAYER SPRITE *****/ 
 		this.players = game.add.group();
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 50, 450, this.levelScale);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 950, 450, this.levelScale);
 		//this.player = new Patches(game, 'patchesAtlas2', 'right1', 850, 300, this.levelScale);
 		this.player.enableBody = true;
 		this.players.add(this.player);
@@ -143,7 +143,7 @@ Level2.prototype = {
 		//game.debug.body(this.tower);
 		//game.debug.body(this.secondRooftop);
 		//game.debug.body(this.library);
-		//game.debug.body(this.droppedPlatform);
+		game.debug.body(this.droppedPlatform);
 
 		this.checkCamBounds();
 
