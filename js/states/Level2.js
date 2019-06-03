@@ -73,15 +73,8 @@ Level2.prototype = {
 		game.physics.arcade.enable(this.ledge);
 		this.ledge.body.immovable = true;
 
-		// this.secondRooftop = platforms.create(700, 490, 'lvl2', 'rooftop');
-		// this.secondRooftop.scale.setTo(0.6, 0.4);
-		// game.physics.arcade.enable(this.secondRooftop);
-		// //this.tower.body.setSize(200, 500, 0, 140);
-		// this.secondRooftop.body.immovable = true;
-
 		// big ass tower
 		this.tower = platforms.create(630, 100, 'lvl2', 'clocktower');
-
 		this.tower.scale.setTo(1, 1);
 		game.physics.arcade.enable(this.tower);
 		this.tower.body.setSize(170, 500, 0, 140);

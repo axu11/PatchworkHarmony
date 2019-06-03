@@ -59,16 +59,6 @@ Play.prototype = {
 		this.exitInstructions.anchor.set(0.5);
 		this.exitInstructions.visible = false;
 	
-		/***** MUSIC BOX *****/
-		this.box = game.add.sprite(350, 250, 'assets', 'box');
-		game.physics.arcade.enable(this.box);
-		this.box.anchor.set(0.50);
-		this.box.scale.set(0.75);
-		this.box.body.collideWorldBounds = true;
-		this.box.body.gravity.y = 300; // Has gravity while not held by player
-		this.box.body.drag = 0.5;
-		this.attached = false; // Initially not picked up by player
-
 			/***** SWITCH MECHANIC *****/
 		this.switches = game.add.group();
 		this.switches.enableBody = true;
@@ -165,6 +155,16 @@ Play.prototype = {
 		this.player.enableBody = true;
 		game.add.existing(this.player);
 		
+		/***** MUSIC BOX *****/
+		this.box = game.add.sprite(350, 250, 'assets', 'box');
+		game.physics.arcade.enable(this.box);
+		this.box.anchor.set(0.50);
+		this.box.scale.set(0.75);
+		this.box.body.collideWorldBounds = true;
+		this.box.body.gravity.y = 300; // Has gravity while not held by player
+		this.box.body.drag = 0.5;
+		this.attached = false; // Initially not picked up by player
+
 	},
 
 	update: function() {
@@ -267,15 +267,15 @@ Play.prototype = {
 			// When facing right, the box moves immediately to the player's right
 			this.box.body.checkCollision.none = true;
 			if(this.player.facing == "RIGHT") { 
-				this.box.x = this.player.x + this.player.width/2 + this.box.width/2 + 1;
+				this.box.x = this.player.x + this.player.width/2 + this.box.width/2 - 37;
 			}
 
 			// When facing left, the box moves immediately to the player's left
 			else{ 
-				this.box.x = this.player.x - this.player.width/2 - this.box.width/2 - 1;	
+				this.box.x = this.player.x - this.player.width/2 - this.box.width/2 + 30;	
 			}
 
-			this.box.y = this.player.y;	 // the box is off the ground and with the player
+			this.box.y = this.player.y + 17;	 // the box is off the ground and with the player
 			this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
@@ -400,4 +400,8 @@ function collectGear(Patches, gear){
 	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
 	this.gearAudio.play();
 	
+	console.log("collected");
+	this.gearInstructions.visible = false;
+	this.platformInstructions.visible = true;
+	this.exitInstructions.visible = true;
 }
