@@ -1,25 +1,24 @@
-var Level4 = function(game) {};
-Level4.prototype = {
+var Level5 = function(game) {};
+Level5.prototype = {
 	init: function() {
 		numPlatforms = 2;
 		reloadOnGround = 0;
 		this.levelScale = 1.0;
-		inElevator = false;
-		self = this;	
-		level = 4;
+		self = this;
+		inElevator = false;	
+		level = 5;
 	},
 	create: function() {
-		this.bg0 = game.add.image(-1600, 0, 'bg0');
-		this.bg1 = game.add.image(-800, 0, 'bg1');
-		this.bg2 = game.add.image(0, 0, 'bg2');
-		this.bg3 = game.add.image(800, 0, 'bg3');
-		game.world.setBounds(-1600, 0, 3200, this.bg1.height);
+		this.bg0 = game.add.image(0, 0, 'bg0');
+		this.bg1 = game.add.image(800, 0, 'bg1');
+		game.world.setBounds(0, 0, 1600, this.bg1.height);
 
 		// Create bgm for game, looped and played
 		this.bgm = game.add.audio('bgm', 0.1, true);
 
-			this.wya = game.add.text(350, 230, 'CURRENTLY ON TOP LEVEL', textStyle);
+		this.wya = game.add.text(350, 230, 'CURRENTLY ON BOTTOM LEVEL', textStyle);
 		this.wya.anchor.set(0.5);
+	
 	
 
 		/***** PLATFORMS *****/
@@ -37,6 +36,7 @@ Level4.prototype = {
 		game.physics.arcade.enable(this.ground);
 		this.ground.body.immovable = true;
 		//this.ground.visible = false;
+
 
 		this.elevator = platforms.create(350, 410, 'atlas', 'red'); 
 		this.elevator.scale.setTo(1, 1.1);
@@ -98,13 +98,9 @@ Level4.prototype = {
 
 
 
-
 	},
 	update: function() {
-		//console.log(this.player.x);
-		//console.log(this.player.y);
 		console.log(level);
-
 		this.checkCamBounds();
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   // player vs platforms
@@ -112,15 +108,15 @@ Level4.prototype = {
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
 		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
-		game.physics.arcade.overlap(this.player, this.elevator, activateElevatorDown, null, this);
+				game.physics.arcade.overlap(this.player, this.elevator, activateElevatorUp, null, this);
 
 
 
 
 		// reset state when player falls
-		//if(this.player.y + this.player.height/2 >= this.world.height - 1) {
-		//	game.state.start('Level4');
-		//}
+		// if(this.player.y + this.player.height/2 >= this.world.height - 1) {
+		// 	game.state.start('Level4');
+		// }
 
 		/***** BOX STUFF *****/
 		this.box.body.velocity.x = 0; // Box won't glide when pushed by player
@@ -219,13 +215,12 @@ Level4.prototype = {
 			this.number4.scale.set(0.5);
 		}
 		if(inElevator){
-			if(this.player.y > 650){
-				game.state.start('Level5');
+			if(this.player.y < 350){
+				game.state.start('Level4');
 			}
 		}
+
 		
-
-
 	},
 
 	render: function() {
@@ -257,33 +252,23 @@ Level4.prototype = {
 	}
 }
 
-// Function for collecting "gears"
-function collectGear(Patches, gear){
-	gear.kill();
-	numPlatforms++;
-	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
-	this.gearAudio.play();
-}
-
-function goToLevel5(){
+function goToLevel4(){
 	    //game.camera.resetFX();
 	if(inElevator){
-	console.log('going to level 5');
+	console.log('going to level 4');
 
-	game.state.start('Level5');
-    }
+	game.state.start('Level4');
+	}
 }
 
 // Function for collecting "gears"
-function activateElevatorDown(Patches, elevator){
-	
+function activateElevatorUp(Patches, elevator){
 
 	if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.player.body.touching.down){
 		if(!inElevator){
 			this.player.x = 415;
 		    this.player.y = 485;	
 	    }
-		
 		inElevator = true;
 		this.player.body.checkCollision.up = false;
 	    this.player.body.checkCollision.down = false;
@@ -291,13 +276,14 @@ function activateElevatorDown(Patches, elevator){
 	    this.player.body.checkCollision.right = false;
 	    this.player.body.collideWorldBounds = false;
 	    this.player.body.gravity.y = 0;
-		this.player.body.velocity.y = 75;
-		this.elevator.body.velocity.y = 75;
+		this.player.body.velocity.y = -75;
+		this.elevator.body.velocity.y = -75;
 
 		if(inElevator){
 			game.camera.fade(0x000000, 4000);
 		}
-			    //game.camera.onFadeComplete.add(goToLevel5, this);
+
+			   // game.camera.onFadeComplete.add(goToLevel4, this);
 
 	}
 }

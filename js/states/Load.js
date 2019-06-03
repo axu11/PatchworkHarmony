@@ -39,21 +39,21 @@ Load.prototype = {
 		this.load.atlas('patchesAtlas2', 'img/patches2.png', 'img/patches2.json');
 		this.load.atlas('lvl2', 'img/lvl2-spritesheet.png', 'img/lvl2-spritesheet.json');
 
-		game.load.audio('bgm', 'audio/.ogg/bg-loop-temp.ogg');
-		game.load.audio('intro', 'audio/.mp3/intro-music.mp3');
-		game.load.audio('menu', 'audio/.mp3/menu-music.mp3');
-		game.load.audio('collectGear', 'audio/.ogg/collect-gear.ogg');
-		game.load.audio('collision', 'audio/.ogg/collision.ogg');
-		game.load.audio('jump', 'audio/.ogg/jump.ogg');
-		game.load.audio('switchTrigger', 'audio/.ogg/switch-trigger.ogg');
-		game.load.audio('platform1audio', 'audio/.ogg/platform-1.ogg');
-		game.load.audio('platform2audio', 'audio/.ogg/platform-2.ogg');
-		game.load.audio('platform3audio', 'audio/.ogg/platform-3.ogg');
-		game.load.audio('platform4audio', 'audio/.ogg/platform-4.ogg');
-		game.load.audio('collect-gear', 'audio/.ogg/collect-gear.ogg');
-		game.load.audio('collision', 'audio/.ogg/collision.ogg');
-		game.load.audio('jump', 'audio/.ogg/jump.ogg');
-		game.load.audio('switch-trigger', 'audio/.ogg/switch-trigger.ogg');
+		game.load.audio('bgm', 'audio/ogg/bg-loop-temp.ogg');
+		game.load.audio('intro', 'audio/mp3/intro-music.mp3');
+		game.load.audio('menu', 'audio/mp3/menu-music.mp3');
+		game.load.audio('collectGear', 'audio/ogg/collect-gear.ogg');
+		game.load.audio('collision', 'audio/ogg/collision.ogg');
+		game.load.audio('jump', 'audio/ogg/jump.ogg');
+		game.load.audio('switchTrigger', 'audio/ogg/switch-trigger.ogg');
+		game.load.audio('platform1audio', 'audio/ogg/platform-1.ogg');
+		game.load.audio('platform2audio', 'audio/ogg/platform-2.ogg');
+		game.load.audio('platform3audio', 'audio/ogg/platform-3.ogg');
+		game.load.audio('platform4audio', 'audio/ogg/platform-4.ogg');
+		game.load.audio('collect-gear', 'audio/ogg/collect-gear.ogg');
+		game.load.audio('collision', 'audio/ogg/collision.ogg');
+		game.load.audio('jump', 'audio/ogg/jump.ogg');
+		game.load.audio('switch-trigger', 'audio/ogg/switch-trigger.ogg');
 
 		
 	},

@@ -2,9 +2,11 @@
 
 // Define global variables to be used in the game
 var numPlatforms = 0;
+var level = 0;
 var game;
 var self;
 var reloadOnGround = 0;
+var inElevator = false;
 var style1 = { fontSize: '32px', fill: '#000' };
 var style2 = { fontSize: '16px', fill: '#000' };
 var palette = ['#1B1B3A', '#693668', '#A74482', '#F84AA7', '#FF3562', '#000'];
@@ -46,6 +48,7 @@ window.onload = function() {
 	game.state.add('Level2', Level2);
 	game.state.add('Level3', Level3);
 	game.state.add('Level4', Level4);
+	game.state.add('Level5', Level5);
 	game.state.add('GameOver', GameOver);
 	game.state.add('TestingRealm', TestingRealm);
 

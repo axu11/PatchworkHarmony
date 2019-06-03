@@ -51,14 +51,14 @@ Patches.prototype.update = function() {
  	this.body.velocity.x = 0;
 
  	// Move left and right with arrow keys
- 	if(this.cursors.left.isDown) {
+ 	if(this.cursors.left.isDown && !inElevator) {
 		this.body.velocity.x = -this.VELOCITY_X; // Move left
 		// this.player.animations.play('left');
 		this.animations.play('moveLeft');
 		this.facing = "LEFT";
 	}
 
-	else if(this.cursors.right.isDown) {
+	else if(this.cursors.right.isDown && !inElevator) {
 		this.body.velocity.x = this.VELOCITY_X; // Move right
 		// this.player.animations.play('right');
 		this.animations.play('moveRight');
