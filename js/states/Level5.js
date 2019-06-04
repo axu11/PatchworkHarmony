@@ -215,7 +215,7 @@ Level5.prototype = {
 			this.number4.scale.set(0.5);
 		}
 		if(inElevator){
-			if(this.player.y < 350){
+			if(this.player.y < 320){
 				game.state.start('Level4');
 			}
 		}
