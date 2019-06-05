@@ -1,34 +1,25 @@
-var Level4 = function(game) {};
-Level4.prototype = {
+var Level5 = function(game) {};
+Level5.prototype = {
 	init: function() {
-		numPlatforms = 3;
-		this.bookTop = true;
+		numPlatforms = 2;
 		reloadOnGround = 0;
 		this.levelScale = 1.0;
-		this.inElevator = false;
-		self = this;	
-		level = 4;
+		self = this;
+		inElevator = false;	
+		level = 5;
 	},
 	create: function() {
-		this.bg0 = game.add.image(-1600, 0, 'bg0');
-		this.bg1 = game.add.image(-800, 0, 'bg1');
-		this.bg2 = game.add.image(0, 0, 'bg2');
-		this.bg3 = game.add.image(800, 0, 'bg3');
-		game.world.setBounds(-1600, 0, 3200, this.bg1.height);
+		this.bg0 = game.add.image(0, 0, 'bg0');
+		this.bg1 = game.add.image(800, 0, 'bg1');
+		game.world.setBounds(0, 0, 1600, this.bg1.height);
 
 		// Create bgm for game, looped and played
 		this.bgm = game.add.audio('bgm', 0.1, true);
 
-			this.wya = game.add.text(350, 230, 'CURRENTLY ON TOP LEVEL', textStyle);
+		this.wya = game.add.text(350, 230, 'CURRENTLY ON BOTTOM LEVEL', textStyle);
 		this.wya.anchor.set(0.5);
 	
-
-		this.switches = game.add.group();
-		this.switches.enableBody = true;
-		this.switch = new Switch(game, 'assets', 'switch-button', 690, 230); // Temp sprite
-		this.switches.add(this.switch);
-		this.switch.body.immovable = true;
-		this.switch.scale.setTo(0.1, 0.125);
+	
 
 		/***** PLATFORMS *****/
 		// Create platforms group
@@ -46,7 +37,7 @@ Level4.prototype = {
 		this.ground.body.immovable = true;
 		//this.ground.visible = false;
 
-		// LIBRARY 1
+
 		this.elevator = platforms.create(350, 410, 'atlas', 'red'); 
 		this.elevator.scale.setTo(1, 1.1);
 		game.physics.arcade.enable(this.elevator);
@@ -57,85 +48,17 @@ Level4.prototype = {
 	    this.elevator.body.checkCollision.right = false;
 
 		// Library1 setup
-
-		this.shiftingWall1 = platforms.create(0, 50, 'atlas', 'red'); 
-		this.shiftingWall1.scale.setTo(0.5, 3.9);
-		game.physics.arcade.enable(this.shiftingWall1);
-		this.shiftingWall1.body.immovable = true;
-
-		this.shiftingWall2 = platforms.create(740, 50, 'atlas', 'red'); 
-		this.shiftingWall2.scale.setTo(0.5, 3.91);
-		game.physics.arcade.enable(this.shiftingWall2);
-		this.shiftingWall2.body.immovable = true;
-
-
 		this.ceiling1 = platforms.create(0, 0, 'atlas', 'sky'); 
 		this.ceiling1.scale.setTo(2.5, 0.5);
 		game.physics.arcade.enable(this.ceiling1);
 		this.ceiling1.body.immovable = true;
+		//this.ground.visible = false;
 
 		this.ceiling2 = platforms.create(480, 0, 'atlas', 'sky'); 
 		this.ceiling2.scale.setTo(2.5, 0.5);
 		game.physics.arcade.enable(this.ceiling2);
 		this.ceiling2.body.immovable = true;
-
-		
-
-		// Creates a visible platform that lowers once switch is activated
-		this.activatedPlatform = platforms.create(565, 230, 'assets', 'shelf-platform');
-		this.activatedPlatform.scale.setTo(0.45, 0.45);
-		game.physics.arcade.enable(this.activatedPlatform);
-		this.activatedPlatform.body.immovable = true;
-
-		
-
-		this.switchHolder = game.add.sprite(690, 230, 'assets', 'switch-holder');
-		this.switchHolder.anchor.set(0.5, 1);
-		platforms.add(this.switchHolder);
-		this.switchHolder.scale.setTo(0.1, 0.125);
-		this.switchHolder.body.immovable = true;
-
-		
-		
-		// LIBRARY 2
-		this.bookshelf = platforms.create(-895, 145, 'atlas', 'red'); 
-		this.bookshelf.scale.setTo(1.5, 3.16);
-		game.physics.arcade.enable(this.bookshelf);
-		this.bookshelf.body.immovable = true;
-
-		this.book1 = platforms.create(-600, 200, 'atlas', 'red'); 
-		this.book1.scale.setTo(0.5, 0.5);
-		game.physics.arcade.enable(this.book1);
-		this.book1.body.immovable = true;
-
-		this.book2 = platforms.create(-400, 350, 'atlas', 'red'); 
-		this.book2.scale.setTo(0.5, 0.5);
-		game.physics.arcade.enable(this.book2);
-		this.book2.body.immovable = true;
-
-
-		this.key1 = game.add.sprite(1000, 210, 'assets', 'music-block');
-		this.key1.anchor.set(0.5);
-		this.key1.scale.set(0.5 * this.levelScale);
-		this.key1.alpha = 0.5;
-		this.key1Lock = false;
-
-		this.key2 = game.add.sprite(1000, 330, 'assets', 'music-block');
-		this.key2.anchor.set(0.5);
-		this.key2.scale.set(0.5 * this.levelScale);
-		this.key2.alpha = 0.5;
-		this.key2Lock = false;
-
-		this.key3 = game.add.sprite(1000, 450, 'assets', 'music-block');
-		this.key3.anchor.set(0.5);
-		this.key3.scale.set(0.5 * this.levelScale);
-		this.key3.alpha = 0.5;
-		this.key3Lock = false;
-
-		this.keyLock = game.add.sprite(1200, 550, 'lvl2', 'clocktower');
-		this.keyLock.scale.set(0.8);
-		this.keyLock.anchor.setTo(0.5, 1);
-
+		//this.ground.visible = false;
 
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
@@ -157,8 +80,8 @@ Level4.prototype = {
 
 		/***** PLAYER SPRITE *****/ 
 		//this.players = game.add.group();
-		//this.player = new Patches(game, 'patchesAtlas2', 'right1', 415, 485, this.levelScale);
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', -615, 485, this.levelScale);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 415, 485, this.levelScale);
+		//this.player = new Patches(game, 'patchesAtlas2', 'right1', 850, 300, this.levelScale);
 		this.player.enableBody = true;
 		game.add.existing(this.player);
 		//this.players.add(this.player);
@@ -175,106 +98,25 @@ Level4.prototype = {
 
 
 
-
 	},
 	update: function() {
-		//console.log(this.player.x);
-		//console.log(this.player.y);
-		//console.log(level);
-		console.log(bookTop);
+		console.log(level);
 		this.checkCamBounds();
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   // player vs platforms
 		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); // player vs created platforms
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
-		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches); // player vs switch
-		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches); // box vs switch
-
 		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
-		game.physics.arcade.overlap(this.player, this.elevator, activateElevatorDown, null, this);
+				game.physics.arcade.overlap(this.player, this.elevator, activateElevatorUp, null, this);
 
-		// If books are are the top of their range of movement, move them down
-		if(bookTop){
-			// Move books down (increase y)
-			this.book1.y += 2;
-			this.book2.y += 2;
 
-			// If book y position is at the bottom of its range of movement, set top boolean to false
-			if(this.book1.y >= 330){
-				bookTop = false;
-			}
-		}
 
-		// Else that means they are at the bottom, move them up
-		else{
-			this.book1.y -= 2;
-			this.book2.y -= 2;
-			if(this.book1.y <= 200){
-				bookTop = true;
-			}
-		}
-
-		/***** SWITCH STUFF *****/
-		// Switch logic for player pressing down on switch 
-		if(this.hitSwitch && this.player.x > this.switch.x - this.switch.width/2 && this.player.x < this.switch.x + this.switch.width/2) {
-			this.playerOnSwitch = true;
-			this.switchPressed = true;
-		}
-		if(this.playerOnSwitch && !this.hitSwitch && (this.player.x + this.player.width/2 < this.switch.x - this.switch.width/2 || this.player.x - this.player.width/2 > this.switch.x + this.switch.width/2 || this.player.y + this.player.height/2 < this.switch.y - this.switch.height - 30))  {
-			this.playerOnSwitch = false;
-		}
-
-		// Switch logic for box pressing down on switch
-		if(this.boxHitSwitch && this.box.x > this.switch.x - this.switch.width/2 && this.box.x < this.switch.x + this.switch.width/2) {
-			this.boxOnSwitch = true;
-			this.switchPressed = true;
-		}
-		if(this.boxOnSwitch && !this.boxHitSwitch && (this.box.x + this.box.width/2 < this.switch.x - this.switch.width/2 || this.box.x - this.box.width/2 > this.switch.x + this.switch.width/2)) {
-			this.boxOnSwitch = false;
-		}
-
-		if(this.switchPressed && !this.playerOnSwitch && !this.boxOnSwitch) {
-			this.switchPressed = false;
-		}
-
-		// When the switch is pressed, it will visibly shrink down (y scale decreases)
-		if(this.switchPressed) {
-			if(this.switch.scale.y > 0.01) {
-				if(this.switch.scale.y >= 0.125) {
-					this.switchTrigger = game.add.audio('switchTrigger');
-					this.switchTrigger.play('', 0, 0.1, false);
-				}
-				this.switch.scale.setTo(0.1, this.switch.scale.y - 0.01);
-
-				if(this.switch.scale.y >= 0.115){
-					this.switchTrigger = game.add.audio('switchTrigger');
-					this.switchTrigger.play('', 0, 0.5, false);
-				}
-
-			}
-		}
-		else {
-			if(this.switch.scale.y < 0.125) {
-				this.switch.scale.setTo(0.1, this.switch.scale.y + 0.01);
-			}
-		}
-
-		if(this.switchPressed) {
-			if(this.shiftingWall1.y > -600){
-				this.shiftingWall1.y -= 10;
-			}
-		}
-		else{
-			if(this.shiftingWall1.y < 50){
-				this.shiftingWall1.y += 10;
-			}
-		}
 
 		// reset state when player falls
-		//if(this.player.y + this.player.height/2 >= this.world.height - 1) {
-		//	game.state.start('Level4');
-		//}
+		// if(this.player.y + this.player.height/2 >= this.world.height - 1) {
+		// 	game.state.start('Level4');
+		// }
 
 		/***** BOX STUFF *****/
 		this.box.body.velocity.x = 0; // Box won't glide when pushed by player
@@ -299,19 +141,13 @@ Level4.prototype = {
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
-				this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
-				this.platform2audio = game.add.audio('platform2audio', 0.5);
-				this.platform2audio.play();
-				this.platform3audio = game.add.audio('platform3audio', 0.25);
-				this.platform3audio.play();
-				this.platform4audio = game.add.audio('platform4audio', 0.125);
-				this.platform4audio.play();
+				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
 				this.createdPlatforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.checkCollision.down = false;
 				this.createdPlatform.body.checkCollision.left = false;
 				this.createdPlatform.body.checkCollision.right = false;
-				// this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
+				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
 				this.createdPlatform.body.immovable = true;
 				numPlatforms--;
 			}
@@ -336,12 +172,12 @@ Level4.prototype = {
 				this.attached = true;
 			}
 		}
-		// numPlatforms doesn't refresh until the player hits the ground
-		if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
-			numPlatforms++;
-			reloadOnGround--;	
-		}
 
+		// numPlatforms doesn't refresh until the player hits the ground
+			if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
+				numPlatforms++;
+				reloadOnGround--;	
+			}
 		// Top-left number updates with numPlatforms
 		if(numPlatforms == 0) {
 			this.number0.scale.set(0.5);
@@ -372,7 +208,6 @@ Level4.prototype = {
 			this.number4.scale.set(0);
 		}
 		else {
-			numPlatforms = 4;
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
@@ -380,13 +215,12 @@ Level4.prototype = {
 			this.number4.scale.set(0.5);
 		}
 		if(inElevator){
-			if(this.player.y > 650){
-				game.state.start('Level5');
+			if(this.player.y < 320){
+				game.state.start('Level4');
 			}
 		}
+
 		
-
-
 	},
 
 	render: function() {
@@ -418,33 +252,23 @@ Level4.prototype = {
 	}
 }
 
-// Function for collecting "gears"
-function collectGear(Patches, gear){
-	gear.kill();
-	numPlatforms++;
-	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
-	this.gearAudio.play();
-}
-
-function goToLevel5(){
+function goToLevel4(){
 	    //game.camera.resetFX();
 	if(inElevator){
-	console.log('going to level 5');
+	console.log('going to level 4');
 
-	game.state.start('Level5');
-    }
+	game.state.start('Level4');
+	}
 }
 
 // Function for collecting "gears"
-function activateElevatorDown(Patches, elevator){
-	
+function activateElevatorUp(Patches, elevator){
 
 	if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.player.body.touching.down){
 		if(!inElevator){
 			this.player.x = 415;
 		    this.player.y = 485;	
 	    }
-		
 		inElevator = true;
 		this.player.body.checkCollision.up = false;
 	    this.player.body.checkCollision.down = false;
@@ -452,13 +276,14 @@ function activateElevatorDown(Patches, elevator){
 	    this.player.body.checkCollision.right = false;
 	    this.player.body.collideWorldBounds = false;
 	    this.player.body.gravity.y = 0;
-		this.player.body.velocity.y = 75;
-		this.elevator.body.velocity.y = 75;
+		this.player.body.velocity.y = -75;
+		this.elevator.body.velocity.y = -75;
 
 		if(inElevator){
 			game.camera.fade(0x000000, 4000);
 		}
-			    //game.camera.onFadeComplete.add(goToLevel5, this);
+
+			   // game.camera.onFadeComplete.add(goToLevel4, this);
 
 	}
 }
