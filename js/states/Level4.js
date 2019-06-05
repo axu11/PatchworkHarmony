@@ -1,11 +1,11 @@
 var Level4 = function(game) {};
 Level4.prototype = {
 	init: function() {
-		bookTop = true;
-		numPlatforms = 2;
+		numPlatforms = 3;
+		this.bookTop = true;
 		reloadOnGround = 0;
 		this.levelScale = 1.0;
-		inElevator = false;
+		this.inElevator = false;
 		self = this;	
 		level = 4;
 	},
@@ -112,6 +112,29 @@ Level4.prototype = {
 		this.book2.scale.setTo(0.5, 0.5);
 		game.physics.arcade.enable(this.book2);
 		this.book2.body.immovable = true;
+
+
+		this.key1 = game.add.sprite(1000, 210, 'assets', 'music-block');
+		this.key1.anchor.set(0.5);
+		this.key1.scale.set(0.5 * this.levelScale);
+		this.key1.alpha = 0.5;
+		this.key1Lock = false;
+
+		this.key2 = game.add.sprite(1000, 330, 'assets', 'music-block');
+		this.key2.anchor.set(0.5);
+		this.key2.scale.set(0.5 * this.levelScale);
+		this.key2.alpha = 0.5;
+		this.key2Lock = false;
+
+		this.key3 = game.add.sprite(1000, 450, 'assets', 'music-block');
+		this.key3.anchor.set(0.5);
+		this.key3.scale.set(0.5 * this.levelScale);
+		this.key3.alpha = 0.5;
+		this.key3Lock = false;
+
+		this.keyLock = game.add.sprite(1200, 550, 'lvl2', 'clocktower');
+		this.keyLock.scale.set(0.8);
+		this.keyLock.anchor.setTo(0.5, 1);
 
 
 		// Create number circle at top left of screen to indicate platforms remaining
@@ -276,19 +299,19 @@ Level4.prototype = {
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
+				this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
 				this.platform2audio = game.add.audio('platform2audio', 0.5);
 				this.platform2audio.play();
 				this.platform3audio = game.add.audio('platform3audio', 0.25);
 				this.platform3audio.play();
 				this.platform4audio = game.add.audio('platform4audio', 0.125);
 				this.platform4audio.play();
-				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
 				this.createdPlatforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.checkCollision.down = false;
 				this.createdPlatform.body.checkCollision.left = false;
 				this.createdPlatform.body.checkCollision.right = false;
-				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
+				// this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
 				this.createdPlatform.body.immovable = true;
 				numPlatforms--;
 			}
@@ -313,12 +336,12 @@ Level4.prototype = {
 				this.attached = true;
 			}
 		}
-
 		// numPlatforms doesn't refresh until the player hits the ground
-			if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
-				numPlatforms++;
-				reloadOnGround--;	
-			}
+		if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
+			numPlatforms++;
+			reloadOnGround--;	
+		}
+
 		// Top-left number updates with numPlatforms
 		if(numPlatforms == 0) {
 			this.number0.scale.set(0.5);
@@ -349,6 +372,7 @@ Level4.prototype = {
 			this.number4.scale.set(0);
 		}
 		else {
+			numPlatforms = 4;
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
