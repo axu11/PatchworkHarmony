@@ -18,10 +18,8 @@ Level2.prototype = {
 		game.world.setBounds(0, 0, this.bg.width+800, this.bg.height);
 
 		// Create bgm for game, looped and played
-		this.bgm = game.add.audio('bgm', 0.1, true);
-		//this.bgm.play();
-		
-
+		this.bgm = game.add.audio('lvl2', 0.25, true);
+		this.bgm.play();
 
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
@@ -75,15 +73,8 @@ Level2.prototype = {
 		game.physics.arcade.enable(this.ledge);
 		this.ledge.body.immovable = true;
 
-		// this.secondRooftop = platforms.create(700, 490, 'lvl2', 'rooftop');
-		// this.secondRooftop.scale.setTo(0.6, 0.4);
-		// game.physics.arcade.enable(this.secondRooftop);
-		// //this.tower.body.setSize(200, 500, 0, 140);
-		// this.secondRooftop.body.immovable = true;
-
 		// big ass tower
 		this.tower = platforms.create(630, 100, 'lvl2', 'clocktower');
-
 		this.tower.scale.setTo(1, 1);
 		game.physics.arcade.enable(this.tower);
 		this.tower.body.setSize(170, 500, 0, 140);
@@ -107,10 +98,11 @@ Level2.prototype = {
 		this.jump = game.add.audio('jump', 0.1, false);
 
 		// Creates a collectible "gear" that will enable player to unlock an ability
-		this.gear = game.add.sprite(120, 80, 'assets', 'gear'); 
+		this.gear = game.add.sprite(100, 100, 'assets', 'gear'); 
 		game.physics.arcade.enable(this.gear);
 		this.gear.body.immovable = true;
-		this.gear.scale.setTo(0.5, 0.5);	
+		this.gear.scale.setTo(0.5, 0.5);
+		this.gear.anchor.set(0.5, 0.5);	
 
 		/***** PLAYER SPRITE *****/ 
 		this.players = game.add.group();
@@ -162,6 +154,9 @@ Level2.prototype = {
 
 		// reset state when player falls
 		if(this.player.y + this.player.height/2 >= this.world.height - 1) {
+			// stop music
+			this.bgm.stop();
+
 			game.state.start('Level2');
 		}
 
@@ -261,13 +256,20 @@ Level2.prototype = {
 			this.number3.scale.set(0);
 			this.number4.scale.set(0.5);
 		}
+
+		// Animate Gear
+		this.gear.angle += 1;
 	},
+
 	render: function() {
 
 	},
 
 	checkCamBounds: function() {
 	if(this.player.x + Math.abs(this.player.width/2) > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
+		// Stop music
+		this.bgm.stop();
+
 		game.state.start('Level3');
 		// move camera, then player
 		// game.camera.x += game.width;

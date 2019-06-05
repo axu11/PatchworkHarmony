@@ -39,9 +39,14 @@ Load.prototype = {
 		this.load.atlas('patchesAtlas2', 'img/patches2.png', 'img/patches2.json');
 		this.load.atlas('lvl2', 'img/lvl2-spritesheet.png', 'img/lvl2-spritesheet.json');
 
-		game.load.audio('bgm', 'audio/ogg/bg-loop-temp.ogg');
+		// Music
 		game.load.audio('intro', 'audio/mp3/intro-music.mp3');
 		game.load.audio('menu', 'audio/mp3/menu-music.mp3');
+		game.load.audio('lvl1', 'audio/ogg/level-1.ogg');
+		game.load.audio('lvl2', 'audio/ogg/level-2.ogg');
+
+		
+		// Sound Effects
 		game.load.audio('collectGear', 'audio/ogg/collect-gear.ogg');
 		game.load.audio('collision', 'audio/ogg/collision.ogg');
 		game.load.audio('jump', 'audio/ogg/jump.ogg');
@@ -54,8 +59,6 @@ Load.prototype = {
 		game.load.audio('collision', 'audio/ogg/collision.ogg');
 		game.load.audio('jump', 'audio/ogg/jump.ogg');
 		game.load.audio('switch-trigger', 'audio/ogg/switch-trigger.ogg');
-
-		
 	},
 
 	create: function() {
