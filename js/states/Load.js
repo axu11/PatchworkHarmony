@@ -44,6 +44,7 @@ Load.prototype = {
 		game.load.audio('menu', 'audio/mp3/menu-music.mp3');
 		game.load.audio('lvl1', 'audio/ogg/level-1.ogg');
 		game.load.audio('lvl2', 'audio/ogg/level-2.ogg');
+
 		
 		// Sound Effects
 		game.load.audio('collectGear', 'audio/ogg/collect-gear.ogg');
