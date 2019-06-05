@@ -5,8 +5,10 @@ Level5.prototype = {
 		reloadOnGround = 0;
 		this.levelScale = 1.0;
 		self = this;
-		inElevator = false;	
+		inElevator = false;
+		traveling = false;	
 		level = 5;
+		timer = 0;
 	},
 	create: function() {
 		this.bg0 = game.add.image(0, 0, 'bg0');
@@ -38,8 +40,8 @@ Level5.prototype = {
 		//this.ground.visible = false;
 
 
-		this.elevator = platforms.create(350, 410, 'atlas', 'red'); 
-		this.elevator.scale.setTo(1, 1.1);
+		this.elevator = platforms.create(350, 380, 'lvl3', 'elevator3'); 
+		this.elevator.scale.setTo(0.4, 0.4);
 		game.physics.arcade.enable(this.elevator);
 		this.elevator.body.immovable = true;
 		this.elevator.body.checkCollision.up = false;
@@ -96,11 +98,13 @@ Level5.prototype = {
 		this.box.body.drag = 0.5;
 		this.attached = true; // Held from last level
 
-
+		//game.camera.onFadeComplete.add(goToLevel4, this);
 
 	},
 	update: function() {
-		console.log(level);
+		//console.log(level);
+		console.log(inElevator);
+
 		this.checkCamBounds();
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   // player vs platforms
@@ -141,7 +145,7 @@ Level5.prototype = {
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
-				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
+				this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
 				this.createdPlatforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.checkCollision.down = false;
@@ -174,10 +178,12 @@ Level5.prototype = {
 		}
 
 		// numPlatforms doesn't refresh until the player hits the ground
+		if(!inElevator){
 			if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
 				numPlatforms++;
 				reloadOnGround--;	
 			}
+		}
 		// Top-left number updates with numPlatforms
 		if(numPlatforms == 0) {
 			this.number0.scale.set(0.5);
@@ -214,12 +220,13 @@ Level5.prototype = {
 			this.number3.scale.set(0);
 			this.number4.scale.set(0.5);
 		}
+
 		if(inElevator){
-			if(this.player.y < 320){
+			timer++;
+			if(timer >= 120){
 				game.state.start('Level4');
 			}
 		}
-
 		
 	},
 
@@ -255,9 +262,9 @@ Level5.prototype = {
 function goToLevel4(){
 	    //game.camera.resetFX();
 	if(inElevator){
-	console.log('going to level 4');
-
-	game.state.start('Level4');
+		console.log('going to level 4');
+		inElevator = false;
+		game.state.start('Level4');
 	}
 }
 
@@ -265,19 +272,22 @@ function goToLevel4(){
 function activateElevatorUp(Patches, elevator){
 
 	if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.player.body.touching.down){
-		if(!inElevator){
-			this.player.x = 415;
-		    this.player.y = 485;	
-	    }
+	
+		this.player.x = 415;
+	    this.player.y = 485;	
+	    
 		inElevator = true;
-		this.player.body.checkCollision.up = false;
-	    this.player.body.checkCollision.down = false;
-	    this.player.body.checkCollision.left = false;
-	    this.player.body.checkCollision.right = false;
-	    this.player.body.collideWorldBounds = false;
-	    this.player.body.gravity.y = 0;
-		this.player.body.velocity.y = -75;
-		this.elevator.body.velocity.y = -75;
+		this.player.destroy();
+		this.elevator = platforms.create(350, 380, 'lvl3', 'elevator2'); 
+		this.elevator.scale.setTo(0.4, 0.4);
+		// this.player.body.checkCollision.up = false;
+	 //    this.player.body.checkCollision.down = false;
+	 //    this.player.body.checkCollision.left = false;
+	 //    this.player.body.checkCollision.right = false;
+	 //    this.player.body.collideWorldBounds = false;
+	 //    this.player.body.gravity.y = 0;
+		// this.player.body.velocity.y = -75;
+		// this.elevator.body.velocity.y = -75;
 
 		if(inElevator){
 			game.camera.fade(0x000000, 4000);

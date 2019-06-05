@@ -38,6 +38,7 @@ Load.prototype = {
 		this.load.atlas('patchesAtlas', 'img/patches.png', 'img/patches.json');
 		this.load.atlas('patchesAtlas2', 'img/patches2.png', 'img/patches2.json');
 		this.load.atlas('lvl2', 'img/lvl2-spritesheet.png', 'img/lvl2-spritesheet.json');
+		this.load.atlas('lvl3', 'img/lvl3-spritesheet.png', 'img/lvl3-sprites.json');
 
 		// Music
 		game.load.audio('intro', 'audio/mp3/intro-music.mp3');
