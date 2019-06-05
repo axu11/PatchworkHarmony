@@ -44,6 +44,10 @@ Level2.prototype = {
 		platforms = game.add.group();
 		platforms.enableBody = true;
 
+		this.key1 = game.add.sprite(-1000, -1000, 'assets', 'box');
+		this.key2 = game.add.sprite(-1000, -1000, 'assets', 'box');
+		this.key3 = game.add.sprite(-1000, -1000, 'assets', 'box');
+
 		//Create createdPlatforms group
 		this.createdPlatforms = game.add.group();
 		this.createdPlatforms.enableBody = true;
@@ -106,7 +110,7 @@ Level2.prototype = {
 
 		/***** PLAYER SPRITE *****/ 
 		this.players = game.add.group();
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 950, 450, this.levelScale);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 100, 450, this.levelScale);
 		//this.player = new Patches(game, 'patchesAtlas2', 'right1', 850, 300, this.levelScale);
 		this.player.enableBody = true;
 		this.players.add(this.player);
@@ -183,13 +187,12 @@ Level2.prototype = {
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
-				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
+				this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
 				this.createdPlatforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.checkCollision.down = false;
 				this.createdPlatform.body.checkCollision.left = false;
 				this.createdPlatform.body.checkCollision.right = false;
-				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
 				this.createdPlatform.body.immovable = true;
 				numPlatforms--;
 			}
