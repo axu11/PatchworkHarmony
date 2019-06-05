@@ -44,7 +44,7 @@ Play.prototype = {
 		this.moveInstructions = game.add.text(350, 230, 'Use the arrow keys to move and jump!', textStyle);
 		this.moveInstructions.anchor.set(0.5);
 
-		this.pickupInstrucctions = game.add.text(375, 280, 'Press SHIFT next to the box to pick it up and put it down!', textStyle);
+		this.pickupInstrucctions = game.add.text(375, 330, 'Press SHIFT next to the box to pick it up and put it down!', textStyle);
 		this.pickupInstrucctions.anchor.set(0.5);
 
 		// Create instructions for collecting the gear and ability gained afterwards (initially invisible)
@@ -58,7 +58,12 @@ Play.prototype = {
 		this.exitInstructions = game.add.text(1200, 265, 'Exit through the window!', style2);
 		this.exitInstructions.anchor.set(0.5);
 		this.exitInstructions.visible = false;
-	
+
+		// dummy sprites so the code doesn't break
+		this.key1 = game.add.sprite(-1000, -1000, 'assets', 'box');
+		this.key2 = game.add.sprite(-1000, -1000, 'assets', 'box');
+		this.key3 = game.add.sprite(-1000, -1000, 'assets', 'box');
+
 			/***** SWITCH MECHANIC *****/
 		this.switches = game.add.group();
 		this.switches.enableBody = true;
@@ -282,7 +287,7 @@ Play.prototype = {
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
-				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30, 1);
+				this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30, 1);
 				this.createdPlatforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.checkCollision.down = false;
@@ -304,7 +309,6 @@ Play.prototype = {
 				this.box.body.checkCollision.none = false;
 			}
 		}
-
 		// When not holding the box...
 		else {
 			this.box.body.gravity.y = 300;	// Box has gravity, will fall
@@ -318,7 +322,7 @@ Play.prototype = {
 				this.attached = true;
 			}
 		}
-
+console.log('reload: ' + reloadOnGround + ' numPlatforms: ' + numPlatforms);
 		// Top-left number updates with numPlatforms
 		if(numPlatforms == 0) {
 			this.number0.scale.set(0.5);
@@ -391,6 +395,7 @@ Play.prototype = {
 
 // Function for collecting "gears"
 function collectGear(Patches, gear){
+		console.log("collected");
 	this.gearInstructions.visible = false;
 	this.platformInstructions.visible = true;
 	this.exitInstructions.visible = true;
@@ -398,9 +403,7 @@ function collectGear(Patches, gear){
 	numPlatforms++;
 	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
 	this.gearAudio.play();
-	
-	console.log("collected");
-	this.gearInstructions.visible = false;
-	this.platformInstructions.visible = true;
-	this.exitInstructions.visible = true;
+	// this.gearInstructions.visible = false;
+	// this.platformInstructions.visible = true;
+	// this.exitInstructions.visible = true;
 }
