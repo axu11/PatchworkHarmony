@@ -263,7 +263,6 @@ function goToLevel4(){
 	    //game.camera.resetFX();
 	if(inElevator){
 		console.log('going to level 4');
-		inElevator = false;
 		game.state.start('Level4');
 	}
 }
