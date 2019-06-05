@@ -20,7 +20,7 @@ function Patches(game, key, frame, x, y, levelScale) {
 	this.y = y;
 	this.body.gravity.y = this.GRAVITY;
 	// this.body.bounce.set(0.3);
-	this.VELOCITY_X = 1300 * levelScale;
+	this.VELOCITY_X = 300 * levelScale;
 	this.body.maxVelocity.x = this.MAX_X_VELOCITY;
 	this.body.maxVelocity.y = this.MAX_Y_VELOCITY;
 	this.body.drag.setTo(this.DRAG, 0);

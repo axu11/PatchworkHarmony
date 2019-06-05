@@ -44,7 +44,7 @@ Play.prototype = {
 		this.moveInstructions = game.add.text(350, 230, 'Use the arrow keys to move and jump!', textStyle);
 		this.moveInstructions.anchor.set(0.5);
 
-		this.pickupInstrucctions = game.add.text(375, 330, 'Press SHIFT next to the box to pick it up and put it down!', textStyle);
+		this.pickupInstrucctions = game.add.text(375, 280, 'Press SHIFT next to the box to pick it up and put it down!', textStyle);
 		this.pickupInstrucctions.anchor.set(0.5);
 
 		// Create instructions for collecting the "apple" and ability gained afterwards (initially invisible)
