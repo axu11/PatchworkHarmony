@@ -8,6 +8,7 @@ var game;
 var self;
 var reloadOnGround = 0;
 var inElevator = false;
+var elevatorActivated = false;
 var traveling = false;
 var style1 = { fontSize: '32px', fill: '#000' };
 var style2 = { fontSize: '16px', fill: '#000' };

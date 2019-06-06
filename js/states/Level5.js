@@ -17,10 +17,6 @@ Level5.prototype = {
 
 		// Create bgm for game, looped and played
 		this.bgm = game.add.audio('bgm', 0.1, true);
-
-		this.wya = game.add.text(350, 230, 'CURRENTLY ON BOTTOM LEVEL', textStyle);
-		this.wya.anchor.set(0.5);
-	
 	
 
 		/***** PLATFORMS *****/
@@ -37,8 +33,6 @@ Level5.prototype = {
 		this.ground.scale.setTo(25, 1);
 		game.physics.arcade.enable(this.ground);
 		this.ground.body.immovable = true;
-		//this.ground.visible = false;
-
 
 		this.elevator = platforms.create(350, 380, 'lvl3', 'elevator3'); 
 		this.elevator.scale.setTo(0.4, 0.4);
@@ -112,7 +106,7 @@ Level5.prototype = {
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
 		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
-				game.physics.arcade.overlap(this.player, this.elevator, activateElevatorUp, null, this);
+		game.physics.arcade.overlap(this.player, this.elevator, activateElevatorUp, null, this);
 
 
 
