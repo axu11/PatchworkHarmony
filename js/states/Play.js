@@ -311,11 +311,11 @@ Play.prototype = {
 			this.box.body.gravity.y = 300;	// Box has gravity, will fall
 
 			// When picked up from left of box...
-			if(game.input.keyboard.addKey(this.player.facing == 'RIGHT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x + this.player.width/2) - (this.box.x - this.box.width/2)) <= 5) {
+			if(game.input.keyboard.addKey(this.player.facing == 'RIGHT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x + this.player.body.size/2) - (this.box.x - this.box.width/2)) <= 5) {
 				this.attached = true;
 			}
 			// When picked up from right of box... 
-			if(game.input.keyboard.addKey(this.player.facing == 'LEFT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x - this.player.width/2) - (this.box.x + this.box.width/2)) <= 5) {
+			if(game.input.keyboard.addKey(this.player.facing == 'LEFT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x - this.player.body.size/2) - (this.box.x + this.box.width/2)) <= 5) {
 				this.attached = true;
 			}
 		}
