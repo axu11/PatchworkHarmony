@@ -20,11 +20,11 @@ function Patches(game, key, frame, x, y, levelScale) {
 	this.y = y;
 	this.body.gravity.y = this.GRAVITY;
 	// this.body.bounce.set(0.3);
-	this.VELOCITY_X = 1300 * levelScale;
+	this.VELOCITY_X = 300 * levelScale;
 	this.body.maxVelocity.x = this.MAX_X_VELOCITY;
 	this.body.maxVelocity.y = this.MAX_Y_VELOCITY;
 	this.body.drag.setTo(this.DRAG, 0);
-	this.body.setSize(110, 250, 30, 80);
+	// this.body.setSize(110, 250, 30, 80);
 
 	// Animations
 	// this.animations.add('right', Phaser.Animation.generateFrameNames('', 1, 4, '', 4), 10, true);
@@ -42,7 +42,7 @@ Patches.prototype.constructor = Patches;
 
 Patches.prototype.update = function() {
 
-	game.debug.body(this);
+	// game.debug.body(this);
 
 	// Enable Phaser's Keyboard Manager
 	this.cursors = game.input.keyboard.createCursorKeys();
@@ -51,14 +51,14 @@ Patches.prototype.update = function() {
  	this.body.velocity.x = 0;
 
  	// Move left and right with arrow keys
- 	if(this.cursors.left.isDown) {
+ 	if(this.cursors.left.isDown && !inElevator) {
 		this.body.velocity.x = -this.VELOCITY_X; // Move left
 		// this.player.animations.play('left');
 		this.animations.play('moveLeft');
 		this.facing = "LEFT";
 	}
 
-	else if(this.cursors.right.isDown) {
+	else if(this.cursors.right.isDown && !inElevator) {
 		this.body.velocity.x = this.VELOCITY_X; // Move right
 		// this.player.animations.play('right');
 		this.animations.play('moveRight');

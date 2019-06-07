@@ -35,15 +35,17 @@ Load.prototype = {
 		this.load.atlas('assets', 'img/assetsheet.png', 'img/assets.json')
 		this.load.atlas('numbers', 'img/numbersheet.png', 'img/numbers.json');
 		this.load.atlas('windowAni', 'img/windowAni.png', 'img/windowAni.json');
-		this.load.atlas('patchesAtlas', 'img/patches.png', 'img/patches.json');
 		this.load.atlas('patchesAtlas2', 'img/patches2.png', 'img/patches2.json');
 		this.load.atlas('lvl2', 'img/lvl2-spritesheet.png', 'img/lvl2-spritesheet.json');
+		this.load.atlas('lvl3', 'img/lvl3-spritesheet.png', 'img/lvl3-sprites.json');
+		this.load.atlas('lvl3-bg', 'img/lvl3-bgs.png', 'img/lvl3-bgs.json');
 
 		// Music
 		game.load.audio('intro', 'audio/mp3/intro-music.mp3');
 		game.load.audio('menu', 'audio/mp3/menu-music.mp3');
 		game.load.audio('lvl1', 'audio/ogg/level-1.ogg');
 		game.load.audio('lvl2', 'audio/ogg/level-2.ogg');
+
 		
 		// Sound Effects
 		game.load.audio('collectGear', 'audio/ogg/collect-gear.ogg');
@@ -61,12 +63,12 @@ Load.prototype = {
 	},
 
 	create: function() {
-		// Check for local storage browser support
-		if(window.localStorage) {
-			console.log('Local storage supported');
-		} else {
-			console.log('Local storage not supported');
-		}
+		// // Check for local storage browser support
+		// if(window.localStorage) {
+		// 	console.log('Local storage supported');
+		// } else {
+		// 	console.log('Local storage not supported');
+		// }
 
 		// Go to MainMenu state
 		game.state.start('MainMenu');

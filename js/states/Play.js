@@ -9,9 +9,9 @@ Play.prototype = {
 	},
 	
 	create: function() {
-		
+
 		/***** BG, BGM, AND NUMBER CIRCLE *****/
-		// Create backgrounds for both scenes, set bounds to image resolution (800 x 600)
+		// Create backgrounds for both scenes, set bounds to include both bg (1600 x 600)
 		this.bg = game.add.image(0, 0, 'bg0');
 		this.bg2 = game.add.image(800, 0, 'bg1');
 		game.world.setBounds(0, 0, this.bg.width+800, this.bg.height);
@@ -58,21 +58,28 @@ Play.prototype = {
 		this.exitInstructions = game.add.text(1200, 265, 'Exit through the window!', style2);
 		this.exitInstructions.anchor.set(0.5);
 		this.exitInstructions.visible = false;
-	
-			/***** SWITCH MECHANIC *****/
+
+		// dummy sprites so the code doesn't break
+		this.key1 = game.add.sprite(-1000, -1000, 'assets', 'box');
+		this.key2 = game.add.sprite(-1000, -1000, 'assets', 'box');
+		this.key3 = game.add.sprite(-1000, -1000, 'assets', 'box');
+
+		/***** SWITCH MECHANIC *****/
 		this.switches = game.add.group();
 		this.switches.enableBody = true;
-		this.switch = new Switch(game, 'assets', 'switch-button', 1250, 525); // Temp sprite
+
+		// Creates the button for the switch (scene 2)
+		this.switch = new Switch(game, 'assets', 'switch-button', 1250, 525); 
 		this.switches.add(this.switch);
 		this.switch.body.immovable = true;
 		this.switch.scale.setTo(0.2, 0.25);
 
 		/***** PLATFORMS *****/
-		// Create this.platforms group
+		// Create this.platforms group for general platform collision (usually invisible)
 		this.platforms = game.add.group();
 		this.platforms.enableBody = true;
 
-		//Create createdPlatforms group
+		//Create createdPlatforms group for music blocks
 		this.createdPlatforms = game.add.group();
 		this.createdPlatforms.enableBody = true;
 
@@ -83,7 +90,7 @@ Play.prototype = {
 		this.ground.body.immovable = true;
 		this.ground.visible = false;
 
-		// Create invisible wall preventing player from returning to first screen
+		// Create invisible wall preventing player from returning to first screen (scene 1)
 		this.wall = this.platforms.create(700, 0, 'atlas', 'sky');
 		this.wall.scale.setTo(0.75,10);
 		game.physics.arcade.enable(this.wall);
@@ -118,15 +125,14 @@ Play.prototype = {
 		this.shelf.body.immovable = true;
 
 		// Creates a visible platform that lowers once switch is activated
-		this.activatedPlatformStartX = 800;
-		this.activatedPlatform = this.platforms.create(this.activatedPlatformStartX, 300, 'assets', 'shelf-platform');
-		this.activatedPlatform.scale.setTo(0.55, 0.55);
-		this.activatedPlatform.angle += 270;
+		this.activatedPlatform = this.platforms.create(800, 300, 'assets', 'shelf-platform');
+		this.activatedPlatform.scale.set(0.55);
+		this.activatedPlatform.angle += 270;  // activated platform starts rotated up
 		this.activatedPlatformXSize = 10;
 		this.activatedPlatformYSize = 1280;
 		this.activatedPlatformXOffset = 0;
 		this.activatedPlatformYOffset = -1280;
-		this.activatedPlatform.body.setSize(this.activatedPlatformXSize, this.activatedPlatformYSize, this.activatedPlatformXOffset, this.activatedPlatformYOffset);
+		this.activatedPlatform.body.setSize(this.activatedPlatformXSize, this.activatedPlatformYSize, this.activatedPlatformXOffset, this.activatedPlatformYOffset);   // custom bounding box for the activated platform
 		game.physics.arcade.enable(this.activatedPlatform);
 		this.activatedPlatform.body.immovable = true;
 
@@ -144,6 +150,7 @@ Play.prototype = {
 		this.gear.scale.setTo(0.5, 0.5);	
 		this.gear.anchor.set(0.5, 0.5);
 
+		// Creates a bed for the switch to rest on
 		this.switchHolder = game.add.sprite(1250, 525, 'assets', 'switch-holder');
 		this.switchHolder.anchor.set(0.5, 1);
 		this.platforms.add(this.switchHolder);
@@ -163,7 +170,7 @@ Play.prototype = {
 		this.box.body.collideWorldBounds = true;
 		this.box.body.gravity.y = 300; // Has gravity while not held by player
 		this.box.body.drag = 0.5;
-		this.attached = false; // Initially not picked up by player
+		this.attached = false; 	// Initially not picked up by player
 
 	},
 
@@ -176,18 +183,17 @@ Play.prototype = {
 		//game.debug.body(this.activatedPlatform);
 		//game.debug.body(this.drawer);
 		//game.debug.body(this.switch);
+		console.log('reload: ' + reloadOnGround + ' numPlatforms: ' + numPlatforms);
 		this.checkCamBounds(); // Keep checking camera bounds
 
 		/***** COLLISIONS *****/
-		this.hitPlatform = game.physics.arcade.collide(this.player, this.platforms);   // player vs platforms
-		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); // player vs created platforms
-		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
-		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches); // player vs switch
-		this.hitDrawer = game.physics.arcade.collide(this.player, this.drawer); // box vs switch
-		this.hitTable = game.physics.arcade.collide(this.player, this.table); // box vs switch
-		this.hitPlatformBox = game.physics.arcade.collide(this.box, this.platforms);   // box vs platforms
-		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches); // box vs switch
-		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
+		this.hitPlatform = game.physics.arcade.collide(this.player, this.platforms);   				// player vs platforms
+		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); 	// player vs created platforms
+		this.hitBox = game.physics.arcade.collide(this.player, this.box);         					// player vs box
+		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches); 					// player vs switch
+		this.hitPlatformBox = game.physics.arcade.collide(this.box, this.platforms); 			    // box vs platforms
+		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches); 					// box vs switch
+		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);				// player vs gear, call collectGear
 		
 		/***** SWITCH STUFF *****/
 		// Switch logic for player pressing down on switch 
@@ -234,11 +240,6 @@ Play.prototype = {
 			}
 		}
 
-		if(this.player.x > 1400 && this.player.y < 240){
-			game.state.start('Level2');
-			this.bgm.destroy();
-		}
-
 		// When the switch is pressed, platform is lowered, otherwise will go back to being raised
 		if(this.switchPressed) {
 			if(this.activatedPlatform.angle < 0) { 
@@ -257,7 +258,8 @@ Play.prototype = {
 			}
 		}
 
-		this.activatedPlatform.body.setSize(this.activatedPlatformXSize, this.activatedPlatformYSize, this.activatedPlatformXOffset, this.activatedPlatformYOffset); // Change platform offset bounding box
+		// Change platform offset bounding box
+		this.activatedPlatform.body.setSize(this.activatedPlatformXSize, this.activatedPlatformYSize, this.activatedPlatformXOffset, this.activatedPlatformYOffset); 
 
 		/***** BOX STUFF *****/
 		this.box.body.velocity.x = 0; // Box won't glide when pushed by player
@@ -276,19 +278,18 @@ Play.prototype = {
 			}
 
 			this.box.y = this.player.y + 17;	 // the box is off the ground and with the player
-			this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
+			this.box.body.gravity.y = 0;         // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
-				this.createdPlatform = new Platform(game, 'assets', 'Platform-1', this.player.x, this.player.y + this.player.height/2 + 30, 1);
+				this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30, 1);
 				this.createdPlatforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.checkCollision.down = false;
 				this.createdPlatform.body.checkCollision.left = false;
 				this.createdPlatform.body.checkCollision.right = false;
-				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
 				this.createdPlatform.body.immovable = true;
 				numPlatforms--;
 			}
@@ -357,6 +358,12 @@ Play.prototype = {
 			this.number4.scale.set(0.5);
 		}
 
+		// When player gets to the window, go to level 2 (town scene 1)
+		if(this.player.x > 1400 && this.player.y < 240){
+			game.state.start('Level2');
+			this.bgm.destroy();
+		}
+
 		// Animate Gear
 		this.gear.angle += 1;
 	},
@@ -392,6 +399,7 @@ Play.prototype = {
 
 // Function for collecting "gears"
 function collectGear(Patches, gear){
+	console.log("collected");
 	this.gearInstructions.visible = false;
 	this.platformInstructions.visible = true;
 	this.exitInstructions.visible = true;
@@ -399,9 +407,7 @@ function collectGear(Patches, gear){
 	numPlatforms++;
 	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
 	this.gearAudio.play();
-	
-	console.log("collected");
-	this.gearInstructions.visible = false;
-	this.platformInstructions.visible = true;
-	this.exitInstructions.visible = true;
+	// this.gearInstructions.visible = false;
+	// this.platformInstructions.visible = true;
+	// this.exitInstructions.visible = true;
 }

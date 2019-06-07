@@ -1,25 +1,60 @@
-// Second level state, rooftops
-var Level2 = function(game) {};
-Level2.prototype = {
-
+var Level5 = function(game) {};
+Level5.prototype = {
 	init: function() {
-		numPlatforms = 1;
+		numPlatforms = 2;
 		reloadOnGround = 0;
-		this.levelScale = 0.4;
+		this.levelScale = 1.0;
 		self = this;
+		inElevator = false;
+		traveling = false;	
+		level = 5;
+		timer = 0;
 	},
-
 	create: function() {
-
-		/***** BG, BGM, AND NUMBER CIRCLE *****/
-		// Create backgrounds for both scenes, set bounds to image resolution (800 x 600)
-		this.bg = game.add.image(0, 0, 'bg2');
-		this.bg2 = game.add.image(800, 0, 'bg3');
-		game.world.setBounds(0, 0, this.bg.width+800, this.bg.height);
+		this.bg0 = game.add.image(0, 0, 'bg0');
+		this.bg1 = game.add.image(800, 0, 'bg1');
+		game.world.setBounds(0, 0, 1600, this.bg1.height);
 
 		// Create bgm for game, looped and played
-		this.bgm = game.add.audio('lvl2', 0.25, true);
-		this.bgm.play();
+		this.bgm = game.add.audio('bgm', 0.1, true);
+	
+
+		/***** PLATFORMS *****/
+		// Create platforms group
+		platforms = game.add.group();
+		platforms.enableBody = true;
+
+		//Create createdPlatforms group
+		this.createdPlatforms = game.add.group();
+		this.createdPlatforms.enableBody = true;
+
+		// Create invisible ground platform for player to stand on (both scenes)
+		this.ground = platforms.create(-1600, 550, 'atlas', 'sky'); 
+		this.ground.scale.setTo(25, 1);
+		game.physics.arcade.enable(this.ground);
+		this.ground.body.immovable = true;
+
+		this.elevator = platforms.create(350, 380, 'lvl3', 'elevator3'); 
+		this.elevator.scale.setTo(0.4, 0.4);
+		game.physics.arcade.enable(this.elevator);
+		this.elevator.body.immovable = true;
+		this.elevator.body.checkCollision.up = false;
+	    this.elevator.body.checkCollision.down = false;
+	    this.elevator.body.checkCollision.left = false;
+	    this.elevator.body.checkCollision.right = false;
+
+		// Library1 setup
+		this.ceiling1 = platforms.create(0, 0, 'atlas', 'sky'); 
+		this.ceiling1.scale.setTo(2.5, 0.5);
+		game.physics.arcade.enable(this.ceiling1);
+		this.ceiling1.body.immovable = true;
+		//this.ground.visible = false;
+
+		this.ceiling2 = platforms.create(480, 0, 'atlas', 'sky'); 
+		this.ceiling2.scale.setTo(2.5, 0.5);
+		game.physics.arcade.enable(this.ceiling2);
+		this.ceiling2.body.immovable = true;
+		//this.ground.visible = false;
 
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
@@ -39,81 +74,13 @@ Level2.prototype = {
 		this.number4.scale.set(0);
 		this.number4.fixedToCamera = true;
 
-		/***** PLATFORMS *****/
-		// Create platforms group
-		platforms = game.add.group();
-		platforms.enableBody = true;
-
-		this.key1 = game.add.sprite(-1000, -1000, 'assets', 'box');
-		this.key2 = game.add.sprite(-1000, -1000, 'assets', 'box');
-		this.key3 = game.add.sprite(-1000, -1000, 'assets', 'box');
-
-		//Create createdPlatforms group
-		this.createdPlatforms = game.add.group();
-		this.createdPlatforms.enableBody = true;
-
-		// Create invisible ground platform for player to stand on (both scenes)
-		this.ground = platforms.create(0, 530, 'lvl2', 'exterior'); 
-		this.ground.scale.setTo(0.5, 0.25);
-		game.physics.arcade.enable(this.ground);
-		this.ground.body.immovable = true;
-
-		// billboard
-		this.billboard = platforms.create(170, 430, 'lvl2', 'billboard');
-		this.billboard.scale.setTo(0.25, 0.3);
-		game.physics.arcade.enable(this.billboard);
-		this.billboard.body.setSize(500, 350, 150, 65);
-		this.billboard.body.immovable = true;
-
-		// building
-		this.building = platforms.create(500, 490, 'lvl2', 'rooftop');
-		this.building.scale.setTo(0.6, 0.4);
-		game.physics.arcade.enable(this.building);
-		this.building.body.immovable = true;
-
-		// ledge
-		this.ledge = platforms.create(600, 350, 'assets', 'shelf-platform');
-		this.ledge.scale.setTo(0.15, 0.3);
-		game.physics.arcade.enable(this.ledge);
-		this.ledge.body.immovable = true;
-
-		// big ass tower
-		this.tower = platforms.create(630, 100, 'lvl2', 'clocktower');
-		this.tower.scale.setTo(1, 1);
-		game.physics.arcade.enable(this.tower);
-		this.tower.body.setSize(170, 500, 0, 140);
-		this.tower.body.immovable = true;
-
-
-		// trampoline
-		this.trampoline = game.add.sprite(100, 400, 'lvl2', 'trampoline');
-		this.trampoline.anchor.setTo(0.5, 1);
-		this.trampoline.scale.setTo(0.3, 0.3);
-		game.physics.arcade.enable(this.trampoline);
-		this.trampoline.body.immovable = true;
-		this.trampoline.body.checkCollision.down = false;
-		this.trampoline.body.checkCollision.left = false;
-		this.trampoline.body.checkCollision.right = false;
-		this.trampolineStand = game.add.sprite(100, 395, 'assets', 'shelf-platform');
-		this.trampolineStand.scale.set(0.33);
-		this.trampolineStand.anchor.setTo(0.5, 0);
-
-		// create bounce sound
-		this.jump = game.add.audio('jump', 0.1, false);
-
-		// Creates a collectible "gear" that will enable player to unlock an ability
-		this.gear = game.add.sprite(100, 100, 'assets', 'gear'); 
-		game.physics.arcade.enable(this.gear);
-		this.gear.body.immovable = true;
-		this.gear.scale.setTo(0.5, 0.5);
-		this.gear.anchor.set(0.5, 0.5);	
-
 		/***** PLAYER SPRITE *****/ 
-		this.players = game.add.group();
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 100, 450, this.levelScale);
+		//this.players = game.add.group();
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 415, 485, this.levelScale);
 		//this.player = new Patches(game, 'patchesAtlas2', 'right1', 850, 300, this.levelScale);
 		this.player.enableBody = true;
-		this.players.add(this.player);
+		game.add.existing(this.player);
+		//this.players.add(this.player);
 
 		/***** MUSIC BOX *****/
 		this.box = game.add.sprite(350, 250, 'assets','box');
@@ -124,45 +91,30 @@ Level2.prototype = {
 		this.box.body.gravity.y = 300; // Has gravity while not held by player
 		this.box.body.drag = 0.5;
 		this.attached = true; // Held from last level
-	},
 
-	update: function(){
-		//game.debug.body(this.billboard);
-		//game.debug.body(this.tower);
-		//game.debug.body(this.secondRooftop);
-		//game.debug.body(this.library);
+		//game.camera.onFadeComplete.add(goToLevel4, this);
+
+	},
+	update: function() {
+		//console.log(level);
+		console.log(inElevator);
 
 		this.checkCamBounds();
-
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   // player vs platforms
 		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); // player vs created platforms
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
-		this.hitTrampoline = game.physics.arcade.collide(this.player, this.trampoline);
 		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
-		
-		// trampoline bounce logic
-		if((this.player.x + this.player.width/2 >= (this.trampoline.x - this.trampoline.width/2 - 2) && this.player.x - this.player.width/2 <= (this.trampoline.x + this.trampoline.width/2 + 2)) &&
-			(((this.player.y + this.player.height/2) >= (this.trampoline.y - this.trampoline.height - 15)) && this.player.y + this.player.height/2 <= this.trampoline.y - this.trampoline.height + 1)) {
-					this.player.body.bounce.y = 1;
-			}
-		else {
-				this.player.body.bounce.y = 0;
-			}
+		game.physics.arcade.overlap(this.player, this.elevator, activateElevatorUp, null, this);
 
-		// play bounce sound on bounce
-		if(this.hitTrampoline) {
-			this.jump.play();
-		}
+
+
 
 		// reset state when player falls
-		if(this.player.y + this.player.height/2 >= this.world.height - 1) {
-			// stop music
-			this.bgm.stop();
-
-			game.state.start('Level2');
-		}
+		// if(this.player.y + this.player.height/2 >= this.world.height - 1) {
+		// 	game.state.start('Level4');
+		// }
 
 		/***** BOX STUFF *****/
 		this.box.body.velocity.x = 0; // Box won't glide when pushed by player
@@ -193,6 +145,7 @@ Level2.prototype = {
 				this.createdPlatform.body.checkCollision.down = false;
 				this.createdPlatform.body.checkCollision.left = false;
 				this.createdPlatform.body.checkCollision.right = false;
+				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
 				this.createdPlatform.body.immovable = true;
 				numPlatforms--;
 			}
@@ -219,10 +172,12 @@ Level2.prototype = {
 		}
 
 		// numPlatforms doesn't refresh until the player hits the ground
-			if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform || this.hitTrampoline)) {
+		if(!inElevator){
+			if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
 				numPlatforms++;
 				reloadOnGround--;	
 			}
+		}
 		// Top-left number updates with numPlatforms
 		if(numPlatforms == 0) {
 			this.number0.scale.set(0.5);
@@ -260,33 +215,78 @@ Level2.prototype = {
 			this.number4.scale.set(0.5);
 		}
 
-		// Animate Gear
-		this.gear.angle += 1;
+		if(inElevator){
+			timer++;
+			if(timer >= 120){
+				game.state.start('Level4');
+			}
+		}
+		
 	},
 
 	render: function() {
-
+		game.debug.cameraInfo(game.camera, 32, 32);
+		//game.debug.rectangle({x:game.camera.bounds.x, y:game.camera.bounds.y, width:game.camera.bounds.width, height:game.camera.bounds.height});
 	},
 
 	checkCamBounds: function() {
-	if(this.player.x + Math.abs(this.player.width/2) > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
-		// Stop music
-		this.bgm.stop();
-
-		game.state.start('Level3');
-		// move camera, then player
-		// game.camera.x += game.width;
-		// this.player.x = game.camera.x + Math.abs(this.player.width/2);	
-	} 
+		// some funky, funky logic to check camera bounds for player movement
+		if(this.player.x + Math.abs(this.player.width/2) > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
+			// move camera, then player
+			game.camera.x += game.width;
+			this.player.x = game.camera.x + Math.abs(this.player.width/2);	
+		} 
+		else if(this.player.x - Math.abs(this.player.width/2) < game.camera.x && !this.player.body.blocked.left && this.player.facing === "LEFT") {
+		 	// move camera, then player
+		 	game.camera.x -= game.width;
+		 	this.player.x = game.camera.x + game.width - Math.abs(this.player.width/2);	
+		} 
+		// else if(this.player.y + Math.abs(this.player.height/2) > game.height + game.camera.y && !this.player.body.blocked.down /*&& this.player.facing === "DOWN"*/) {
+		// 	// move camera, then player
+		// 	game.camera.y += game.height;
+		// 	this.player.y = game.camera.y + Math.abs(this.player.height/2);	
+		// } else if(this.player.y - Math.abs(this.player.height/2) < game.camera.y && !this.player.body.blocked.up /*&& this.player.facing === "UP"*/) {
+		// 	// move camera, then player
+		// 	game.camera.y -= game.height;
+		// 	this.player.y = game.camera.y + game.height - Math.abs(this.player.height/2);	
+		// }
+	}
 }
+
+function goToLevel4(){
+	    //game.camera.resetFX();
+	if(inElevator){
+		console.log('going to level 4');
+		game.state.start('Level4');
+	}
 }
-
-
 
 // Function for collecting "gears"
-function collectGear(Patches, gear){
-	gear.kill();
-	numPlatforms++;
-	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
-	this.gearAudio.play();
+function activateElevatorUp(Patches, elevator){
+
+	if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.player.body.touching.down){
+	
+		this.player.x = 415;
+	    this.player.y = 485;	
+	    
+		inElevator = true;
+		this.player.destroy();
+		this.elevator = platforms.create(350, 380, 'lvl3', 'elevator2'); 
+		this.elevator.scale.setTo(0.4, 0.4);
+		// this.player.body.checkCollision.up = false;
+	 //    this.player.body.checkCollision.down = false;
+	 //    this.player.body.checkCollision.left = false;
+	 //    this.player.body.checkCollision.right = false;
+	 //    this.player.body.collideWorldBounds = false;
+	 //    this.player.body.gravity.y = 0;
+		// this.player.body.velocity.y = -75;
+		// this.elevator.body.velocity.y = -75;
+
+		if(inElevator){
+			game.camera.fade(0x000000, 4000);
+		}
+
+			   // game.camera.onFadeComplete.add(goToLevel4, this);
+
+	}
 }
