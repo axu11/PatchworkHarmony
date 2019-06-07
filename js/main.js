@@ -42,7 +42,7 @@ window.onload = function() {
 
 	// Define game
 	game = new Phaser.Game(800, 600, Phaser.AUTO, 'myGame');
-	
+
 	// Define states
 	game.state.add('Boot', Boot);
 	game.state.add('Load', Load);

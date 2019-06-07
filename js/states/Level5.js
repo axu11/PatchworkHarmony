@@ -50,6 +50,13 @@ Level5.prototype = {
 		this.ground.body.immovable = true;
 		this.ground.visible = false;
 
+		// pedestal
+		this.pedestal = platforms.create(1360, 420, 'atlas', 'sky');
+		this.pedestal.scale.setTo(1, 1);
+		game.physics.arcade.enable(this.pedestal);
+		this.pedestal.body.immovable = true;
+		this.pedestal.alpha = 0;
+
 		// Create invisible ceiling platform for player to hit their little heads on, extends both bgs
 		this.ceiling = platforms.create(0, 0, 'atlas', 'sky'); 
 		this.ceiling.scale.setTo(12.5, 0.4);
@@ -93,9 +100,16 @@ Level5.prototype = {
 		this.number4.scale.set(0);
 		this.number4.fixedToCamera = true;
 
+		// Creates a collectible "gear" that will enable player to unlock an ability
+		this.gear = game.add.sprite(1420, 370, 'assets', 'gear'); 
+		game.physics.arcade.enable(this.gear);
+		this.gear.body.immovable = true;
+		this.gear.scale.setTo(0.75);
+		this.gear.anchor.set(0.5);	
+
 		/***** PLAYER SPRITE *****/ 
 		//this.players = game.add.group();
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 415, 485, this.levelScale);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 1215, 485, this.levelScale); // -800
 		this.player.enableBody = true;
 		game.add.existing(this.player);
 
@@ -114,7 +128,6 @@ Level5.prototype = {
 	update: function() {
 		//console.log(level);
 		//console.log(inElevator);
-
 		this.checkCamBounds();
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   // player vs platforms
@@ -235,9 +248,14 @@ Level5.prototype = {
 			}
 		}
 		
+		// Animate Gear
+		this.gear.angle += 1;
 	},
 
 	render: function() {
+		game.debug.body(this.pedestal);
+		game.debug.body(this.player);
+		game.debug.body(this.box);
 		//game.debug.cameraInfo(game.camera, 32, 32);
 		//game.debug.rectangle({x:game.camera.bounds.x, y:game.camera.bounds.y, width:game.camera.bounds.width, height:game.camera.bounds.height});
 	},
@@ -308,4 +326,12 @@ function activateElevatorUp(Patches, elevator){
 			}
 		}
 	}
+}
+
+// Function for collecting "gears"
+function collectGear(Patches, gear){
+	gear.kill();
+	numPlatforms++;
+	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
+	this.gearAudio.play();
 }

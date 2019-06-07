@@ -1,7 +1,7 @@
 var Level4 = function(game) {};
 Level4.prototype = {
 	init: function() {
-		numPlatforms = 2;
+		numPlatforms = 3;
 		reloadOnGround = 0;
 		self = this;	
 		level = 4;
@@ -213,27 +213,29 @@ Level4.prototype = {
 		this.holdingSpring = false; 
 
 		/***** MISCELLANEOUS *****/
-		this.key1 = game.add.sprite(1000, 210, 'assets', 'music-block');
+		this.key1 = game.add.sprite(1050, 230, 'assets', 'music-block');
 		this.key1.anchor.set(0.5);
-		this.key1.scale.set(0.5 * this.levelScale);
+		this.key1.scale.set(0.33 * this.levelScale);
 		this.key1.alpha = 0.5;
 		this.key1Lock = false;
 
-		this.key2 = game.add.sprite(1000, 330, 'assets', 'music-block');
+		this.key2 = game.add.sprite(1050, 340, 'assets', 'music-block');
 		this.key2.anchor.set(0.5);
-		this.key2.scale.set(0.5 * this.levelScale);
+		this.key2.scale.set(0.33 * this.levelScale);
 		this.key2.alpha = 0.5;
 		this.key2Lock = false;
 
-		this.key3 = game.add.sprite(1000, 450, 'assets', 'music-block');
+		this.key3 = game.add.sprite(1050, 450, 'assets', 'music-block');
 		this.key3.anchor.set(0.5);
-		this.key3.scale.set(0.5 * this.levelScale);
+		this.key3.scale.set(0.33 * this.levelScale);
 		this.key3.alpha = 0.5;
 		this.key3Lock = false;
 
 		this.keyLock = game.add.sprite(1200, 550, 'lvl2', 'clocktower');
 		this.keyLock.scale.set(0.8);
 		this.keyLock.anchor.setTo(0.5, 1);
+		game.physics.arcade.enable(this.keyLock);
+		this.keyLock.body.immovable = true;
 
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
@@ -293,6 +295,13 @@ Level4.prototype = {
 		//game.debug.body(this.leverHandle);
 		//game.debug.body(this.leftWall);
 		//this.elevator.y += 5;
+		console.log(this.key1Lock + ' ' + this.key2Lock + ' ' + this.key3Lock);
+		console.log(this.keyLock.y);
+		if(this.key1Lock && this.key2Lock && this.key3Lock) {
+			if(this.keyLock.y > 100) {
+				this.keyLock.y -= 10;
+			}
+		}
 		// CheckCamBounds will be disabled while the panning process is occuring
 		if(!leverActivated){
 			this.checkCamBounds();			
@@ -329,7 +338,7 @@ Level4.prototype = {
 			}
 
 			// Switch logic for box pressing down on switch
-			if(this.boxHitSwitch && this.box.x > this.switch.x - this.switch.width/2 && this.box.x < this.switch.x + this.switch.width/2) {
+			if(this.boxHitSwitch && this.box.x + this.box.width/2 > this.switch.x - this.switch.width/2 && this.box.x < this.switch.x + this.switch.width/2) {
 				this.boxOnSwitch = true;
 				this.switchPressed = true;
 			}

@@ -75,6 +75,11 @@ Load.prototype = {
 		// 	console.log('Local storage not supported');
 		// }
 
+		game.input.keyboard.addKeyCapture(Phaser.KeyCode.SPACEBAR);
+		game.input.keyboard.addKeyCapture(Phaser.KeyCode.UP);
+		game.input.keyboard.addKeyCapture(Phaser.KeyCode.DOWN);
+		game.input.keyboard.addKeyCapture(Phaser.KeyCode.LEFT);
+		game.input.keyboard.addKeyCapture(Phaser.KeyCode.RIGHT);
 		// Go to MainMenu state
 		game.state.start('MainMenu');
 	}
