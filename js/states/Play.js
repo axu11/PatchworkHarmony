@@ -20,7 +20,6 @@ Play.prototype = {
 		this.bgm = game.add.audio('lvl1', 0.25, true);
 		this.bgm.play();
 
-
 		// Create number circle at top left of screen to indicate this.platforms remaining
 		this.numberPosition = 16;
 		this.number0 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number0');
@@ -98,8 +97,17 @@ Play.prototype = {
 		this.wall.alpha = 0;
 		this.wall.body.checkCollision.left = false;
 
+		this.desk = this.platforms.create(30, 400, 'atlas', 'sky');
+		this.desk.scale.setTo(1.20, 1);
+		game.physics.arcade.enable(this.desk);
+		this.desk.body.immovable = true;
+		this.desk.alpha = 0;
+		this.desk.body.checkCollision.down = false;
+		this.desk.body.checkCollision.left = false;
+		this.desk.body.checkCollision.right = false;
+
 		// Create invisible platform on top of drawer, only collides on top (scene 2)
-		this.drawer = this.platforms.create(1020, 400, 'atlas','sky');
+		this.drawer = this.platforms.create(1020, 395, 'atlas','sky');
 		game.physics.arcade.enable(this.drawer);
 		this.drawer.scale.setTo(0.65, 0.075);
 		this.drawer.body.immovable = true;
@@ -158,12 +166,12 @@ Play.prototype = {
 		this.switchHolder.body.immovable = true;
 
 		/***** PLAYER SPRITE *****/ 
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 100, 400, 1);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 76, 332, 1);
 		this.player.enableBody = true;
 		game.add.existing(this.player);
 		
 		/***** MUSIC BOX *****/
-		this.box = game.add.sprite(350, 250, 'assets', 'box');
+		this.box = game.add.sprite(148, 382, 'assets', 'box');
 		game.physics.arcade.enable(this.box);
 		this.box.anchor.set(0.50);
 		this.box.scale.set(0.2);
@@ -183,7 +191,11 @@ Play.prototype = {
 		//game.debug.body(this.activatedPlatform);
 		//game.debug.body(this.drawer);
 		//game.debug.body(this.switch);
-		console.log('reload: ' + reloadOnGround + ' numPlatforms: ' + numPlatforms);
+		//game.debug.body(this.desk);
+		//console.log('reload: ' + reloadOnGround + ' numPlatforms: ' + numPlatforms);
+		// console.log(this.player.x + 'and' + this.player.y);
+		// console.log(this.box.x + 'and' + this.box.y);
+
 		this.checkCamBounds(); // Keep checking camera bounds
 
 		/***** COLLISIONS *****/

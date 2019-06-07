@@ -47,6 +47,7 @@ window.onload = function() {
 	game.state.add('Boot', Boot);
 	game.state.add('Load', Load);
 	game.state.add('MainMenu', MainMenu);
+	game.state.add('Intro', Intro);
 	game.state.add('Play', Play);
 	game.state.add('Level2', Level2);
 	game.state.add('Level3', Level3);

@@ -20,11 +20,15 @@ Load.prototype = {
 
 		// Load all assets, beginning with images and spritesheets, then audio
 		this.load.path = 'assets/';
-		game.load.image('bg', 'img/bg.jpg');
+		game.load.image('logo', 'img/PH-logo.png');
 		game.load.image('bg0', 'img/bg-lvl-0.png');
 		game.load.image('bg1', 'img/bg-lvl-1.png');
 		game.load.image('bg2', 'img/bg-lvl-2.png');
 		game.load.image('bg3', 'img/bg-lvl-3.png');
+		game.load.image('cutscene1', 'img/cutscene1.png');
+		game.load.image('cutscene2', 'img/cutscene2.png');
+		game.load.image('cutscene3', 'img/cutscene3.png');		
+
 
 		game.load.image('library', 'img/library.png');
 		game.load.image('crane-platform', 'img/crane-platform.png');
