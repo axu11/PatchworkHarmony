@@ -13,6 +13,8 @@ Level4.prototype = {
 		this.falling = false;		
 		this.timer = 0;
 		this.slideAway = 0;
+		this.playerCanMove = true;
+		this.keySolved = false;
 	},
 	create: function() {
 		/***** BG, BGM, AND SOUND EFFECTS *****/
@@ -298,6 +300,7 @@ Level4.prototype = {
 		console.log(this.key1Lock + ' ' + this.key2Lock + ' ' + this.key3Lock);
 		console.log(this.keyLock.y);
 		if(this.key1Lock && this.key2Lock && this.key3Lock) {
+			this.keySolved = true;
 			if(this.keyLock.y > 100) {
 				this.keyLock.y -= 10;
 			}
@@ -323,6 +326,8 @@ Level4.prototype = {
 		this.boxHitPlatform = game.physics.arcade.collide(this.box, platforms);   					// box vs platforms
 		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches); 					// box vs switch
 		this.springHitPlatform = game.physics.arcade.collide(this.spring, platforms);   			// spring vs platforms
+		this.hitKeyLock = game.physics.arcade.collide(this.player, this.keyLock); // player vs keyLock
+		this.boxHitKeyLock = game.physics.arcade.collide(this.box, this.keyLock); // box vs keyLock
 		game.physics.arcade.overlap(this.player, this.leverHandle, pullLever, null, this);
 		game.physics.arcade.overlap(this.player, this.elevators, activateElevatorDown, null, this);
 

@@ -34,17 +34,26 @@ Platform.prototype.update = function() {
 	if(this.x >= self.key1.x - this.keyLeniency && this.x <= self.key1.x + this.keyLeniency && this.y >= self.key1.y - this.keyLeniency && this.y <= self.key1.y + this.keyLeniency) {
 		console.log('filled 1');
 		self.key1Lock = true;
-		this.decaying = false;
+		if(!self.keySolved)
+			this.decaying = false;
+		else
+			this.decaying = true;
 	}
 	else if(this.x >= self.key2.x - this.keyLeniency && this.x <= self.key2.x + this.keyLeniency && this.y >= self.key2.y - this.keyLeniency && this.y <= self.key2.y + this.keyLeniency) {
 		console.log('filled 2');
 		self.key2Lock = true;
-		this.decaying = false;
+		if(!self.keySolved)
+			this.decaying = false;
+		else
+			this.decaying = true;
 	}
 	else if(this.x >= self.key3.x - this.keyLeniency && this.x <= self.key3.x + this.keyLeniency && this.y >= self.key3.y - this.keyLeniency && this.y <= self.key3.y + this.keyLeniency) {
 		console.log('filled 3');
 		self.key3Lock = true;
-		this.decaying = false;
+		if(!self.keySolved)
+			this.decaying = false;
+		else
+			this.decaying = true;
 	}
 	else {
 		self.key1Lock = false;

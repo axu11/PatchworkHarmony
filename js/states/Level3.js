@@ -6,6 +6,8 @@ Level3.prototype = {
 		this.levelScale = 0.6;
 		self = this;
 		this.bgmOn = bgmOn;
+		this.playerCanMove = true;
+		this.keySolved = true;
 	},
 	create: function() {
 		this.bg = game.add.image(0, 0, 'bg3');

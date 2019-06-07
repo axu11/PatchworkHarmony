@@ -8,6 +8,8 @@ Level2.prototype = {
 		this.levelScale = 0.45;
 		self = this;
 		this.bgmOn = bgmOn;
+		this.playerCanMove = true;
+		this.keySolved = true;
 	},
 
 	create: function() {

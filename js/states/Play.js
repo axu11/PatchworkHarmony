@@ -6,6 +6,8 @@ Play.prototype = {
 		numPlatforms = 0;
 		reloadOnGround = 0;
 		self = this;
+		this.playerCanMove = true;
+		this.keySolved = true;
 	},
 	
 	create: function() {

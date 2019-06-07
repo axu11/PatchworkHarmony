@@ -8,6 +8,9 @@ Level5.prototype = {
 		inElevator = false;
 		this.levelScale = 1.0;
 		this.timer = 0;
+		this.lockDown = false;
+		this.playerCanMove = true;
+		this.keySolved = false;
 	},
 	create: function() {
 		/***** BG, BGM, AND SOUND EFFECTS *****/
@@ -26,9 +29,29 @@ Level5.prototype = {
 		this.platform3audio = game.add.audio('platform3audio');
 		this.platform4audio = game.add.audio('platform4audio');
 	
-		this.key1 = game.add.sprite(-1000, -1000, 'assets', 'box');
-		this.key2 = game.add.sprite(-1000, -1000, 'assets', 'box');
-		this.key3 = game.add.sprite(-1000, -1000, 'assets', 'box');
+		this.key1 = game.add.sprite(1125, 340, 'assets', 'music-block');
+		this.key1.anchor.set(0.5);
+		this.key1.scale.set(0.33 * this.levelScale);
+		this.key1.alpha = 0.5;
+		this.key1Lock = false;
+
+		this.key2 = game.add.sprite(1250, 450, 'assets', 'music-block');
+		this.key2.anchor.set(0.5);
+		this.key2.scale.set(0.33 * this.levelScale);
+		this.key2.alpha = 0.5;
+		this.key2Lock = false;
+
+		this.key3 = game.add.sprite(1000, 450, 'assets', 'music-block');
+		this.key3.anchor.set(0.5);
+		this.key3.scale.set(0.33 * this.levelScale);
+		this.key3.alpha = 0.5;
+		this.key3Lock = false;
+
+		this.keyLock = game.add.sprite(850, 250, 'lvl2', 'clocktower');
+		this.keyLock.scale.set(0.8);
+		this.keyLock.anchor.setTo(0.5, 1);
+		game.physics.arcade.enable(this.keyLock);
+		this.keyLock.body.immovable = true;
 
 		/***** GROUPS AND INVISIBLE BOUNDARIES *****/
 		// Create elevators group
@@ -109,7 +132,7 @@ Level5.prototype = {
 
 		/***** PLAYER SPRITE *****/ 
 		//this.players = game.add.group();
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 1215, 485, this.levelScale); // -800
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 415, 485, this.levelScale); // -800
 		this.player.enableBody = true;
 		game.add.existing(this.player);
 
@@ -134,9 +157,27 @@ Level5.prototype = {
 		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); // player vs created platforms
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
+		this.hitKeyLock = game.physics.arcade.collide(this.player, this.keyLock); // player vs keyLock
+		this.boxHitKeyLock = game.physics.arcade.collide(this.box, this.keyLock); // box vs keyLock
 		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
 		game.physics.arcade.overlap(this.player, this.elevator, activateElevatorUp, null, this);
 
+
+		if(!this.lockDown && this.player.x > 1200) {
+			if(this.keyLock.y < 550) {
+				this.playerCanMove = false;
+				this.keyLock.y += 10;
+			}
+			else {
+				this.lockDown = true;
+				this.playerCanMove = true;
+			}
+		}
+		if(this.key1Lock && this.key2Lock && this.key3Lock && this.lockDown) {
+			this.keySolved = true;
+			if(this.keyLock.y > 250) 
+				this.keyLock.y -= 10;
+		}
 		/***** BOX STUFF *****/
 		if(!inElevator){
 			this.box.body.velocity.x = 0; // Box won't glide when pushed by player
