@@ -36,5 +36,5 @@ Intro.prototype = {
 
 function transitionToTutorial(){
 	this.bgm.destroy();
-	game.state.start('Play');
+	game.state.start('Play', true, false, 0);
 }

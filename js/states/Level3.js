@@ -8,6 +8,7 @@ Level3.prototype = {
 		this.bgmOn = bgmOn;
 		this.playerCanMove = true;
 		this.keySolved = true;
+		this.carryingPlatform = false;
 	},
 	create: function() {
 		this.bg = game.add.image(0, 0, 'bg3');
@@ -64,7 +65,7 @@ Level3.prototype = {
 		this.secondRooftop.body.immovable = true;
 
 		// big ass tower
-		this.library = platforms.create(600, 300, 'library');
+		this.library = platforms.create(600, 250, 'library');
 		this.library.scale.setTo(1, 1);
 		game.physics.arcade.enable(this.library);
 		this.library.body.setSize(200, 200, 0, 170);
@@ -81,7 +82,7 @@ Level3.prototype = {
 		this.box = game.add.sprite(350, 250, 'assets','box');
 		game.physics.arcade.enable(this.box);
 		this.box.anchor.set(0.50);
-		this.box.scale.set(0.75 * this.levelScale);
+		this.box.scale.set(0.2 * this.levelScale);
 		this.box.body.collideWorldBounds = false;
 		this.box.body.gravity.y = 300; // Has gravity while not held by player
 		this.box.body.drag = 0.5;
@@ -104,13 +105,10 @@ Level3.prototype = {
 		this.carryDroppedPlatform = game.physics.arcade.collide(this.droppedPlatform, this.createdPlatforms);   // dropped vs  created platforms
 		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
 
-		if(this.carryDroppedPlatform){
-			console.log('hit');
+		if(this.carryDroppedPlatform)
 			this.droppingPlatform = false;
-		}
-		else {
+		else 
 			this.droppingPlatform = true;
-		}
 
 		// reset state when player falls
 		if(this.player.y + this.player.height/2 >= this.world.height - 1) {			
