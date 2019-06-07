@@ -373,23 +373,19 @@ Level4.prototype = {
 
 			// When holding the box...
 			if(this.attached) {
-				// When facing right, the box moves immediately to the player's right
 				this.box.body.checkCollision.none = true;
-				if(this.player.facing == "RIGHT") { 
-					this.box.x = this.player.x + this.player.width/2 + this.box.width/2 + 1;
+				// Box moves where player is facing
+				if(this.player.facing == "RIGHT") {
+					this.box.x = this.player.x + this.player.width/2 + this.box.width/2 - (37*this.levelScale);
 				}
-
-				// When facing left, the box moves immediately to the player's left
-				else{ 
-					this.box.x = this.player.x - this.player.width/2 - this.box.width/2 - 1;	
+				else {
+					this.box.x = this.player.x - this.player.width/2 - this.box.width/2 + (30*this.levelScale);
 				}
-
-				this.box.y = this.player.y;	 // the box is off the ground and with the player
+				this.box.y = this.player.y + (17*this.levelScale);	 // the box is off the ground and with the player
 				this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
 				// Spawn platform directly under by pressing SPACEBAR
 				if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
-
 					// Kills all current sounds set to play before playing the music note sounds in order
 					game.time.events.removeAll();
 					game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
@@ -397,15 +393,12 @@ Level4.prototype = {
 					game.time.events.add(Phaser.Timer.SECOND * 1.0, platformSound3, this);
 					game.time.events.add(Phaser.Timer.SECOND * 1.5, platformSound4, this);
 
-					// Creates the music note block
 					this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
 					this.createdPlatforms.add(this.createdPlatform); 
 					game.physics.arcade.enable(this.createdPlatform);
-					this.createdPlatform.scale.set(0.33);
 					this.createdPlatform.body.checkCollision.down = false;
 					this.createdPlatform.body.checkCollision.left = false;
 					this.createdPlatform.body.checkCollision.right = false;
-					// this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
 					this.createdPlatform.body.immovable = true;
 					numPlatforms--;
 				}

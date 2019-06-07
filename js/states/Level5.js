@@ -26,6 +26,9 @@ Level5.prototype = {
 		this.platform3audio = game.add.audio('platform3audio');
 		this.platform4audio = game.add.audio('platform4audio');
 	
+		this.key1 = game.add.sprite(-1000, -1000, 'assets', 'box');
+		this.key2 = game.add.sprite(-1000, -1000, 'assets', 'box');
+		this.key3 = game.add.sprite(-1000, -1000, 'assets', 'box');
 
 		/***** GROUPS AND INVISIBLE BOUNDARIES *****/
 		// Create elevators group
@@ -36,7 +39,7 @@ Level5.prototype = {
 		platforms = game.add.group();
 		platforms.enableBody = true;
 
-		//Create createdPlatforms group
+		//Create createdPlatforms group 
 		this.createdPlatforms = game.add.group();
 		this.createdPlatforms.enableBody = true;
 
@@ -137,18 +140,15 @@ Level5.prototype = {
 
 		// When holding the box...
 		if(this.attached) {
-			// When facing right, the box moves immediately to the player's right
 			this.box.body.checkCollision.none = true;
-			if(this.player.facing == "RIGHT") { 
-				this.box.x = this.player.x + this.player.width/2 + this.box.width/2 + 1;
-			}
 
-			// When facing left, the box moves immediately to the player's left
-			else{ 
-				this.box.x = this.player.x - this.player.width/2 - this.box.width/2 - 1;	
-			}
+			// Box moves where player is facing
+			if(this.player.facing == "RIGHT") 
+				this.box.x = this.player.x + this.player.width/2 + this.box.width/2 - (37*this.levelScale);
+			else 
+				this.box.x = this.player.x - this.player.width/2 - this.box.width/2 + (30*this.levelScale);
 
-			this.box.y = this.player.y;	 // the box is off the ground and with the player
+			this.box.y = this.player.y + (17*this.levelScale);	 // the box is off the ground and with the player
 			this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
@@ -161,7 +161,6 @@ Level5.prototype = {
 				this.createdPlatform.body.checkCollision.down = false;
 				this.createdPlatform.body.checkCollision.left = false;
 				this.createdPlatform.body.checkCollision.right = false;
-				this.createdPlatform.body.setSize(this.createdPlatform.body.width*10 - 80, this.createdPlatform.body.height*10 - 200, this.createdPlatform.body.width/2 , this.createdPlatform.body.height/2 + 45);
 				this.createdPlatform.body.immovable = true;
 				numPlatforms--;
 			}
@@ -177,14 +176,11 @@ Level5.prototype = {
 		else {
 			this.box.body.gravity.y = 300;	// Box has gravity, will fall
 
-			// When picked up from left of box...
-			if(game.input.keyboard.addKey(this.player.facing == 'RIGHT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x + this.player.width/2) - (this.box.x - this.box.width/2)) <= 5) {
+			// Pick up box
+			if(game.input.keyboard.addKey(this.player.facing == 'RIGHT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x + this.player.width/2) - (this.box.x - this.box.width/2)) <= 5) 
 				this.attached = true;
-			}
-			// When picked up from right of box... 
-			if(game.input.keyboard.addKey(this.player.facing == 'LEFT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x - this.player.width/2) - (this.box.x + this.box.width/2)) <= 5) {
+			else if(game.input.keyboard.addKey(this.player.facing == 'LEFT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x - this.player.width/2) - (this.box.x + this.box.width/2)) <= 5) 
 				this.attached = true;
-			}
 		}
 
 		// numPlatforms doesn't refresh until the player hits the ground

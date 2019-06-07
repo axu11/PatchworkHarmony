@@ -1,17 +1,21 @@
 var Level3 = function(game) {};
 Level3.prototype = {
-	init: function() {
+	init: function(bgmOn) {
 		numPlatforms = 2;
 		reloadOnGround = 0;
 		this.levelScale = 0.6;
 		self = this;
+		this.bgmOn = bgmOn;
 	},
 	create: function() {
 		this.bg = game.add.image(0, 0, 'bg3');
 
 		// Create bgm for game, looped and played
-		this.bgm = game.add.audio('lvl2', 0.25, true);
-		this.bgm.play();
+		if(this.bgmOn == false) {
+			this.bgm = game.add.audio('lvl2', 0.25, true);
+			this.bgm.play();
+			this.bgmOn = true;
+		}
 
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
@@ -107,11 +111,8 @@ Level3.prototype = {
 		}
 
 		// reset state when player falls
-		if(this.player.y + this.player.height/2 >= this.world.height - 1) {
-			// stop music
-			this.bgm.stop();
-			
-			game.state.start('Level3');
+		if(this.player.y + this.player.height/2 >= this.world.height - 1) {			
+			game.state.start('Level3', true, false, true);
 		}
 
 		/***** BOX STUFF *****/
@@ -119,18 +120,15 @@ Level3.prototype = {
 
 		// When holding the box...
 		if(this.attached) {
-			// When facing right, the box moves immediately to the player's right
 			this.box.body.checkCollision.none = true;
-			if(this.player.facing == "RIGHT") { 
-				this.box.x = this.player.x + this.player.width/2 + this.box.width/2 + 1;
-			}
 
-			// When facing left, the box moves immediately to the player's left
-			else{ 
-				this.box.x = this.player.x - this.player.width/2 - this.box.width/2 - 1;	
-			}
+			// Box moves where player is facing
+			if(this.player.facing == "RIGHT") 
+				this.box.x = this.player.x + this.player.width/2 + this.box.width/2 - (37*this.levelScale);
+			else 
+				this.box.x = this.player.x - this.player.width/2 - this.box.width/2 + (30*this.levelScale);
 
-			this.box.y = this.player.y;	 // the box is off the ground and with the player
+			this.box.y = this.player.y + (17*this.levelScale);	 // the box is off the ground and with the player
 			this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
@@ -158,14 +156,11 @@ Level3.prototype = {
 		else {
 			this.box.body.gravity.y = 300;	// Box has gravity, will fall
 
-			// When picked up from left of box...
-			if(game.input.keyboard.addKey(this.player.facing == 'RIGHT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x + this.player.width/2) - (this.box.x - this.box.width/2)) <= 5) {
+			// Pick up box
+			if(game.input.keyboard.addKey(this.player.facing == 'RIGHT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x + this.player.width/2) - (this.box.x - this.box.width/2)) <= 5) 
 				this.attached = true;
-			}
-			// When picked up from right of box... 
-			if(game.input.keyboard.addKey(this.player.facing == 'LEFT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x - this.player.width/2) - (this.box.x + this.box.width/2)) <= 5) {
+			else if(game.input.keyboard.addKey(this.player.facing == 'LEFT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x - this.player.width/2) - (this.box.x + this.box.width/2)) <= 5) 
 				this.attached = true;
-			}
 		}
 
 		// numPlatforms doesn't refresh until the player hits the ground

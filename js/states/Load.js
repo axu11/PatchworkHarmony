@@ -60,6 +60,7 @@ Load.prototype = {
 		game.load.audio('collision', 'audio/ogg/collision.ogg');
 		game.load.audio('jump', 'audio/ogg/jump.ogg');
 		game.load.audio('switch-trigger', 'audio/ogg/switch-trigger.ogg');
+		game.load.audio('trampoline', 'audio/ogg/trampoline.ogg');
 	},
 
 	create: function() {
