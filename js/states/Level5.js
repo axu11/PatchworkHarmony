@@ -3,26 +3,38 @@ Level5.prototype = {
 	init: function() {
 		numPlatforms = 2;
 		reloadOnGround = 0;
-		this.levelScale = 1.0;
 		self = this;
-		inElevator = false;
-		traveling = false;	
 		level = 5;
-		timer = 0;
+		inElevator = false;
+		this.levelScale = 1.0;
+		this.timer = 0;
 	},
 	create: function() {
-		this.bg0 = game.add.image(0, 0, 'bg0');
-		this.bg1 = game.add.image(800, 0, 'bg1');
+		/***** BG, BGM, AND SOUND EFFECTS *****/
+		// Create backgrounds for top floor of the library level, set bounds to image resolution (1600 x 600)
+		this.bg0 = game.add.image(0, 0, 'lvl3-bg', 'bg5');   // Background 5 (elevator bottom floor)
+		this.bg1 = game.add.image(800, 0, 'lvl3-bg', 'bg9'); // Background 9 (third gear and platform keys)
 		game.world.setBounds(0, 0, 1600, this.bg1.height);
 
 		// Create bgm for game, looped and played
-		this.bgm = game.add.audio('bgm', 0.1, true);
+		this.bgm = game.add.audio('lvl1', 0.1, true);
+		this.bgm.play();
+
+		// Create sound effects for when a music block platform is created
+		this.platform1audio = game.add.audio('platform1audio');
+		this.platform2audio = game.add.audio('platform2audio');
+		this.platform3audio = game.add.audio('platform3audio');
+		this.platform4audio = game.add.audio('platform4audio');
 	
 		this.key1 = game.add.sprite(-1000, -1000, 'assets', 'box');
 		this.key2 = game.add.sprite(-1000, -1000, 'assets', 'box');
 		this.key3 = game.add.sprite(-1000, -1000, 'assets', 'box');
 
-		/***** PLATFORMS *****/
+		/***** GROUPS AND INVISIBLE BOUNDARIES *****/
+		// Create elevators group
+		this.elevators = game.add.group();
+		this.elevators.enableBody = true;
+
 		// Create platforms group
 		platforms = game.add.group();
 		platforms.enableBody = true;
@@ -31,13 +43,22 @@ Level5.prototype = {
 		this.createdPlatforms = game.add.group();
 		this.createdPlatforms.enableBody = true;
 
-		// Create invisible ground platform for player to stand on (both scenes)
-		this.ground = platforms.create(-1600, 550, 'atlas', 'sky'); 
-		this.ground.scale.setTo(25, 1);
+		// Create invisible ground platform for player to stand on, extends both four bgs
+		this.ground = platforms.create(0, 550, 'atlas', 'sky'); 
+		this.ground.scale.setTo(12.5, 1);
 		game.physics.arcade.enable(this.ground);
 		this.ground.body.immovable = true;
 
-		this.elevator = platforms.create(350, 380, 'lvl3', 'elevator3'); 
+		// Create invisible ceiling platform for player to hit their little heads on, extends both bgs
+		this.ceiling = platforms.create(0, 0, 'atlas', 'sky'); 
+		this.ceiling.scale.setTo(12.5, 0.4);
+		game.physics.arcade.enable(this.ceiling);
+		this.ceiling.body.immovable = true;
+		this.ceiling.visible = false;
+
+		/***** ELEVATOR ROOM 2 (BG5) *****/
+		// Creates an elevator that brings player up to top floor, starts open and powered 
+		this.elevator = this.elevators.create(350, 380, 'lvl3', 'elevator3'); 
 		this.elevator.scale.setTo(0.4, 0.4);
 		game.physics.arcade.enable(this.elevator);
 		this.elevator.body.immovable = true;
@@ -46,18 +67,13 @@ Level5.prototype = {
 	    this.elevator.body.checkCollision.left = false;
 	    this.elevator.body.checkCollision.right = false;
 
-		// Library1 setup
-		this.ceiling1 = platforms.create(0, 0, 'atlas', 'sky'); 
-		this.ceiling1.scale.setTo(2.5, 0.5);
-		game.physics.arcade.enable(this.ceiling1);
-		this.ceiling1.body.immovable = true;
-		//this.ground.visible = false;
+	    // Creates an invisible leftmost wall 
+		this.leftWall = platforms.create(0, 0, 'lvl3', 'bookshelf1'); 
+		this.leftWall.scale.setTo(0.5, 1.5);
+		game.physics.arcade.enable(this.leftWall);
+		this.leftWall.body.immovable = true;
+		this.leftWall.alpha = 0;
 
-		this.ceiling2 = platforms.create(480, 0, 'atlas', 'sky'); 
-		this.ceiling2.scale.setTo(2.5, 0.5);
-		game.physics.arcade.enable(this.ceiling2);
-		this.ceiling2.body.immovable = true;
-		//this.ground.visible = false;
 
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
