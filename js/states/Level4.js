@@ -24,7 +24,7 @@ Level4.prototype = {
 		game.world.setBounds(-1600, 0, 3200, this.bg1.height);
 
 		// Create bgm for game, looped and played
-		this.bgm = game.add.audio('lvl1', 0.1, true);
+		this.bgm = game.add.audio('lvl1', 0.5, true);
 		this.bgm.play();
 
 		// Create sound effects for when a music block platform is created
@@ -124,19 +124,19 @@ Level4.prototype = {
 		game.physics.arcade.enable(this.elevatorPlatform);
 		this.elevatorPlatform.body.immovable = true;
 
-		// Creates the left bookshelf that goes up when the switch is activated 
-		this.shiftingWall1 = platforms.create(0, 50, 'lvl3', 'bookshelf1'); 
-		this.shiftingWall1.scale.setTo(1, 1);
-		game.physics.arcade.enable(this.shiftingWall1);
-		this.shiftingWall1.body.immovable = true;
+		if(!elevatorActivated){
+			// Creates the left bookshelf that goes up when the switch is activated 
+			this.shiftingWall1 = platforms.create(0, 50, 'lvl3', 'bookshelf1'); 
+			this.shiftingWall1.scale.setTo(1, 1);
+			game.physics.arcade.enable(this.shiftingWall1);
+			this.shiftingWall1.body.immovable = true;
+		}
 
 		// Creates the right bookshelf that goes up last gear is obtained 
-		this.shiftingWall2 = platforms.create(700, 50, 'lvl3', 'bookshelf2'); 
-		this.shiftingWall2.scale.setTo(1, 1);
-		game.physics.arcade.enable(this.shiftingWall2);
-		this.shiftingWall2.body.immovable = true;
-
-		
+		// this.shiftingWall2 = platforms.create(700, 50, 'lvl3', 'bookshelf2'); 
+		// this.shiftingWall2.scale.setTo(1, 1);
+		// game.physics.arcade.enable(this.shiftingWall2);
+		// this.shiftingWall2.body.immovable = true;		
 
 		/***** FLYING BOOKS ROOM (BG1) *****/
 		this.bookshelf = platforms.create(-800, 260, 'lvl3', 'bookshelf3'); 
@@ -235,7 +235,6 @@ Level4.prototype = {
 		this.keyLock.scale.set(0.8);
 		this.keyLock.anchor.setTo(0.5, 1);
 
-
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
 		this.number0 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number0');
@@ -255,9 +254,16 @@ Level4.prototype = {
 		this.number4.fixedToCamera = true;
 
 		/***** PLAYER SPRITE *****/ 
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 415, 100, this.levelScale);
-		this.player.enableBody = true;
-		game.add.existing(this.player);
+		if(!elevatorActivated){
+			this.player = new Patches(game, 'patchesAtlas2', 'right1', 415, 100, this.levelScale);
+			this.player.enableBody = true;
+			game.add.existing(this.player);
+		}
+		else{
+			this.player = new Patches(game, 'patchesAtlas2', 'right1', 415, 465, this.levelScale);
+			this.player.enableBody = true;
+			game.add.existing(this.player);
+		}
 
 		/***** MUSIC BOX *****/
 		this.box = game.add.sprite(350, 250, 'assets','box');
@@ -280,6 +286,7 @@ Level4.prototype = {
 		//console.log(this.leverHandle.angle);
 		//console.log(this.player.x);
 		//console.log(elevatorActivated);
+		//console.log(this.player.body.touching.down && elevatorActivated && this.attached)
 		//game.debug.body(this.elevatorPlatform);
 		//game.debug.body(this.ground);
 		//game.debug.body(this.shiftingWall1);
@@ -359,7 +366,7 @@ Level4.prototype = {
 					this.shiftingWall1.y -= 10;
 				}
 			}
-			else{
+			else if(!this.switchPressed && !elevatorActivated){
 				if(this.shiftingWall1.y < 50){
 					this.shiftingWall1.y += 10;
 				}
@@ -400,6 +407,7 @@ Level4.prototype = {
 					this.createdPlatform.body.checkCollision.left = false;
 					this.createdPlatform.body.checkCollision.right = false;
 					this.createdPlatform.body.immovable = true;
+					this.createdPlatform.scale.setTo(0.33);
 					numPlatforms--;
 				}
 
@@ -540,9 +548,12 @@ Level4.prototype = {
 			}
 		}
 
-		this.switchHolder.body.velocity.x = this.slideAway;
-		this.switch.body.velocity.x = this.slideAway;
-		this.activatedPlatform.body.velocity.x = this.slideAway;
+		if(!elevatorActivated){
+			this.switchHolder.body.velocity.x = this.slideAway;
+			this.switch.body.velocity.x = this.slideAway;
+			this.activatedPlatform.body.velocity.x = this.slideAway;
+		}
+		
 
 		// If the player is in the elevator (called from collisions above), then player moves to bottom floor
 		if(inElevator){
@@ -603,18 +614,18 @@ Level4.prototype = {
 	},
 
 	render: function() {
-		game.debug.cameraInfo(game.camera, 32, 32);
+		//game.debug.cameraInfo(game.camera, 32, 32);
 		//game.debug.rectangle({x:game.camera.bounds.x, y:game.camera.bounds.y, width:game.camera.bounds.width, height:game.camera.bounds.height});
 	},
 
 	checkCamBounds: function() {
 		// some funky, funky logic to check camera bounds for player movement
-		if(this.player.x + Math.abs(this.player.width/2) > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
+		if(this.player.x  > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
 			// move camera, then player
 			game.camera.x += game.width;
 			this.player.x = game.camera.x + Math.abs(this.player.width/2);	
 		} 
-		else if(this.player.x - Math.abs(this.player.width/2) < game.camera.x && !this.player.body.blocked.left && this.player.facing === "LEFT") {
+		else if(this.player.x  < game.camera.x && !this.player.body.blocked.left && this.player.facing === "LEFT") {
 		 	// move camera, then player
 		 	game.camera.x -= game.width;
 		 	this.player.x = game.camera.x + game.width - Math.abs(this.player.width/2);	
@@ -681,7 +692,6 @@ function activateElevatorDown(Patches, elevator){
 			}
 		}
 	}
-	
 }
 
 // Function for turning on the elevator initially
@@ -710,7 +720,6 @@ function dropBox(){
 }
 
 function boxMagicTrick(){
-	console.log('box');
 	this.box.destroy();
 	this.box = game.add.sprite(650, 500, 'assets','box');
 	game.physics.arcade.enable(this.box);
