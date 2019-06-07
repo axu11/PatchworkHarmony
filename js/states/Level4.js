@@ -12,6 +12,7 @@ Level4.prototype = {
 		this.holdingSpring = false;
 		this.falling = false;		
 		this.timer = 0;
+		this.slideAway = 0;
 	},
 	create: function() {
 		/***** BG, BGM, AND SOUND EFFECTS *****/
@@ -83,8 +84,8 @@ Level4.prototype = {
 		
 		// If global var elevatorActivated, then always create the elevator sprite as powered and open instead of unpowered and closed
 		if(elevatorActivated){
-			this.elevator = this.elevators.create(340, 365, 'lvl3', 'elevator3'); 
-			this.elevator.scale.setTo(0.4, 0.4);
+			this.elevator = this.elevators.create(310, 320, 'lvl3', 'elevator3'); 
+			this.elevator.scale.setTo(0.5);
 			game.physics.arcade.enable(this.elevator);
 			this.elevator.body.immovable = true;
 			this.elevator.body.checkCollision.up = false;
@@ -94,8 +95,8 @@ Level4.prototype = {
 		}
 
 		if(!elevatorActivated) {
-			this.elevator = this.elevators.create(340, 365, 'lvl3', 'elevator1'); 
-			this.elevator.scale.setTo(0.4, 0.4);
+			this.elevator = this.elevators.create(310, 320, 'lvl3', 'elevator1'); 
+			this.elevator.scale.setTo(0.5);
 			game.physics.arcade.enable(this.elevator);
 			this.elevator.body.immovable = true;
 			this.elevator.body.checkCollision.up = false;
@@ -278,6 +279,7 @@ Level4.prototype = {
 		//console.log(bookTop);
 		//console.log(this.leverHandle.angle);
 		//console.log(this.player.x);
+		//console.log(elevatorActivated);
 		//game.debug.body(this.elevatorPlatform);
 		//game.debug.body(this.ground);
 		//game.debug.body(this.shiftingWall1);
@@ -287,6 +289,12 @@ Level4.prototype = {
 		// CheckCamBounds will be disabled while the panning process is occuring
 		if(!leverActivated){
 			this.checkCamBounds();			
+		}
+
+		if(game.input.keyboard.addKey(Phaser.KeyCode.Q).justPressed()){
+			game.time.events.add(Phaser.Timer.SECOND * 1, activateElevator, this);
+			game.time.events.add(Phaser.Timer.SECOND * 1, dropBox, this);
+
 		}
 
 		/***** COLLISIONS *****/
@@ -526,6 +534,7 @@ Level4.prototype = {
 				game.camera.x += 16;
 				if(game.camera.x == 0) {
 					game.time.events.add(Phaser.Timer.SECOND * 1, activateElevator, this);
+					game.time.events.add(Phaser.Timer.SECOND * 1, dropBox, this);			
 				}
 			}
 			else if(elevatorActivated){
@@ -537,6 +546,10 @@ Level4.prototype = {
 				}
 			}
 		}
+
+		this.switchHolder.body.velocity.x = this.slideAway;
+		this.switch.body.velocity.x = this.slideAway;
+		this.activatedPlatform.body.velocity.x = this.slideAway;
 
 		// If the player is in the elevator (called from collisions above), then player moves to bottom floor
 		if(inElevator){
@@ -654,7 +667,7 @@ function pullLever(){
 function activateElevatorDown(Patches, elevator){
 	if(!inElevator){
 		// When spacebar pressed and player is standing
-		if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.player.body.touching.down && elevatorActivated){
+		if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.player.body.touching.down && elevatorActivated && this.attached){
 			// Puts player in middle of elevator
 			this.player.x = 405;
 		    this.player.y = 470;	
@@ -666,9 +679,9 @@ function activateElevatorDown(Patches, elevator){
 			this.elevators.removeAll(true);
 
 			// Creates a new elevator sprite with its doors closed, but active
-			this.closedElevator = this.elevators.create(340, 365, 'lvl3', 'elevator2'); 
-			this.closedElevator.scale.setTo(0.4, 0.4);
-			
+			this.closedElevator = this.elevators.create(310, 320, 'lvl3', 'elevator2'); 
+			this.closedElevator.scale.setTo(0.5);
+
 			// Fade out effect
 			if(inElevator){
 				game.camera.fade(0x000000, 4000);
@@ -684,8 +697,8 @@ function activateElevator(){
 	this.elevators.removeAll(true);
 
 	// Creates a new elevator sprite with its doors open and active
-	this.activatedElevator = this.elevators.create(350, 380, 'lvl3', 'elevator3'); 
-	this.activatedElevator.scale.setTo(0.4, 0.4);
+	this.activatedElevator = this.elevators.create(310, 320, 'lvl3', 'elevator3'); 
+	this.activatedElevator.scale.setTo(0.5);
 	game.physics.arcade.enable(this.activatedElevator);
 	this.activatedElevator.body.immovable = true;
 	this.activatedElevator.body.checkCollision.up = false;
@@ -696,6 +709,24 @@ function activateElevator(){
 
     // After one second, move on
 	game.time.events.add(Phaser.Timer.SECOND * 1, oneSecond, this);
+}
+
+function dropBox(){
+	this.slideAway = 100;
+	game.time.events.add(Phaser.Timer.SECOND * 2, boxMagicTrick, this);
+}
+
+function boxMagicTrick(){
+	console.log('box');
+	this.box.destroy();
+	this.box = game.add.sprite(650, 500, 'assets','box');
+	game.physics.arcade.enable(this.box);
+	this.box.anchor.set(0.50);
+	this.box.scale.set(0.15 * this.levelScale);
+	this.box.body.collideWorldBounds = false;
+	this.box.body.gravity.y = 300; 
+	this.box.body.drag = 0.5;
+	this.attached = false; 
 }
 
 // Function for setting global var "elevatorActivated" to true
