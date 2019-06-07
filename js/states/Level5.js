@@ -1,7 +1,7 @@
 var Level5 = function(game) {};
 Level5.prototype = {
-	init: function() {
-		numPlatforms = 2;
+	init: function(numPlatforms) {
+		this.numPlatforms = numPlatforms;
 		reloadOnGround = 0;
 		self = this;
 		level = 5;
@@ -196,7 +196,7 @@ Level5.prototype = {
 				this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
 				// Spawn platform directly under by pressing SPACEBAR
-				if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
+				if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0) {
 					// Kills all current sounds set to play before playing the music note sounds in order
 					game.time.events.removeAll();
 					game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
@@ -212,7 +212,7 @@ Level5.prototype = {
 					this.createdPlatform.body.checkCollision.right = false;
 					this.createdPlatform.body.immovable = true;
 					this.createdPlatform.scale.setTo(0.33);
-					numPlatforms--;
+					this.numPlatforms--;
 				}
 
 				// Drop the box by pressing SHIFT
@@ -237,36 +237,36 @@ Level5.prototype = {
 			}
 		}
 
-		// numPlatforms doesn't refresh until the player hits the ground
+		// this.numPlatforms doesn't refresh until the player hits the ground
 		if(!inElevator){
 			if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
-				numPlatforms++;
+				this.numPlatforms++;
 				reloadOnGround--;	
 			}
 		}
-		// Top-left number updates with numPlatforms
-		if(numPlatforms == 0) {
+		// Top-left number updates with this.numPlatforms
+		if(this.numPlatforms == 0) {
 			this.number0.scale.set(0.5);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 1) {
+		else if(this.numPlatforms == 1) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0.5);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 2) {
+		else if(this.numPlatforms == 2) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0.5);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 3) {
+		else if(this.numPlatforms == 3) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
@@ -285,7 +285,7 @@ Level5.prototype = {
 			this.timer++;
 			if(this.timer >= 120){
 				this.bgm.destroy();
-				game.state.start('Level4');
+				game.state.start('Level4', true, false, this.numPlatforms);
 			}
 		}
 		
@@ -372,7 +372,7 @@ function activateElevatorUp(Patches, elevator){
 // Function for collecting "gears"
 function collectGear(Patches, gear){
 	gear.kill();
-	numPlatforms++;
+	this.numPlatforms++;
 	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
 	this.gearAudio.play();
 }

@@ -25,11 +25,11 @@ MainMenu.prototype = {
 		// if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
 		// 	game.camera.fade(0x000000, 4000);
 		// }
-		// game.state.start('Play');
-			// game.state.start('Level2', true, false, false);
-			// game.state.start('Level3', true, false, false);
-			// game.state.start('Level4');
-			game.state.start('Level5');
+		// game.state.start('Play', true, false, 0);
+			// game.state.start('Level2', true, false, false, 1);
+			// game.state.start('Level3', true, false, false, 2);
+			// game.state.start('Level4', true, false, 2);
+			game.state.start('Level5', true, false, 2);
 	}
 }
 
