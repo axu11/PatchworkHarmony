@@ -2,11 +2,12 @@
 var Level2 = function(game) {};
 Level2.prototype = {
 
-	init: function() {
+	init: function(bgmOn) {
 		numPlatforms = 1;
 		reloadOnGround = 0;
-		this.levelScale = 0.4;
+		this.levelScale = 0.45;
 		self = this;
+		this.bgmOn = bgmOn;
 	},
 
 	create: function() {
@@ -16,10 +17,13 @@ Level2.prototype = {
 		this.bg = game.add.image(0, 0, 'bg2');
 		this.bg2 = game.add.image(800, 0, 'bg3');
 		game.world.setBounds(0, 0, this.bg.width+800, this.bg.height);
-
+		console.log(this.bgmOn);
 		// Create bgm for game, looped and played
-		this.bgm = game.add.audio('lvl2', 0.25, true);
-		this.bgm.play();
+		if(this.bgmOn == false) {
+			this.bgm = game.add.audio('lvl2', 0.25, true);
+			this.bgm.play();
+			this.bgmOn = true;
+		}
 
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
@@ -99,7 +103,7 @@ Level2.prototype = {
 		this.trampolineStand.anchor.setTo(0.5, 0);
 
 		// create bounce sound
-		this.jump = game.add.audio('jump', 0.1, false);
+		this.jump = game.add.audio('trampoline', 0.1, false);
 
 		// Creates a collectible "gear" that will enable player to unlock an ability
 		this.gear = game.add.sprite(100, 100, 'assets', 'gear'); 
@@ -111,7 +115,6 @@ Level2.prototype = {
 		/***** PLAYER SPRITE *****/ 
 		this.players = game.add.group();
 		this.player = new Patches(game, 'patchesAtlas2', 'right1', 100, 450, this.levelScale);
-		//this.player = new Patches(game, 'patchesAtlas2', 'right1', 850, 300, this.levelScale);
 		this.player.enableBody = true;
 		this.players.add(this.player);
 
@@ -119,7 +122,7 @@ Level2.prototype = {
 		this.box = game.add.sprite(350, 250, 'assets','box');
 		game.physics.arcade.enable(this.box);
 		this.box.anchor.set(0.50);
-		this.box.scale.set(0.75 * this.levelScale);
+		this.box.scale.set(0.2 * this.levelScale);
 		this.box.body.collideWorldBounds = false;
 		this.box.body.gravity.y = 300; // Has gravity while not held by player
 		this.box.body.drag = 0.5;
@@ -146,41 +149,31 @@ Level2.prototype = {
 		if((this.player.x + this.player.width/2 >= (this.trampoline.x - this.trampoline.width/2 - 2) && this.player.x - this.player.width/2 <= (this.trampoline.x + this.trampoline.width/2 + 2)) &&
 			(((this.player.y + this.player.height/2) >= (this.trampoline.y - this.trampoline.height - 15)) && this.player.y + this.player.height/2 <= this.trampoline.y - this.trampoline.height + 1)) {
 					this.player.body.bounce.y = 1;
+					// play bounce sound on bounce
+					if(this.hitTrampoline)
+						this.jump.play();
 			}
-		else {
-				this.player.body.bounce.y = 0;
-			}
-
-		// play bounce sound on bounce
-		if(this.hitTrampoline) {
-			this.jump.play();
-		}
+		else 
+			this.player.body.bounce.y = 0;
 
 		// reset state when player falls
-		if(this.player.y + this.player.height/2 >= this.world.height - 1) {
-			// stop music
-			this.bgm.stop();
-
-			game.state.start('Level2');
-		}
-
+		if(this.player.y + this.player.height/2 >= this.world.height - 1) 
+			game.state.start('Level2', true, false, this.bgmOn);
+		
 		/***** BOX STUFF *****/
 		this.box.body.velocity.x = 0; // Box won't glide when pushed by player
 
 		// When holding the box...
 		if(this.attached) {
-			// When facing right, the box moves immediately to the player's right
 			this.box.body.checkCollision.none = true;
-			if(this.player.facing == "RIGHT") { 
-				this.box.x = this.player.x + this.player.width/2 + this.box.width/2 + 1;
-			}
 
-			// When facing left, the box moves immediately to the player's left
-			else{ 
-				this.box.x = this.player.x - this.player.width/2 - this.box.width/2 - 1;	
-			}
+			// Box moves where player is facing
+			if(this.player.facing == "RIGHT") 
+				this.box.x = this.player.x + this.player.width/2 + this.box.width/2 - (37*this.levelScale);
+			else 
+				this.box.x = this.player.x - this.player.width/2 - this.box.width/2 + (30*this.levelScale);
 
-			this.box.y = this.player.y;	 // the box is off the ground and with the player
+			this.box.y = this.player.y + (17*this.levelScale);	 // the box is off the ground and with the player
 			this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
@@ -208,21 +201,19 @@ Level2.prototype = {
 		else {
 			this.box.body.gravity.y = 300;	// Box has gravity, will fall
 
-			// When picked up from left of box...
-			if(game.input.keyboard.addKey(this.player.facing == 'RIGHT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x + this.player.width/2) - (this.box.x - this.box.width/2)) <= 5) {
+			// Pick up box
+			if(game.input.keyboard.addKey(this.player.facing == 'RIGHT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x + this.player.width/2) - (this.box.x - this.box.width/2)) <= 5) 
 				this.attached = true;
-			}
-			// When picked up from right of box... 
-			if(game.input.keyboard.addKey(this.player.facing == 'LEFT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x - this.player.width/2) - (this.box.x + this.box.width/2)) <= 5) {
+			else if(game.input.keyboard.addKey(this.player.facing == 'LEFT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x - this.player.width/2) - (this.box.x + this.box.width/2)) <= 5) 
 				this.attached = true;
-			}
 		}
 
 		// numPlatforms doesn't refresh until the player hits the ground
-			if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform || this.hitTrampoline)) {
-				numPlatforms++;
-				reloadOnGround--;	
-			}
+		if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform || this.hitTrampoline)) {
+			numPlatforms++;
+			reloadOnGround--;	
+		}
+
 		// Top-left number updates with numPlatforms
 		if(numPlatforms == 0) {
 			this.number0.scale.set(0.5);
@@ -272,11 +263,7 @@ Level2.prototype = {
 	if(this.player.x + Math.abs(this.player.width/2) > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
 		// Stop music
 		this.bgm.stop();
-
-		game.state.start('Level3');
-		// move camera, then player
-		// game.camera.x += game.width;
-		// this.player.x = game.camera.x + Math.abs(this.player.width/2);	
+		game.state.start('Level3', true, false, false);	
 	} 
 }
 }

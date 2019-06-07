@@ -41,10 +41,10 @@ Play.prototype = {
 
 		/***** INSTRUCTION TEXT *****/
 		// Create instructions for player movement and pickup, overlaid on screen for now
-		this.moveInstructions = game.add.text(350, 230, 'Use the arrow keys to move and jump!', textStyle);
+		this.moveInstructions = game.add.text(350, 230, 'Use the arrow keys to move and jump!', style2);
 		this.moveInstructions.anchor.set(0.5);
 
-		this.pickupInstrucctions = game.add.text(375, 330, 'Press SHIFT next to the box to pick it up and put it down!', textStyle);
+		this.pickupInstrucctions = game.add.text(375, 330, 'Press SHIFT next to the box to pick it up and put it down!', style2);
 		this.pickupInstrucctions.anchor.set(0.5);
 
 		// Create instructions for collecting the gear and ability gained afterwards (initially invisible)
@@ -166,7 +166,7 @@ Play.prototype = {
 		this.box = game.add.sprite(350, 250, 'assets', 'box');
 		game.physics.arcade.enable(this.box);
 		this.box.anchor.set(0.50);
-		this.box.scale.set(0.75);
+		this.box.scale.set(0.2);
 		this.box.body.collideWorldBounds = true;
 		this.box.body.gravity.y = 300; // Has gravity while not held by player
 		this.box.body.drag = 0.5;
@@ -266,16 +266,12 @@ Play.prototype = {
 
 		// When holding the box...
 		if(this.attached) {
-			// When facing right, the box moves immediately to the player's right
 			this.box.body.checkCollision.none = true;
-			if(this.player.facing == "RIGHT") { 
+			// Box moves where player is facing
+			if(this.player.facing == "RIGHT") 
 				this.box.x = this.player.x + this.player.width/2 + this.box.width/2 - 37;
-			}
-
-			// When facing left, the box moves immediately to the player's left
-			else{ 
-				this.box.x = this.player.x - this.player.width/2 - this.box.width/2 + 30;	
-			}
+			else 
+				this.box.x = this.player.x - this.player.width/2 - this.box.width/2 + 30;
 
 			this.box.y = this.player.y + 17;	 // the box is off the ground and with the player
 			this.box.body.gravity.y = 0;         // box doesn't fall when you're holding it
@@ -360,7 +356,7 @@ Play.prototype = {
 
 		// When player gets to the window, go to level 2 (town scene 1)
 		if(this.player.x > 1400 && this.player.y < 240){
-			game.state.start('Level2');
+			game.state.start('Level2', true, false, false);
 			this.bgm.destroy();
 		}
 
@@ -375,25 +371,11 @@ Play.prototype = {
 
 	checkCamBounds: function() {
 		// some funky, funky logic to check camera bounds for player movement
-		if(this.player.x + Math.abs(this.player.width/2) > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
+		if(this.player.x > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
 			// move camera, then player
 			game.camera.x += game.width;
 			this.player.x = game.camera.x + Math.abs(this.player.width/2);	
 		} 
-		//else if(this.player.x - Math.abs(this.player.width/2) < game.camera.x && !this.player.body.blocked.left && this.player.facing === "LEFT") {
-		// 	// move camera, then player
-		// 	game.camera.x -= game.width;
-		// 	this.player.x = game.camera.x + game.width - Math.abs(this.player.width/2);	
-		// } 
-		// else if(this.player.y + Math.abs(this.player.height/2) > game.height + game.camera.y && !this.player.body.blocked.down /*&& this.player.facing === "DOWN"*/) {
-		// 	// move camera, then player
-		// 	game.camera.y += game.height;
-		// 	this.player.y = game.camera.y + Math.abs(this.player.height/2);	
-		// } else if(this.player.y - Math.abs(this.player.height/2) < game.camera.y && !this.player.body.blocked.up /*&& this.player.facing === "UP"*/) {
-		// 	// move camera, then player
-		// 	game.camera.y -= game.height;
-		// 	this.player.y = game.camera.y + game.height - Math.abs(this.player.height/2);	
-		// }
 	}
 }
 
