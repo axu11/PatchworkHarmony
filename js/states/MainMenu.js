@@ -22,11 +22,12 @@ MainMenu.prototype = {
 	update: function() {
 		// Go to Play state once SPACEBAR pressed
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-			game.camera.fade(0x000000, 4000);
-			// game.state.start('Play');
+			 // game.camera.fade(0x000000, 4000);
+			game.state.start('Play');
 			// game.state.start('Level2', true, false, false);
 			// game.state.start('Level3', true, false, false);
 			// game.state.start('Level4');
+			// this.bgm.destroy();
 			// game.state.start('Level5');
 		}
 	}

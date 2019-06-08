@@ -229,7 +229,7 @@ Level5.prototype = {
 
 		if(inElevator){
 			this.timer++;
-			if(this.timer >= 120){
+			if(this.timer >= 160){
 				this.bgm.destroy();
 				game.state.start('Level4');
 			}
@@ -301,7 +301,9 @@ function activateElevatorUp(Patches, elevator){
 			// Creates a new elevator sprite with its doors closed, but active
 			this.elevator = this.elevators.create(310, 330, 'lvl3', 'elevator2'); 
 			this.elevator.scale.setTo(0.5);
-			
+
+			this.elevator.body.velocity.y = -75;
+
 			// Fade out effect
 			if(inElevator){
 				game.camera.fade(0x000000, 4000);

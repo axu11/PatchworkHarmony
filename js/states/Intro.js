@@ -22,13 +22,20 @@ Intro.prototype = {
 			this.delay = 0;
 			this.currentScene++;
 		}
+		// if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.currentScene == 2 && this.delay > 80) {
+		// 	this.boxScene = game.add.image(0, 0, 'boxscene', 'cutscene1');
+		// 	this.boxScene.animations.add('boxscene', Phaser.Animation.generateFrameNames('boxscene', 'cutscene', 1, 4), 10, true);
+		// 	this.boxScene.animations.play('boxscene');
+		// 	this.delay = 0;
+		// 	this.currentScene++;
+		// }
 
-		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.currentScene == 2 && this.delay > 120) {
+		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.currentScene == 2 && this.delay > 80) {
 			game.add.image(0, 0, 'cutscene3');
 			this.delay = 0;
 			this.currentScene++;
 		}
-		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.currentScene == 3 && this.delay > 120) {
+		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.currentScene == 3 && this.delay > 80) {
 			game.camera.fade(0x000000, 4000);
 		}
 	}

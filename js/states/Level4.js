@@ -6,6 +6,7 @@ Level4.prototype = {
 		self = this;	
 		level = 4;
 		inElevator = false;
+		cutscenePlaying = false;
 		this.levelScale = 1.0;
 		this.bookTop = true;
 		this.bookTop2 = true;
@@ -133,10 +134,10 @@ Level4.prototype = {
 		}
 
 		// Creates the right bookshelf that goes up last gear is obtained 
-		// this.shiftingWall2 = platforms.create(700, 50, 'lvl3', 'bookshelf2'); 
-		// this.shiftingWall2.scale.setTo(1, 1);
-		// game.physics.arcade.enable(this.shiftingWall2);
-		// this.shiftingWall2.body.immovable = true;		
+		this.shiftingWall2 = platforms.create(700, 50, 'lvl3', 'bookshelf2'); 
+		this.shiftingWall2.scale.setTo(1, 1);
+		game.physics.arcade.enable(this.shiftingWall2);
+		this.shiftingWall2.body.immovable = true;		
 
 		/***** FLYING BOOKS ROOM (BG1) *****/
 		this.bookshelf = platforms.create(-800, 260, 'lvl3', 'bookshelf3'); 
@@ -287,6 +288,7 @@ Level4.prototype = {
 		//console.log(this.player.x);
 		//console.log(elevatorActivated);
 		//console.log(this.player.body.touching.down && elevatorActivated && this.attached)
+		console.log(this.box.x + '    ' + this.box.y)
 		//game.debug.body(this.elevatorPlatform);
 		//game.debug.body(this.ground);
 		//game.debug.body(this.shiftingWall1);
@@ -329,7 +331,7 @@ Level4.prototype = {
 			}
 
 			// Switch logic for box pressing down on switch
-			if(this.boxHitSwitch && this.box.x > this.switch.x - this.switch.width/2 && this.box.x < this.switch.x + this.switch.width/2) {
+			if(this.boxHitSwitch && this.box.x + this.box.width/2 > this.switch.x - this.switch.width/2 && this.box.x - this.box.width/2 < this.switch.x + this.switch.width/2) {
 				this.boxOnSwitch = true;
 				this.switchPressed = true;
 			}
@@ -465,6 +467,12 @@ Level4.prototype = {
 			if(this.book2.y <= 200){
 				this.bookTop2 = true;
 			}
+		}
+
+		// reset state when player falls
+		if(this.box.y + this.box.height/2 >= this.world.height - 1) {
+			this.box.x = 650;
+			this.box.y = 400;
 		}
 
 		/***** SPRING STUFF *****/
@@ -686,6 +694,8 @@ function activateElevatorDown(Patches, elevator){
 			this.closedElevator = this.elevators.create(310, 320, 'lvl3', 'elevator2'); 
 			this.closedElevator.scale.setTo(0.5);
 
+			this.closedElevator.body.velocity.y = 75;
+
 			// Fade out effect
 			if(inElevator){
 				game.camera.fade(0x000000, 4000);
@@ -720,13 +730,14 @@ function dropBox(){
 }
 
 function boxMagicTrick(){
-	this.box.destroy();
+	//this.box.destroy();
 	this.box = game.add.sprite(650, 500, 'assets','box');
 	game.physics.arcade.enable(this.box);
 	this.box.anchor.set(0.50);
 	this.box.scale.set(0.15 * this.levelScale);
 	this.box.body.collideWorldBounds = false;
-	this.box.body.gravity.y = 300; 
+	this.box.body.gravity.y = 300;
+	this.box.body.immovable = false; 
 	this.box.body.drag = 0.5;
 	this.attached = false; 
 }
