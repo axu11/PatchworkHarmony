@@ -3,13 +3,14 @@
 // Define global variables to be used in the game
 var numPlatforms = 0;
 var level = 0;
-var bookTop = true;
 var game;
 var self;
 var reloadOnGround = 0;
 var inElevator = false;
 var elevatorActivated = false;
-var traveling = false;
+var leverActivated = false;
+var cutscenePlaying = false;
+
 var style1 = { fontSize: '32px', fill: '#000' };
 var style2 = { fontSize: '16px', fill: '#000' };
 var palette = ['#1B1B3A', '#693668', '#A74482', '#F84AA7', '#FF3562', '#000'];
@@ -42,11 +43,12 @@ window.onload = function() {
 
 	// Define game
 	game = new Phaser.Game(800, 600, Phaser.AUTO, 'myGame');
-	
+
 	// Define states
 	game.state.add('Boot', Boot);
 	game.state.add('Load', Load);
 	game.state.add('MainMenu', MainMenu);
+	game.state.add('Intro', Intro);
 	game.state.add('Play', Play);
 	game.state.add('Level2', Level2);
 	game.state.add('Level3', Level3);

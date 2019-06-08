@@ -2,10 +2,16 @@
 var Play = function(game) {};
 Play.prototype = {
 
-	init: function() {
-		numPlatforms = 0;
+	init: function(numPlatforms) {
+		this.numPlatforms = numPlatforms;
 		reloadOnGround = 0;
 		self = this;
+		this.currentScene = 1;
+		this.delay = 0;
+		this.playScene = false;
+		this.gearInBox = false;
+		this.playerCanMove = true;
+		this.keySolved = true;
 	},
 	
 	create: function() {
@@ -14,12 +20,11 @@ Play.prototype = {
 		// Create backgrounds for both scenes, set bounds to include both bg (1600 x 600)
 		this.bg = game.add.image(0, 0, 'bg0');
 		this.bg2 = game.add.image(800, 0, 'bg1');
-		game.world.setBounds(0, 0, this.bg.width+800, this.bg.height);
+		game.world.setBounds(0, 0, this.bg.width + 800, this.bg.height);
 
 		// Create bgm for game, looped and played
 		this.bgm = game.add.audio('lvl1', 0.25, true);
 		this.bgm.play();
-
 
 		// Create number circle at top left of screen to indicate this.platforms remaining
 		this.numberPosition = 16;
@@ -41,10 +46,10 @@ Play.prototype = {
 
 		/***** INSTRUCTION TEXT *****/
 		// Create instructions for player movement and pickup, overlaid on screen for now
-		this.moveInstructions = game.add.text(350, 230, 'Use the arrow keys to move and jump!', textStyle);
+		this.moveInstructions = game.add.text(350, 230, 'Use the arrow keys to move and jump!', style2);
 		this.moveInstructions.anchor.set(0.5);
 
-		this.pickupInstrucctions = game.add.text(375, 330, 'Press SHIFT next to the box to pick it up and put it down!', textStyle);
+		this.pickupInstrucctions = game.add.text(375, 330, 'Press SHIFT next to the box to pick it up and put it down!', style2);
 		this.pickupInstrucctions.anchor.set(0.5);
 
 		// Create instructions for collecting the gear and ability gained afterwards (initially invisible)
@@ -98,8 +103,17 @@ Play.prototype = {
 		this.wall.alpha = 0;
 		this.wall.body.checkCollision.left = false;
 
+		this.desk = this.platforms.create(30, 400, 'atlas', 'sky');
+		this.desk.scale.setTo(1.20, 1);
+		game.physics.arcade.enable(this.desk);
+		this.desk.body.immovable = true;
+		this.desk.alpha = 0;
+		this.desk.body.checkCollision.down = false;
+		this.desk.body.checkCollision.left = false;
+		this.desk.body.checkCollision.right = false;
+
 		// Create invisible platform on top of drawer, only collides on top (scene 2)
-		this.drawer = this.platforms.create(1020, 400, 'atlas','sky');
+		this.drawer = this.platforms.create(1020, 395, 'atlas','sky');
 		game.physics.arcade.enable(this.drawer);
 		this.drawer.scale.setTo(0.65, 0.075);
 		this.drawer.body.immovable = true;
@@ -142,6 +156,11 @@ Play.prototype = {
 		this.window.scale.setTo(0.5, 0.5);
 		this.window.animations.add('windowBillow', Phaser.Animation.generateFrameNames('windowAni', 'window', 0, 2), 4, true);
 		this.window.animations.play('windowBillow');
+			this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
+
+
+		
+
 
 		// Creates a collectible "gear" that will enable player to unlock an ability
 		this.gear = game.add.sprite(920, 95, 'assets', 'gear'); 
@@ -158,19 +177,24 @@ Play.prototype = {
 		this.switchHolder.body.immovable = true;
 
 		/***** PLAYER SPRITE *****/ 
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 100, 400, 1);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 76, 332, 1);
 		this.player.enableBody = true;
 		game.add.existing(this.player);
 		
 		/***** MUSIC BOX *****/
-		this.box = game.add.sprite(350, 250, 'assets', 'box');
+		this.box = game.add.sprite(148, 382, 'assets', 'box');
 		game.physics.arcade.enable(this.box);
 		this.box.anchor.set(0.50);
-		this.box.scale.set(0.75);
+		this.box.scale.set(0.2);
 		this.box.body.collideWorldBounds = true;
 		this.box.body.gravity.y = 300; // Has gravity while not held by player
 		this.box.body.drag = 0.5;
 		this.attached = false; 	// Initially not picked up by player
+
+		this.boxScene = game.add.sprite(800, 0, 'boxscene', 'cutscene1');
+		this.boxScene.visible = false;
+		this.boxScene.animations.add('boxscene', Phaser.Animation.generateFrameNames('boxscene', 'cutscene', 1, 4), 10, true);
+		this.boxScene.animations.play('boxscene');
 
 	},
 
@@ -183,7 +207,14 @@ Play.prototype = {
 		//game.debug.body(this.activatedPlatform);
 		//game.debug.body(this.drawer);
 		//game.debug.body(this.switch);
-		console.log('reload: ' + reloadOnGround + ' numPlatforms: ' + numPlatforms);
+		//game.debug.body(this.desk);
+		//console.log('reload: ' + reloadOnGround + ' numPlatforms: ' + numPlatforms);
+		//console.log(this.boxScene.visible);
+		//console.log('playscene ' + this.playScene);
+		//console.log('reload: ' + reloadOnGround + ' this.numPlatforms: ' + this.numPlatforms);
+		//console.log(this.player.x + 'and' + this.player.y);
+		//console.log(this.box.x + 'and' + this.box.y);
+
 		this.checkCamBounds(); // Keep checking camera bounds
 
 		/***** COLLISIONS *****/
@@ -193,7 +224,9 @@ Play.prototype = {
 		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches); 					// player vs switch
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, this.platforms); 			    // box vs platforms
 		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches); 					// box vs switch
-		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);				// player vs gear, call collectGear
+		game.physics.arcade.overlap(this.player, this.gear, gearCollect, null, this);				// player vs gear, call collectGear
+		game.physics.arcade.overlap(this.gear, this.box, flyToBox, null, this);				// player vs gear, call collectGear
+
 		
 		/***** SWITCH STUFF *****/
 		// Switch logic for player pressing down on switch 
@@ -266,22 +299,18 @@ Play.prototype = {
 
 		// When holding the box...
 		if(this.attached) {
-			// When facing right, the box moves immediately to the player's right
 			this.box.body.checkCollision.none = true;
-			if(this.player.facing == "RIGHT") { 
+			// Box moves where player is facing
+			if(this.player.facing == "RIGHT") 
 				this.box.x = this.player.x + this.player.width/2 + this.box.width/2 - 37;
-			}
-
-			// When facing left, the box moves immediately to the player's left
-			else{ 
-				this.box.x = this.player.x - this.player.width/2 - this.box.width/2 + 30;	
-			}
+			else 
+				this.box.x = this.player.x - this.player.width/2 - this.box.width/2 + 30;
 
 			this.box.y = this.player.y + 17;	 // the box is off the ground and with the player
 			this.box.body.gravity.y = 0;         // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
-			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
+			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
 				this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30, 1);
@@ -291,12 +320,12 @@ Play.prototype = {
 				this.createdPlatform.body.checkCollision.left = false;
 				this.createdPlatform.body.checkCollision.right = false;
 				this.createdPlatform.body.immovable = true;
-				numPlatforms--;
+				this.numPlatforms--;
 			}
 
-			// numPlatforms doesn't refresh until the player hits the ground
+			// this.numPlatforms doesn't refresh until the player hits the ground
 			if(reloadOnGround > 0 && this.player.body.touching.down && this.hitPlatform) {
-				numPlatforms++;
+				this.numPlatforms++;
 				reloadOnGround--;	
 			}
 
@@ -321,29 +350,44 @@ Play.prototype = {
 			}
 		}
 
-		// Top-left number updates with numPlatforms
-		if(numPlatforms == 0) {
+		if(this.numPlatforms > 0 && this.currentScene == 1 && this.gearInBox){
+			this.boxScene.visible = true;
+		}
+		else{
+			this.boxScene.visible = false;
+		}
+
+		if(this.numPlatforms > 0 && !this.gearInBox){
+			if(this.gear.x < this.box.x)
+				this.gear.x += 5;
+			if(this.gear.y < this.box.y)
+				this.gear.y += 5;
+			game.camera.flash(0xffffff, 1000);
+		}
+
+		// Top-left number updates with this.numPlatforms
+		if(this.numPlatforms == 0) {
 			this.number0.scale.set(0.5);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 1) {
+		else if(this.numPlatforms == 1) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0.5);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 2) {
+		else if(this.numPlatforms == 2) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0.5);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 3) {
+		else if(this.numPlatforms == 3) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
@@ -360,12 +404,19 @@ Play.prototype = {
 
 		// When player gets to the window, go to level 2 (town scene 1)
 		if(this.player.x > 1400 && this.player.y < 240){
-			game.state.start('Level2');
+			game.state.start('Level2', true, false, false, this.numPlatforms);
 			this.bgm.destroy();
 		}
 
 		// Animate Gear
 		this.gear.angle += 1;
+
+		this.delay++;
+		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.currentScene == 1 && this.numPlatforms > 0) {
+			this.boxScene.destroy();
+			this.currentScene++;
+			cutscenePlaying = false;
+		}
 	},
 
 	render: function() {
@@ -375,39 +426,25 @@ Play.prototype = {
 
 	checkCamBounds: function() {
 		// some funky, funky logic to check camera bounds for player movement
-		if(this.player.x + Math.abs(this.player.width/2) > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
+		if(this.player.x > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
 			// move camera, then player
 			game.camera.x += game.width;
 			this.player.x = game.camera.x + Math.abs(this.player.width/2);	
 		} 
-		//else if(this.player.x - Math.abs(this.player.width/2) < game.camera.x && !this.player.body.blocked.left && this.player.facing === "LEFT") {
-		// 	// move camera, then player
-		// 	game.camera.x -= game.width;
-		// 	this.player.x = game.camera.x + game.width - Math.abs(this.player.width/2);	
-		// } 
-		// else if(this.player.y + Math.abs(this.player.height/2) > game.height + game.camera.y && !this.player.body.blocked.down /*&& this.player.facing === "DOWN"*/) {
-		// 	// move camera, then player
-		// 	game.camera.y += game.height;
-		// 	this.player.y = game.camera.y + Math.abs(this.player.height/2);	
-		// } else if(this.player.y - Math.abs(this.player.height/2) < game.camera.y && !this.player.body.blocked.up /*&& this.player.facing === "UP"*/) {
-		// 	// move camera, then player
-		// 	game.camera.y -= game.height;
-		// 	this.player.y = game.camera.y + game.height - Math.abs(this.player.height/2);	
-		// }
 	}
 }
 
 // Function for collecting "gears"
-function collectGear(Patches, gear){
-	console.log("collected");
-	this.gearInstructions.visible = false;
-	this.platformInstructions.visible = true;
-	this.exitInstructions.visible = true;
-	gear.kill();
-	numPlatforms++;
-	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
+function gearCollect(){
+	cutscenePlaying = true;
+	this.numPlatforms = 1;
+	this.delay = 0;
+}
+
+function flyToBox(){
+	this.gearInBox = true;
+	console.log(this.gearInBox);
 	this.gearAudio.play();
-	// this.gearInstructions.visible = false;
-	// this.platformInstructions.visible = true;
-	// this.exitInstructions.visible = true;
+	this.gear.destroy();
+
 }

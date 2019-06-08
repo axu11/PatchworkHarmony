@@ -4,27 +4,37 @@ MainMenu.prototype = {
 	create: function() {
 		// Temp background and placeholder text instructions
 		//game.stage.backgroundColor = "#facade";
-		game.add.image(-800, -800, 'bg');
+		game.add.image(0, 0, 'bg0');
+		this.logo = game.add.image(200, 100, 'logo');
+		this.logo.scale.setTo(0.5);
 		this.bgm = game.add.audio('menu', 0.1, true);
 		this.bgm.play();
-		this.title = game.add.text(game.world.centerX, 200, 'PATCHWORK HARMONY', textStyle2);
-		this.title.anchor.set(0.5);
-		this.description = game.add.text(game.world.centerX, 270, 'You are a toy bunny! Reunite the magic music box with its owner!', textStyle3);
-		this.description.anchor.set(0.5);
-		this.startInstructions = game.add.text(game.world.centerX,300, 'Press SPACEBAR to play!', textStyle3);
+		// this.title = game.add.text(game.world.centerX, 200, 'PATCHWORK HARMONY', textStyle2);
+		// this.title.anchor.set(0.5);
+		// this.description = game.add.text(game.world.centerX, 270, 'You are a toy bunny! Reunite the magic music box with its owner!', textStyle3);
+		// this.description.anchor.set(0.5);
+		this.startInstructions = game.add.text(game.world.centerX, 450, 'Press spacebar to play!', textStyle3);
 		this.startInstructions.anchor.set(0.5);
+
+		// game.camera.onFadeComplete.add(transitionToCutscenes, this);
 	},
 
 	update: function() {
 		// Go to Play state once SPACEBAR pressed
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-			this.bgm.destroy();
-			// game.state.start('Play');
-			// game.state.start('Level2');
-			// game.state.start('Level3');
-			game.state.start('Level4');
-			// game.state.start('Level5');
-
+			// game.camera.fade(0x000000, 4000);
+			// this.bgm.destroy();
+			game.state.start('Play', true, false, 0);
+			// game.state.start('Level2', true, false, false, 1);
+			// game.state.start('Level3', true, false, false, 2);
+			// game.state.start('Level4', true, false, 2);
+			
+			// game.state.start('Level5', true, false, 2);
 		}
 	}
+}
+
+function transitionToCutscenes(){
+	this.bgm.destroy();
+	game.state.start('Intro');
 }

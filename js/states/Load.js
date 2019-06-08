@@ -20,11 +20,16 @@ Load.prototype = {
 
 		// Load all assets, beginning with images and spritesheets, then audio
 		this.load.path = 'assets/';
-		game.load.image('bg', 'img/bg.jpg');
+		game.load.image('logo', 'img/PH-logo.png');
 		game.load.image('bg0', 'img/bg-lvl-0.png');
 		game.load.image('bg1', 'img/bg-lvl-1.png');
 		game.load.image('bg2', 'img/bg-lvl-2.png');
 		game.load.image('bg3', 'img/bg-lvl-3.png');
+		game.load.image('cutscene1', 'img/cutscene1.png');
+		game.load.image('cutscene2', 'img/cutscene2.png');
+		game.load.image('cutscene3', 'img/cutscene3.png');	
+		game.load.image('cutscene5', 'img/cutscene3.png');		
+
 
 		game.load.image('library', 'img/library.png');
 		game.load.image('crane-platform', 'img/crane-platform.png');
@@ -39,6 +44,7 @@ Load.prototype = {
 		this.load.atlas('lvl2', 'img/lvl2-spritesheet.png', 'img/lvl2-spritesheet.json');
 		this.load.atlas('lvl3', 'img/lvl3-spritesheet.png', 'img/lvl3-sprites.json');
 		this.load.atlas('lvl3-bg', 'img/lvl3-bgs.png', 'img/lvl3-bgs.json');
+		this.load.atlas('boxscene', 'img/boxscene.png', 'img/boxscene.json');
 
 		// Music
 		game.load.audio('intro', 'audio/mp3/intro-music.mp3');
@@ -60,6 +66,7 @@ Load.prototype = {
 		game.load.audio('collision', 'audio/ogg/collision.ogg');
 		game.load.audio('jump', 'audio/ogg/jump.ogg');
 		game.load.audio('switch-trigger', 'audio/ogg/switch-trigger.ogg');
+		game.load.audio('trampoline', 'audio/ogg/trampoline.ogg');
 	},
 
 	create: function() {
@@ -70,6 +77,11 @@ Load.prototype = {
 		// 	console.log('Local storage not supported');
 		// }
 
+		game.input.keyboard.addKeyCapture(Phaser.KeyCode.SPACEBAR);
+		game.input.keyboard.addKeyCapture(Phaser.KeyCode.UP);
+		game.input.keyboard.addKeyCapture(Phaser.KeyCode.DOWN);
+		game.input.keyboard.addKeyCapture(Phaser.KeyCode.LEFT);
+		game.input.keyboard.addKeyCapture(Phaser.KeyCode.RIGHT);
 		// Go to MainMenu state
 		game.state.start('MainMenu');
 	}
