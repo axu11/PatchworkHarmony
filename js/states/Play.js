@@ -6,6 +6,10 @@ Play.prototype = {
 		this.numPlatforms = numPlatforms;
 		reloadOnGround = 0;
 		self = this;
+		this.currentScene = 1;
+		this.delay = 0;
+		this.playScene = false;
+		this.gearInBox = false;
 		this.playerCanMove = true;
 		this.keySolved = true;
 	},
@@ -152,6 +156,11 @@ Play.prototype = {
 		this.window.scale.setTo(0.5, 0.5);
 		this.window.animations.add('windowBillow', Phaser.Animation.generateFrameNames('windowAni', 'window', 0, 2), 4, true);
 		this.window.animations.play('windowBillow');
+			this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
+
+
+		
+
 
 		// Creates a collectible "gear" that will enable player to unlock an ability
 		this.gear = game.add.sprite(920, 95, 'assets', 'gear'); 
@@ -182,6 +191,11 @@ Play.prototype = {
 		this.box.body.drag = 0.5;
 		this.attached = false; 	// Initially not picked up by player
 
+		this.boxScene = game.add.sprite(800, 0, 'boxscene', 'cutscene1');
+		this.boxScene.visible = false;
+		this.boxScene.animations.add('boxscene', Phaser.Animation.generateFrameNames('boxscene', 'cutscene', 1, 4), 10, true);
+		this.boxScene.animations.play('boxscene');
+
 	},
 
 	update: function() {
@@ -194,9 +208,12 @@ Play.prototype = {
 		//game.debug.body(this.drawer);
 		//game.debug.body(this.switch);
 		//game.debug.body(this.desk);
+		//console.log('reload: ' + reloadOnGround + ' numPlatforms: ' + numPlatforms);
+		//console.log(this.boxScene.visible);
+		//console.log('playscene ' + this.playScene);
 		//console.log('reload: ' + reloadOnGround + ' this.numPlatforms: ' + this.numPlatforms);
-		// console.log(this.player.x + 'and' + this.player.y);
-		// console.log(this.box.x + 'and' + this.box.y);
+		//console.log(this.player.x + 'and' + this.player.y);
+		//console.log(this.box.x + 'and' + this.box.y);
 
 		this.checkCamBounds(); // Keep checking camera bounds
 
@@ -207,7 +224,9 @@ Play.prototype = {
 		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches); 					// player vs switch
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, this.platforms); 			    // box vs platforms
 		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches); 					// box vs switch
-		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);				// player vs gear, call collectGear
+		game.physics.arcade.overlap(this.player, this.gear, gearCollect, null, this);				// player vs gear, call collectGear
+		game.physics.arcade.overlap(this.gear, this.box, flyToBox, null, this);				// player vs gear, call collectGear
+
 		
 		/***** SWITCH STUFF *****/
 		// Switch logic for player pressing down on switch 
@@ -331,6 +350,21 @@ Play.prototype = {
 			}
 		}
 
+		if(this.numPlatforms > 0 && this.currentScene == 1 && this.gearInBox){
+			this.boxScene.visible = true;
+		}
+		else{
+			this.boxScene.visible = false;
+		}
+
+		if(this.numPlatforms > 0 && !this.gearInBox){
+			if(this.gear.x < this.box.x)
+				this.gear.x += 5;
+			if(this.gear.y < this.box.y)
+				this.gear.y += 5;
+			game.camera.flash(0xffffff, 1000);
+		}
+
 		// Top-left number updates with this.numPlatforms
 		if(this.numPlatforms == 0) {
 			this.number0.scale.set(0.5);
@@ -376,6 +410,13 @@ Play.prototype = {
 
 		// Animate Gear
 		this.gear.angle += 1;
+
+		this.delay++;
+		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.currentScene == 1 && this.numPlatforms > 0) {
+			this.boxScene.destroy();
+			this.currentScene++;
+			cutscenePlaying = false;
+		}
 	},
 
 	render: function() {
@@ -394,16 +435,16 @@ Play.prototype = {
 }
 
 // Function for collecting "gears"
-function collectGear(Patches, gear){
-	console.log("collected");
-	this.gearInstructions.visible = false;
-	this.platformInstructions.visible = true;
-	this.exitInstructions.visible = true;
-	gear.kill();
-	this.numPlatforms++;
-	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
+function gearCollect(){
+	cutscenePlaying = true;
+	this.numPlatforms = 1;
+	this.delay = 0;
+}
+
+function flyToBox(){
+	this.gearInBox = true;
+	console.log(this.gearInBox);
 	this.gearAudio.play();
-	// this.gearInstructions.visible = false;
-	// this.platformInstructions.visible = true;
-	// this.exitInstructions.visible = true;
+	this.gear.destroy();
+
 }
