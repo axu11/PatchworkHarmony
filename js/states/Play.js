@@ -7,7 +7,6 @@ Play.prototype = {
 		reloadOnGround = 0;
 		self = this;
 		this.currentScene = 1;
-		this.delay = 0;
 		this.playScene = false;
 		this.gearInBox = false;
 		this.playerCanMove = true;
@@ -16,15 +15,25 @@ Play.prototype = {
 	
 	create: function() {
 
-		/***** BG, BGM, AND NUMBER CIRCLE *****/
+		/***** BG, BGM, AND SOUND EFFECTS *****/
 		// Create backgrounds for both scenes, set bounds to include both bg (1600 x 600)
 		this.bg = game.add.image(0, 0, 'bg0');
+		this.bg.alpha = 0;
 		this.bg2 = game.add.image(800, 0, 'bg1');
 		game.world.setBounds(0, 0, this.bg.width + 800, this.bg.height);
 
 		// Create bgm for game, looped and played
 		this.bgm = game.add.audio('lvl1', 0.25, true);
 		this.bgm.play();
+
+		// Create sound effects for when a music block platform is created
+		this.platform1audio = game.add.audio('platform1audio');
+		this.platform2audio = game.add.audio('platform2audio');
+		this.platform3audio = game.add.audio('platform3audio');
+		this.platform4audio = game.add.audio('platform4audio');
+
+		// Creates sound effect for gear collection
+		this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
 
 		// Create number circle at top left of screen to indicate this.platforms remaining
 		this.numberPosition = 16;
@@ -43,26 +52,6 @@ Play.prototype = {
 		this.number4 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number4');
 		this.number4.scale.set(0);
 		this.number4.fixedToCamera = true;
-
-		/***** INSTRUCTION TEXT *****/
-		// Create instructions for player movement and pickup, overlaid on screen for now
-		this.moveInstructions = game.add.text(350, 230, 'Use the arrow keys to move and jump!', style2);
-		this.moveInstructions.anchor.set(0.5);
-
-		this.pickupInstrucctions = game.add.text(375, 330, 'Press SHIFT next to the box to pick it up and put it down!', style2);
-		this.pickupInstrucctions.anchor.set(0.5);
-
-		// Create instructions for collecting the gear and ability gained afterwards (initially invisible)
-		this.gearInstructions = game.add.text(1200, 245, 'Collect the gear!', style2);
-		this.gearInstructions.anchor.set(0.5);
-
-		this.platformInstructions = game.add.text(1200, 245, 'Press SPACEBAR when holding the box to make a temporary platform!', style2);
-		this.platformInstructions.anchor.set(0.5);
-		this.platformInstructions.visible = false;
-
-		this.exitInstructions = game.add.text(1200, 265, 'Exit through the window!', style2);
-		this.exitInstructions.anchor.set(0.5);
-		this.exitInstructions.visible = false;
 
 		// dummy sprites so the code doesn't break
 		this.key1 = game.add.sprite(-1000, -1000, 'assets', 'box');
@@ -103,6 +92,7 @@ Play.prototype = {
 		this.wall.alpha = 0;
 		this.wall.body.checkCollision.left = false;
 
+		// Creates invisible platform on top of desk (scene 1)
 		this.desk = this.platforms.create(30, 400, 'atlas', 'sky');
 		this.desk.scale.setTo(1.20, 1);
 		game.physics.arcade.enable(this.desk);
@@ -155,13 +145,8 @@ Play.prototype = {
 		this.window = game.add.sprite(1320, 70, 'windowAni', 'window0');
 		this.window.scale.setTo(0.5, 0.5);
 		this.window.animations.add('windowBillow', Phaser.Animation.generateFrameNames('windowAni', 'window', 0, 2), 4, true);
-		this.window.animations.play('windowBillow');
-			this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
-
-
-		
-
-
+		this.window.animations.play('windowBillow');		
+	
 		// Creates a collectible "gear" that will enable player to unlock an ability
 		this.gear = game.add.sprite(920, 95, 'assets', 'gear'); 
 		game.physics.arcade.enable(this.gear);
@@ -179,11 +164,13 @@ Play.prototype = {
 		/***** PLAYER SPRITE *****/ 
 		this.player = new Patches(game, 'patchesAtlas2', 'right1', 76, 332, 1);
 		this.player.enableBody = true;
+		this.player.alpha = 0;
 		game.add.existing(this.player);
 		
 		/***** MUSIC BOX *****/
 		this.box = game.add.sprite(148, 382, 'assets', 'box');
 		game.physics.arcade.enable(this.box);
+		this.box.alpha = 0;
 		this.box.anchor.set(0.50);
 		this.box.scale.set(0.2);
 		this.box.body.collideWorldBounds = true;
@@ -224,10 +211,17 @@ Play.prototype = {
 		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches); 					// player vs switch
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, this.platforms); 			    // box vs platforms
 		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches); 					// box vs switch
-		game.physics.arcade.overlap(this.player, this.gear, gearCollect, null, this);				// player vs gear, call collectGear
-		game.physics.arcade.overlap(this.gear, this.box, flyToBox, null, this);				// player vs gear, call collectGear
+		game.physics.arcade.overlap(this.player, this.gear, gearCollect, null, this);				// player vs gear, call gearCollect
+		game.physics.arcade.overlap(this.gear, this.box, flyToBox, null, this);						// gear vs box, call flyToBox
+		//game.phyiscs.arcade.overlap(this.player, this.window);                                      // player vs window
 
-		
+		// fade in bg and player and box
+		if(this.bg.alpha < 1){
+        	this.bg.alpha += 0.01;
+        	this.player.alpha += 0.01;
+        	this.box.alpha += 0.01;
+        }
+
 		/***** SWITCH STUFF *****/
 		// Switch logic for player pressing down on switch 
 		if(this.hitSwitch && this.player.x > this.switch.x - this.switch.width/2 && this.player.x < this.switch.x + this.switch.width/2) {
@@ -239,7 +233,7 @@ Play.prototype = {
 		}
 
 		// Switch logic for box pressing down on switch
-		if(this.boxHitSwitch && this.box.x > this.switch.x - this.switch.width/2 && this.box.x < this.switch.x + this.switch.width/2) {
+		if(this.boxHitSwitch && this.box.x + this.box.width/2 > this.switch.x - this.switch.width/2 && this.box.x < this.switch.x + this.switch.width/2) {
 			this.boxOnSwitch = true;
 			this.switchPressed = true;
 		}
@@ -311,8 +305,13 @@ Play.prototype = {
 
 			// Spawn platform directly under by pressing SPACEBAR
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0) {
-				this.platform1audio = game.add.audio('platform1audio');
-				this.platform1audio.play();
+				// Kills all current sounds set to play before playing the music note sounds in order
+				game.time.events.removeAll();
+				game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
+				game.time.events.add(Phaser.Timer.SECOND * 0.5, platformSound2, this);
+				game.time.events.add(Phaser.Timer.SECOND * 1.0, platformSound3, this);
+				game.time.events.add(Phaser.Timer.SECOND * 1.5, platformSound4, this);
+
 				this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30, 1);
 				this.createdPlatforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
@@ -403,15 +402,16 @@ Play.prototype = {
 		}
 
 		// When player gets to the window, go to level 2 (town scene 1)
-		if(this.player.x > 1400 && this.player.y < 240){
-			game.state.start('Level2', true, false, false, this.numPlatforms);
-			this.bgm.destroy();
+		//this.player.x > 1400 && this.player.y < 240
+		if(this.player.overlap(this.window) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.player.body.touching.down){
+			cutscenePlaying = true;
+			game.camera.fade(0x000000, 3000);
+			game.time.events.add(Phaser.Timer.SECOND * 3.0, transitionToRooftops, this);
 		}
 
 		// Animate Gear
 		this.gear.angle += 1;
 
-		this.delay++;
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.currentScene == 1 && this.numPlatforms > 0) {
 			this.boxScene.destroy();
 			this.currentScene++;
@@ -438,13 +438,18 @@ Play.prototype = {
 function gearCollect(){
 	cutscenePlaying = true;
 	this.numPlatforms = 1;
-	this.delay = 0;
 }
 
+// Function called when gear flies into the box
 function flyToBox(){
 	this.gearInBox = true;
-	console.log(this.gearInBox);
+	//console.log(this.gearInBox);
 	this.gearAudio.play();
 	this.gear.destroy();
+}
 
+// Function called to transition to next level and kill bgm
+function transitionToRooftops(){
+	game.state.start('Level2', true, false, false, this.numPlatforms);
+	this.bgm.destroy();
 }

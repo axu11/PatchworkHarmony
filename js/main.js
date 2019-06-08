@@ -10,7 +10,9 @@ var inElevator = false;
 var elevatorActivated = false;
 var leverActivated = false;
 var cutscenePlaying = false;
-
+var wallShifted = false;
+var playedCutscene6 = false;
+var keySolved = false;
 var style1 = { fontSize: '32px', fill: '#000' };
 var style2 = { fontSize: '16px', fill: '#000' };
 var palette = ['#1B1B3A', '#693668', '#A74482', '#F84AA7', '#FF3562', '#000'];
@@ -54,6 +56,8 @@ window.onload = function() {
 	game.state.add('Level3', Level3);
 	game.state.add('Level4', Level4);
 	game.state.add('Level5', Level5);
+	game.state.add('Level7', Level7);
+
 	game.state.add('GameOver', GameOver);
 	game.state.add('TestingRealm', TestingRealm);
 

@@ -1,7 +1,12 @@
 var Level5 = function(game) {};
 Level5.prototype = {
 	init: function(numPlatforms) {
-		this.numPlatforms = numPlatforms;
+		if(wallShifted){
+			this.numPlatforms = 3;
+		}
+		else{
+			this.numPlatforms = 2;
+		}
 		reloadOnGround = 0;
 		self = this;
 		level = 5;
@@ -10,14 +15,25 @@ Level5.prototype = {
 		this.timer = 0;
 		this.lockDown = false;
 		this.playerCanMove = true;
-		this.keySolved = false;
+		this.canProceed = playedCutscene6;
+		if(wallShifted){
+			this.keySolved = true;
+		}
+		else{
+			this.keySolved = false;
+		}
+
 	},
 	create: function() {
 		/***** BG, BGM, AND SOUND EFFECTS *****/
 		// Create backgrounds for top floor of the library level, set bounds to image resolution (1600 x 600)
 		this.bg0 = game.add.image(0, 0, 'lvl3-bg', 'bg5');   // Background 5 (elevator bottom floor)
 		this.bg1 = game.add.image(800, 0, 'lvl3-bg', 'bg9'); // Background 9 (third gear and platform keys)
-		game.world.setBounds(0, 0, 1600, this.bg1.height);
+		this.bg2 = game.add.image(0, -600, 'lvl3-bg', 'bg4'); // Background 4 (third gear and platform keys)
+		game.world.setBounds(0, -600, 1600, this.bg1.height + 600);
+
+
+
 
 		// Create bgm for game, looped and played
 		this.bgm = game.add.audio('lvl1', 0.5, true);
@@ -29,30 +45,33 @@ Level5.prototype = {
 		this.platform3audio = game.add.audio('platform3audio');
 		this.platform4audio = game.add.audio('platform4audio');
 	
-		this.key1 = game.add.sprite(1125, 340, 'assets', 'music-block');
-		this.key1.anchor.set(0.5);
-		this.key1.scale.set(0.33 * this.levelScale);
-		this.key1.alpha = 0.5;
-		this.key1Lock = false;
+		if(!wallShifted){
+			this.key1 = game.add.sprite(1125, 340, 'assets', 'music-block');
+			this.key1.anchor.set(0.5);
+			this.key1.scale.set(0.33 * this.levelScale);
+			this.key1.alpha = 0.5;
+			this.key1Lock = false;
 
-		this.key2 = game.add.sprite(1250, 450, 'assets', 'music-block');
-		this.key2.anchor.set(0.5);
-		this.key2.scale.set(0.33 * this.levelScale);
-		this.key2.alpha = 0.5;
-		this.key2Lock = false;
+			this.key2 = game.add.sprite(1250, 450, 'assets', 'music-block');
+			this.key2.anchor.set(0.5);
+			this.key2.scale.set(0.33 * this.levelScale);
+			this.key2.alpha = 0.5;
+			this.key2Lock = false;
 
-		this.key3 = game.add.sprite(1000, 450, 'assets', 'music-block');
-		this.key3.anchor.set(0.5);
-		this.key3.scale.set(0.33 * this.levelScale);
-		this.key3.alpha = 0.5;
-		this.key3Lock = false;
+			this.key3 = game.add.sprite(1000, 450, 'assets', 'music-block');
+			this.key3.anchor.set(0.5);
+			this.key3.scale.set(0.33 * this.levelScale);
+			this.key3.alpha = 0.5;
+			this.key3Lock = false;
 
-		this.keyLock = game.add.sprite(850, 250, 'lvl2', 'clocktower');
-		this.keyLock.scale.set(0.8);
-		this.keyLock.anchor.setTo(0.5, 1);
-		game.physics.arcade.enable(this.keyLock);
-		this.keyLock.body.immovable = true;
+			this.keyLock = game.add.sprite(800, -1050, 'lvl3', 'bookshelf1');
+			this.keyLock.scale.set(1);
+			this.keyLock.anchor.setTo(0);
+			game.physics.arcade.enable(this.keyLock);
+			this.keyLock.body.immovable = true;	
 
+		}
+		
 		/***** GROUPS AND INVISIBLE BOUNDARIES *****/
 		// Create elevators group
 		this.elevators = game.add.group();
@@ -105,6 +124,18 @@ Level5.prototype = {
 		this.leftWall.body.immovable = true;
 		this.leftWall.alpha = 0;
 
+		// Creates the right bookshelf that goes up last gear is obtained 
+		this.shiftingWall2 = platforms.create(700, -550, 'lvl3', 'bookshelf2'); 
+		this.shiftingWall2.scale.setTo(1, 1);
+		game.physics.arcade.enable(this.shiftingWall2);
+		this.shiftingWall2.body.immovable = true;	
+
+		// Creates a visible platform for the elevator to rest on
+		this.elevatorPlatform = platforms.create(255, -65, 'assets', 'shelf-platform');
+		this.elevatorPlatform.scale.setTo(0.74, 0.50);
+		game.physics.arcade.enable(this.elevatorPlatform);
+		this.elevatorPlatform.body.immovable = true;
+
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
 		this.number0 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number0');
@@ -124,11 +155,13 @@ Level5.prototype = {
 		this.number4.fixedToCamera = true;
 
 		// Creates a collectible "gear" that will enable player to unlock an ability
-		this.gear = game.add.sprite(1420, 370, 'assets', 'gear'); 
-		game.physics.arcade.enable(this.gear);
-		this.gear.body.immovable = true;
-		this.gear.scale.setTo(0.75);
-		this.gear.anchor.set(0.5);	
+		if(!wallShifted){
+			this.gear = game.add.sprite(1420, 370, 'assets', 'gear'); 
+			game.physics.arcade.enable(this.gear);
+			this.gear.body.immovable = true;
+			this.gear.scale.setTo(0.75);
+			this.gear.anchor.set(0.5);	
+		}
 
 		/***** PLAYER SPRITE *****/ 
 		//this.players = game.add.group();
@@ -146,12 +179,21 @@ Level5.prototype = {
 		this.box.body.drag = 0.5;
 		this.attached = true; // Held from last level
 
+		this.libraryCutscene = game.add.image(800, 0, 'cutscene6');
+		this.libraryCutscene.alpha = 0;
+
+		//game.camera.onFadeComplete.add(cameraReset, this);
+
 
 	},
 	update: function() {
 		//console.log(level);
 		//console.log(inElevator);
-		this.checkCamBounds();
+		// console.log(game.camera.x);
+		// console.log(game.camera.y);
+		if(!cutscenePlaying){
+			this.checkCamBounds();
+		}
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   // player vs platforms
 		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); // player vs created platforms
@@ -159,12 +201,36 @@ Level5.prototype = {
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
 		this.hitKeyLock = game.physics.arcade.collide(this.player, this.keyLock); // player vs keyLock
 		this.boxHitKeyLock = game.physics.arcade.collide(this.box, this.keyLock); // box vs keyLock
-		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
+		game.physics.arcade.overlap(this.player, this.gear, collectLastGear, null, this);
 		game.physics.arcade.overlap(this.player, this.elevator, activateElevatorUp, null, this);
 
+		if(game.input.keyboard.addKey(Phaser.KeyCode.Q).justPressed()){
+			elevatorActivated = true;
+			cutscenePlaying = true;
+			this.keySolved = true;
+			//wallShifted = true;
+		}
 
-		if(!this.lockDown && this.player.x > 1200) {
-			if(this.keyLock.y < 550) {
+		if(game.input.keyboard.addKey(Phaser.KeyCode.W).justPressed()){
+			reactivateCamera();
+		}
+
+		if(!playedCutscene6){
+			if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.libraryCutscene.alpha >= 1) {
+				this.libraryCutscene.destroy();
+				game.time.events.add(Phaser.Timer.SECOND * 1, proceed, this);
+				cutscenePlaying = false;
+				playedCutscene6 = true;
+			}
+
+			if(this.libraryCutscene.alpha < 1 && this.numPlatforms == 3){
+				this.libraryCutscene.alpha += 0.02;
+			}
+		}
+		
+
+		if(!this.lockDown && this.player.x > 1200 && !wallShifted) {
+			if(this.keyLock.y < 50) {
 				this.playerCanMove = false;
 				this.keyLock.y += 10;
 			}
@@ -175,9 +241,24 @@ Level5.prototype = {
 		}
 		if(this.key1Lock && this.key2Lock && this.key3Lock && this.lockDown) {
 			this.keySolved = true;
-			if(this.keyLock.y > 250) 
+			if(this.keyLock.y > -1000) 
 				this.keyLock.y -= 10;
 		}
+
+		if(this.keySolved && !wallShifted){
+			cutscenePlaying = true;
+			if(game.camera.x > 0){
+				game.camera.x -= 16;
+			}
+			if(game.camera.x == 0 && game.camera.y > -600){
+				game.camera.y -= 12;
+				if(game.camera.y == -600) {
+					wallShifted = true;
+					game.time.events.add(Phaser.Timer.SECOND * 0.5, shiftWall, this);
+				}
+			}
+		}
+
 		/***** BOX STUFF *****/
 		if(!inElevator){
 			this.box.body.velocity.x = 0; // Box won't glide when pushed by player
@@ -196,7 +277,7 @@ Level5.prototype = {
 				this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
 				// Spawn platform directly under by pressing SPACEBAR
-				if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0) {
+				if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0 && !cutscenePlaying && this.canProceed) {
 					// Kills all current sounds set to play before playing the music note sounds in order
 					game.time.events.removeAll();
 					game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
@@ -211,7 +292,6 @@ Level5.prototype = {
 					this.createdPlatform.body.checkCollision.left = false;
 					this.createdPlatform.body.checkCollision.right = false;
 					this.createdPlatform.body.immovable = true;
-					this.createdPlatform.scale.setTo(0.33);
 					this.numPlatforms--;
 				}
 
@@ -294,9 +374,9 @@ Level5.prototype = {
 	},
 
 	render: function() {
-		game.debug.body(this.pedestal);
-		game.debug.body(this.player);
-		game.debug.body(this.box);
+		// game.debug.body(this.pedestal);
+		// game.debug.body(this.player);
+		// game.debug.body(this.box);
 		//game.debug.cameraInfo(game.camera, 32, 32);
 		//game.debug.rectangle({x:game.camera.bounds.x, y:game.camera.bounds.y, width:game.camera.bounds.width, height:game.camera.bounds.height});
 	},
@@ -372,9 +452,34 @@ function activateElevatorUp(Patches, elevator){
 }
 
 // Function for collecting "gears"
-function collectGear(Patches, gear){
+function collectLastGear(Patches, gear){
 	gear.kill();
 	this.numPlatforms++;
 	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
 	this.gearAudio.play();
+	cutscenePlaying = true;
+	game.camera.flash(0xffffff, 1000);
+}
+
+function proceed(){
+	this.canProceed = true;
+}
+
+function shiftWall(){
+	this.shiftingWall2.body.velocity.y = -150
+	game.camera.fade(0x000000, 4000);
+	game.time.events.add(Phaser.Timer.SECOND * 4, cameraReset, this);
+}
+
+function cameraReset(){
+	game.camera.resetFX();
+	this.player.x = 1200;
+	this.player.y = 475;
+	game.camera.x = 800;
+	game.camera.y = 0;
+	game.time.events.add(Phaser.Timer.SECOND * 1.0, reactivateCamera, this);
+}
+
+function reactivateCamera(){
+	cutscenePlaying = false;
 }

@@ -1,7 +1,12 @@
 var Level4 = function(game) {};
 Level4.prototype = {
 	init: function(numPlatforms) {
-		this.numPlatforms = numPlatforms;
+		if(!wallShifted){
+			this.numPlatforms = 2;	
+		}
+		else{
+			this.numPlatforms = 3;	
+		}
 		reloadOnGround = 0;
 		self = this;	
 		level = 4;
@@ -15,7 +20,6 @@ Level4.prototype = {
 		this.timer = 0;
 		this.slideAway = 0;
 		this.playerCanMove = true;
-		this.keySolved = false;
 	},
 	create: function() {
 		/***** BG, BGM, AND SOUND EFFECTS *****/
@@ -135,11 +139,13 @@ Level4.prototype = {
 			this.shiftingWall1.body.immovable = true;
 		}
 
-		// Creates the right bookshelf that goes up last gear is obtained 
-		this.shiftingWall2 = platforms.create(700, 50, 'lvl3', 'bookshelf2'); 
-		this.shiftingWall2.scale.setTo(1, 1);
-		game.physics.arcade.enable(this.shiftingWall2);
-		this.shiftingWall2.body.immovable = true;		
+		// if(!wallShifted){
+		// 	// Creates the right bookshelf that goes up last gear is obtained 
+		// 	this.shiftingWall2 = platforms.create(700, 50, 'lvl3', 'bookshelf2'); 
+		// 	this.shiftingWall2.scale.setTo(1, 1);
+		// 	game.physics.arcade.enable(this.shiftingWall2);
+		// 	this.shiftingWall2.body.immovable = true;	
+		// }
 
 		/***** FLYING BOOKS ROOM (BG1) *****/
 		this.bookshelf = platforms.create(-800, 260, 'lvl3', 'bookshelf3'); 
@@ -172,14 +178,26 @@ Level4.prototype = {
 		this.leftWall.body.immovable = true;
 		this.leftWall.alpha = 0;
 
-		// Creates the lever bar handle, left side
-		this.leverHandle = levers.create(-1540, 180, 'lvl3', 'lever-handle');
-		this.leverHandle.scale.setTo(0.5);
-		this.leverHandle.anchor.set(1);
-		game.physics.arcade.enable(this.leverHandle);
-		this.leverHandle.body.immovable = true;
-		this.leverHandle.angle = 20;
-		this.leverHandle.body.setSize(150, 300, 0, -50);
+		if(!elevatorActivated){
+			// Creates the lever bar handle, left side
+			this.leverHandle = levers.create(-1540, 180, 'lvl3', 'lever-handle');
+			this.leverHandle.scale.setTo(0.5);
+			this.leverHandle.anchor.set(1);
+			game.physics.arcade.enable(this.leverHandle);
+			this.leverHandle.body.immovable = true;
+			this.leverHandle.angle = 20;
+			this.leverHandle.body.setSize(150, 300, 0, -50);
+		}
+		else{
+			// Creates the lever bar handle, left side
+			this.leverHandle = levers.create(-1540, 180, 'lvl3', 'lever-handle');
+			this.leverHandle.scale.setTo(0.5);
+			this.leverHandle.anchor.set(1);
+			game.physics.arcade.enable(this.leverHandle);
+			this.leverHandle.body.immovable = true;
+			this.leverHandle.angle = 160;
+			this.leverHandle.body.setSize(150, 300, 0, -50);
+		}
 
 		// Creates a base for the lever, left side
 		this.leverBase = platforms.create(-1550, 150, 'lvl3', 'lever-base');
@@ -216,29 +234,44 @@ Level4.prototype = {
 		this.holdingSpring = false; 
 
 		/***** MISCELLANEOUS *****/
-		this.key1 = game.add.sprite(1050, 230, 'assets', 'music-block');
-		this.key1.anchor.set(0.5);
-		this.key1.scale.set(0.33 * this.levelScale);
-		this.key1.alpha = 0.5;
-		this.key1Lock = false;
+		if(!keySolved){
+			this.key1 = game.add.sprite(1050, 230, 'assets', 'music-block');
+			this.key1.anchor.set(0.5);
+			this.key1.scale.set(0.33 * this.levelScale);
+			this.key1.alpha = 0.5;
+			this.key1Lock = false;
 
-		this.key2 = game.add.sprite(1050, 340, 'assets', 'music-block');
-		this.key2.anchor.set(0.5);
-		this.key2.scale.set(0.33 * this.levelScale);
-		this.key2.alpha = 0.5;
-		this.key2Lock = false;
+			this.key2 = game.add.sprite(1050, 340, 'assets', 'music-block');
+			this.key2.anchor.set(0.5);
+			this.key2.scale.set(0.33 * this.levelScale);
+			this.key2.alpha = 0.5;
+			this.key2Lock = false;
 
-		this.key3 = game.add.sprite(1050, 450, 'assets', 'music-block');
-		this.key3.anchor.set(0.5);
-		this.key3.scale.set(0.33 * this.levelScale);
-		this.key3.alpha = 0.5;
-		this.key3Lock = false;
+			this.key3 = game.add.sprite(1050, 450, 'assets', 'music-block');
+			this.key3.anchor.set(0.5);
+			this.key3.scale.set(0.33 * this.levelScale);
+			this.key3.alpha = 0.5;
+			this.key3Lock = false;
 
-		this.keyLock = game.add.sprite(1200, 550, 'lvl2', 'clocktower');
-		this.keyLock.scale.set(0.8);
-		this.keyLock.anchor.setTo(0.5, 1);
-		game.physics.arcade.enable(this.keyLock);
-		this.keyLock.body.immovable = true;
+			this.keyLock = game.add.sprite(1200, 52, 'lvl3', 'bookshelf1');
+			this.keyLock.scale.set(1);
+			this.keyLock.anchor.setTo(0);
+			game.physics.arcade.enable(this.keyLock);
+			this.keyLock.body.immovable = true;	
+		}
+
+
+		this.rightWall = platforms.create(1580, 0, 'lvl3', 'bookshelf1');
+		this.rightWall.scale.setTo(1, 1.5);
+		game.physics.arcade.enable(this.rightWall);
+		this.rightWall.body.immovable = true;
+		this.rightWall.alpha = 0;
+
+		this.door = game.add.sprite(1415, 265, 'atlas', 'sky');
+		this.door.scale.setTo(1.5, 2.5);
+		game.physics.arcade.enable(this.door);
+		this.door.body.immovable = true;
+		this.door.alpha = 0;
 
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
@@ -292,21 +325,26 @@ Level4.prototype = {
 		//console.log(this.player.x);
 		//console.log(elevatorActivated);
 		//console.log(this.player.body.touching.down && elevatorActivated && this.attached)
-		console.log(this.box.x + '    ' + this.box.y)
-		//game.debug.body(this.elevatorPlatform);
-		//game.debug.body(this.ground);
-		//game.debug.body(this.shiftingWall1);
-		//game.debug.body(this.leverHandle);
-		//game.debug.body(this.leftWall);
-		//this.elevator.y += 5;
-		console.log(this.key1Lock + ' ' + this.key2Lock + ' ' + this.key3Lock);
-		console.log(this.keyLock.y);
-		if(this.key1Lock && this.key2Lock && this.key3Lock) {
-			this.keySolved = true;
-			if(this.keyLock.y > 100) {
-				this.keyLock.y -= 10;
+		// console.log(this.box.x + '    ' + this.box.y)
+		// //game.debug.body(this.elevatorPlatform);
+		// //game.debug.body(this.ground);
+		// //game.debug.body(this.shiftingWall1);
+		// //game.debug.body(this.leverHandle);
+		// //game.debug.body(this.leftWall);
+		//game.debug.body(this.rightWall);
+		game.debug.body(this.door);
+		// //this.elevator.y += 5;
+		// console.log(this.key1Lock + ' ' + this.key2Lock + ' ' + this.key3Lock);
+		// console.log(this.keyLock.y);
+		if(!keySolved){
+			if(this.key1Lock && this.key2Lock && this.key3Lock) {
+				keySolved = true;
+				if(this.keyLock.y > -1000){
+					this.keyLock.body.velocity.y = -150;
+				}
 			}
 		}
+		
 		// CheckCamBounds will be disabled while the panning process is occuring
 		if(!leverActivated){
 			this.checkCamBounds();			
@@ -315,8 +353,25 @@ Level4.prototype = {
 		if(game.input.keyboard.addKey(Phaser.KeyCode.Q).justPressed()){
 			game.time.events.add(Phaser.Timer.SECOND * 1, activateElevator, this);
 			game.time.events.add(Phaser.Timer.SECOND * 1, dropBox, this);
+			this.numPlatforms = 3;
 
 		}
+
+		if(this.player.overlap(this.door) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.hitPlatform){
+			cutscenePlaying = true;
+			game.camera.fade(0x000000, 3000);
+			game.time.events.add(Phaser.Timer.SECOND * 3.0, transitionToBench, this);
+		}
+
+		// if(this.player.overlap(this.door)){
+		// 	console.log('overlapping');
+		// }
+		// if(this.player.body.touching.down){
+		// 	console.log('touching');
+		// }
+		// if(game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed()){
+		// 	console.log('down');
+		// }
 
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   					// player vs platforms
@@ -423,7 +478,6 @@ Level4.prototype = {
 					this.createdPlatform.body.checkCollision.left = false;
 					this.createdPlatform.body.checkCollision.right = false;
 					this.createdPlatform.body.immovable = true;
-					this.createdPlatform.scale.setTo(0.33);
 					this.numPlatforms--;
 				}
 
@@ -566,6 +620,7 @@ Level4.prototype = {
 				}
 				else {
 					leverActivated = false;
+					cutscenePlaying = false;
 				}
 			}
 		}
@@ -685,6 +740,7 @@ function platformSound4(){
 function pullLever(){
 	if(game.input.keyboard.addKey(Phaser.KeyCode.SHIFT).justPressed() && !leverActivated){
 		leverActivated = true;
+		cutscenePlaying = true;
 		this.switchTrigger.play('', 0, 0.5, false);
 	}
 }
@@ -759,6 +815,13 @@ function boxMagicTrick(){
 // Function for setting global var "elevatorActivated" to true
 function oneSecond(){
 	elevatorActivated = true;
+}
+
+// Function called to transition to next level and kill bgm
+function transitionToBench(){
+	cutscenePlaying = false;
+	game.state.start('Level7', true, false, false, this.numPlatforms);
+	this.bgm.destroy();
 }
 
 

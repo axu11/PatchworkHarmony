@@ -13,23 +13,25 @@ MainMenu.prototype = {
 		// this.title.anchor.set(0.5);
 		// this.description = game.add.text(game.world.centerX, 270, 'You are a toy bunny! Reunite the magic music box with its owner!', textStyle3);
 		// this.description.anchor.set(0.5);
-		this.startInstructions = game.add.text(game.world.centerX, 450, 'Press spacebar to play!', textStyle3);
+		this.startInstructions = game.add.text(game.world.centerX, 450, 'Press spacebar to play!', textStyle);
 		this.startInstructions.anchor.set(0.5);
 
-		// game.camera.onFadeComplete.add(transitionToCutscenes, this);
+		//game.camera.onFadeComplete.add(transitionToCutscenes, this);
 	},
 
 	update: function() {
 		// Go to Play state once SPACEBAR pressed
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-			// game.camera.fade(0x000000, 4000);
+			game.camera.fade(0x000000, 4000);
+			game.time.events.add(Phaser.Timer.SECOND * 4, transitionToCutscenes, this);
 			// this.bgm.destroy();
-			game.state.start('Play', true, false, 0);
+			// game.state.start('Play', true, false, 0);
 			// game.state.start('Level2', true, false, false, 1);
 			// game.state.start('Level3', true, false, false, 2);
 			// game.state.start('Level4', true, false, 2);
 			
 			// game.state.start('Level5', true, false, 2);
+			// game.state.start('Level7', true, false, 3);
 		}
 	}
 }

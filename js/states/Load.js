@@ -28,7 +28,8 @@ Load.prototype = {
 		game.load.image('cutscene1', 'img/cutscene1.png');
 		game.load.image('cutscene2', 'img/cutscene2.png');
 		game.load.image('cutscene3', 'img/cutscene3.png');	
-		game.load.image('cutscene5', 'img/cutscene3.png');		
+		game.load.image('cutscene5', 'img/cutscene5.png');	
+		game.load.image('cutscene6', 'img/cutscene6.png');	
 
 
 		game.load.image('library', 'img/library.png');
