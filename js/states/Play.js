@@ -2,14 +2,16 @@
 var Play = function(game) {};
 Play.prototype = {
 
-	init: function() {
-		numPlatforms = 0;
+	init: function(numPlatforms) {
+		this.numPlatforms = numPlatforms;
 		reloadOnGround = 0;
 		self = this;
 		this.currentScene = 1;
 		this.delay = 0;
 		this.playScene = false;
 		this.gearInBox = false;
+		this.playerCanMove = true;
+		this.keySolved = true;
 	},
 	
 	create: function() {
@@ -18,7 +20,7 @@ Play.prototype = {
 		// Create backgrounds for both scenes, set bounds to include both bg (1600 x 600)
 		this.bg = game.add.image(0, 0, 'bg0');
 		this.bg2 = game.add.image(800, 0, 'bg1');
-		game.world.setBounds(0, 0, this.bg.width+800, this.bg.height);
+		game.world.setBounds(0, 0, this.bg.width + 800, this.bg.height);
 
 		// Create bgm for game, looped and played
 		this.bgm = game.add.audio('lvl1', 0.25, true);
@@ -207,10 +209,11 @@ Play.prototype = {
 		//game.debug.body(this.switch);
 		//game.debug.body(this.desk);
 		//console.log('reload: ' + reloadOnGround + ' numPlatforms: ' + numPlatforms);
-		// console.log(this.boxScene.visible);
-		// console.log('playscene ' + this.playScene);
-		// console.log(this.player.x + 'and' + this.player.y);
-		// console.log(this.box.x + 'and' + this.box.y);
+		//console.log(this.boxScene.visible);
+		//console.log('playscene ' + this.playScene);
+		//console.log('reload: ' + reloadOnGround + ' this.numPlatforms: ' + this.numPlatforms);
+		//console.log(this.player.x + 'and' + this.player.y);
+		//console.log(this.box.x + 'and' + this.box.y);
 
 		this.checkCamBounds(); // Keep checking camera bounds
 
@@ -307,7 +310,7 @@ Play.prototype = {
 			this.box.body.gravity.y = 0;         // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
-			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
+			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
 				this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30, 1);
@@ -317,12 +320,12 @@ Play.prototype = {
 				this.createdPlatform.body.checkCollision.left = false;
 				this.createdPlatform.body.checkCollision.right = false;
 				this.createdPlatform.body.immovable = true;
-				numPlatforms--;
+				this.numPlatforms--;
 			}
 
-			// numPlatforms doesn't refresh until the player hits the ground
+			// this.numPlatforms doesn't refresh until the player hits the ground
 			if(reloadOnGround > 0 && this.player.body.touching.down && this.hitPlatform) {
-				numPlatforms++;
+				this.numPlatforms++;
 				reloadOnGround--;	
 			}
 
@@ -347,14 +350,14 @@ Play.prototype = {
 			}
 		}
 
-		if(numPlatforms > 0 && this.currentScene == 1 && this.gearInBox){
+		if(this.numPlatforms > 0 && this.currentScene == 1 && this.gearInBox){
 			this.boxScene.visible = true;
 		}
 		else{
 			this.boxScene.visible = false;
 		}
 
-		if(numPlatforms > 0 && !this.gearInBox){
+		if(this.numPlatforms > 0 && !this.gearInBox){
 			if(this.gear.x < this.box.x)
 				this.gear.x += 5;
 			if(this.gear.y < this.box.y)
@@ -362,29 +365,29 @@ Play.prototype = {
 			game.camera.flash(0xffffff, 1000);
 		}
 
-		// Top-left number updates with numPlatforms
-		if(numPlatforms == 0) {
+		// Top-left number updates with this.numPlatforms
+		if(this.numPlatforms == 0) {
 			this.number0.scale.set(0.5);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 1) {
+		else if(this.numPlatforms == 1) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0.5);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 2) {
+		else if(this.numPlatforms == 2) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0.5);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 3) {
+		else if(this.numPlatforms == 3) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
@@ -401,7 +404,7 @@ Play.prototype = {
 
 		// When player gets to the window, go to level 2 (town scene 1)
 		if(this.player.x > 1400 && this.player.y < 240){
-			game.state.start('Level2', true, false, false);
+			game.state.start('Level2', true, false, false, this.numPlatforms);
 			this.bgm.destroy();
 		}
 
@@ -409,7 +412,7 @@ Play.prototype = {
 		this.gear.angle += 1;
 
 		this.delay++;
-		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.currentScene == 1 && numPlatforms > 0) {
+		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.currentScene == 1 && this.numPlatforms > 0) {
 			this.boxScene.destroy();
 			this.currentScene++;
 			cutscenePlaying = false;
@@ -434,14 +437,8 @@ Play.prototype = {
 // Function for collecting "gears"
 function gearCollect(){
 	cutscenePlaying = true;
-	numPlatforms = 1;
+	this.numPlatforms = 1;
 	this.delay = 0;
-	//this.boxscene = game.add.image.(0, 0, 'boxscene', 'cutscene1');
-	//game.time.events.add(Phaser.Timer.SECOND * 1, playScene, this);
-
-	// this.gearInstructions.visible = false;
-	// this.platformInstructions.visible = true;
-	// this.exitInstructions.visible = true;
 }
 
 function flyToBox(){
@@ -451,8 +448,3 @@ function flyToBox(){
 	this.gear.destroy();
 
 }
-
-// function playScene(){
-// 	this.boxScene.visible = true;
-
-// }

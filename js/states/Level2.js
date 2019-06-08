@@ -2,12 +2,14 @@
 var Level2 = function(game) {};
 Level2.prototype = {
 
-	init: function(bgmOn) {
-		numPlatforms = 1;
+	init: function(bgmOn, numPlatforms) {
+		this.numPlatforms = numPlatforms;
 		reloadOnGround = 0;
 		this.levelScale = 0.45;
 		self = this;
 		this.bgmOn = bgmOn;
+		this.playerCanMove = true;
+		this.keySolved = true;
 	},
 
 	create: function() {
@@ -158,7 +160,7 @@ Level2.prototype = {
 
 		// reset state when player falls
 		if(this.player.y + this.player.height/2 >= this.world.height - 1) 
-			game.state.start('Level2', true, false, this.bgmOn);
+			game.state.start('Level2', true, false, this.bgmOn, 1);
 		
 		/***** BOX STUFF *****/
 		this.box.body.velocity.x = 0; // Box won't glide when pushed by player
@@ -177,7 +179,7 @@ Level2.prototype = {
 			this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
-			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
+			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0) {
 				this.platform1audio = game.add.audio('platform1audio');
 				this.platform1audio.play();
 				this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
@@ -187,7 +189,7 @@ Level2.prototype = {
 				this.createdPlatform.body.checkCollision.left = false;
 				this.createdPlatform.body.checkCollision.right = false;
 				this.createdPlatform.body.immovable = true;
-				numPlatforms--;
+				this.numPlatforms--;
 			}
 
 			// Drop the box by pressing SHIFT
@@ -208,35 +210,35 @@ Level2.prototype = {
 				this.attached = true;
 		}
 
-		// numPlatforms doesn't refresh until the player hits the ground
+		// this.numPlatforms doesn't refresh until the player hits the ground
 		if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform || this.hitTrampoline)) {
-			numPlatforms++;
+			this.numPlatforms++;
 			reloadOnGround--;	
 		}
 
-		// Top-left number updates with numPlatforms
-		if(numPlatforms == 0) {
+		// Top-left number updates with this.numPlatforms
+		if(this.numPlatforms == 0) {
 			this.number0.scale.set(0.5);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 1) {
+		else if(this.numPlatforms == 1) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0.5);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 2) {
+		else if(this.numPlatforms == 2) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0.5);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 3) {
+		else if(this.numPlatforms == 3) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
@@ -263,7 +265,7 @@ Level2.prototype = {
 	if(this.player.x + Math.abs(this.player.width/2) > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
 		// Stop music
 		this.bgm.stop();
-		game.state.start('Level3', true, false, false);	
+		game.state.start('Level3', true, false, false, this.numPlatforms);	
 	} 
 }
 }
@@ -273,7 +275,7 @@ Level2.prototype = {
 // Function for collecting "gears"
 function collectGear(Patches, gear){
 	gear.kill();
-	numPlatforms++;
+	this.numPlatforms++;
 	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
 	this.gearAudio.play();
 }

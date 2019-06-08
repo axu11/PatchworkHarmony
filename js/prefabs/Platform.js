@@ -18,37 +18,50 @@ Platform.prototype = Object.create(Phaser.Sprite.prototype);
 Platform.prototype.constructor = Platform;
 
 Platform.prototype.update = function() {
+	this.carryDroppedPlatform = game.physics.arcade.collide(self.droppedPlatform, this);   // dropped vs  created platforms
+
 	if(this.decaying) {
 		this.lifetime -= 2;
 		this.alpha = this.lifetime/200;
 	}
 
 	// if the platform is carrying the dropped platform, it will not disappear
-	if(self.carryDroppedPlatform) {
+	if(this.carryDroppedPlatform) {
 		this.decaying = false;
 	}
 	else {
 		this.decaying = true;
 	}
-// if(self = 'Level4') {
+
 	if(this.x >= self.key1.x - this.keyLeniency && this.x <= self.key1.x + this.keyLeniency && this.y >= self.key1.y - this.keyLeniency && this.y <= self.key1.y + this.keyLeniency) {
 		console.log('filled 1');
 		self.key1Lock = true;
+		if(!self.keySolved)
+			this.decaying = false;
+		else
+			this.decaying = true;
 	}
 	else if(this.x >= self.key2.x - this.keyLeniency && this.x <= self.key2.x + this.keyLeniency && this.y >= self.key2.y - this.keyLeniency && this.y <= self.key2.y + this.keyLeniency) {
 		console.log('filled 2');
 		self.key2Lock = true;
+		if(!self.keySolved)
+			this.decaying = false;
+		else
+			this.decaying = true;
 	}
 	else if(this.x >= self.key3.x - this.keyLeniency && this.x <= self.key3.x + this.keyLeniency && this.y >= self.key3.y - this.keyLeniency && this.y <= self.key3.y + this.keyLeniency) {
 		console.log('filled 3');
 		self.key3Lock = true;
+		if(!self.keySolved)
+			this.decaying = false;
+		else
+			this.decaying = true;
 	}
 	else {
 		self.key1Lock = false;
 		self.key2Lock = false;
 		self.key3Lock = false;
 	}
-// }
 	// After some time, destroy the platform and enable player to create another
 	if(this.lifetime <= 0 ) {
 		this.destroy();

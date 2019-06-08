@@ -49,37 +49,38 @@ Patches.prototype.update = function() {
 
  	// If nothing pressed, velocity = 0
  	this.body.velocity.x = 0;
-
- 	// Move left and right with arrow keys
- 	if(this.cursors.left.isDown && !inElevator & !cutscenePlaying) {
-		this.body.velocity.x = -this.VELOCITY_X; // Move left
-		// this.player.animations.play('left');
-		this.animations.play('moveLeft');
-		this.facing = "LEFT";
-	}
-
-	else if(this.cursors.right.isDown && !inElevator & !cutscenePlaying) {
-		this.body.velocity.x = this.VELOCITY_X; // Move right
-		// this.player.animations.play('right');
-		this.animations.play('moveRight');
-		this.facing = "RIGHT";
-	}
-
-	else { // Stand "still"
-		this.body.velocity.x = 0;
-		// this.player.animations.stop();
-		if(this.facing == 'RIGHT') {
-			this.animations.play('idleRight');
+ 	if(self.playerCanMove) {
+	 	// Move left and right with arrow keys
+	 	if(this.cursors.left.isDown && !inElevator && !cutscenePlaying) {
+			this.body.velocity.x = -this.VELOCITY_X; // Move left
+			// this.player.animations.play('left');
+			this.animations.play('moveLeft');
+			this.facing = "LEFT";
 		}
-		else {
-			this.animations.play('idleLeft');
-		}
-	}
 
-	// Jump if the player is grounded
-	if(this.cursors.up.isDown && this.body.touching.down & !cutscenePlaying){
-		this.body.velocity.y = this.JUMP_SPEED;
-		this.jump.play();
-		// this.player.animations.play('jump');
+		else if(this.cursors.right.isDown && !inElevator && !cutscenePlaying) {
+			this.body.velocity.x = this.VELOCITY_X; // Move right
+			// this.player.animations.play('right');
+			this.animations.play('moveRight');
+			this.facing = "RIGHT";
+		}
+
+		else { // Stand "still"
+			this.body.velocity.x = 0;
+			// this.player.animations.stop();
+			if(this.facing == 'RIGHT') {
+				this.animations.play('idleRight');
+			}
+			else {
+				this.animations.play('idleLeft');
+			}
+		}
+
+		// Jump if the player is grounded
+		if(this.cursors.up.isDown && this.body.touching.down && !cutscenePlaying){
+			this.body.velocity.y = this.JUMP_SPEED;
+			this.jump.play();
+			// this.player.animations.play('jump');
+		}
 	}
 }

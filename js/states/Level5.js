@@ -1,13 +1,16 @@
 var Level5 = function(game) {};
 Level5.prototype = {
-	init: function() {
-		numPlatforms = 2;
+	init: function(numPlatforms) {
+		this.numPlatforms = numPlatforms;
 		reloadOnGround = 0;
 		self = this;
 		level = 5;
 		inElevator = false;
 		this.levelScale = 1.0;
 		this.timer = 0;
+		this.lockDown = false;
+		this.playerCanMove = true;
+		this.keySolved = false;
 	},
 	create: function() {
 		/***** BG, BGM, AND SOUND EFFECTS *****/
@@ -26,9 +29,29 @@ Level5.prototype = {
 		this.platform3audio = game.add.audio('platform3audio');
 		this.platform4audio = game.add.audio('platform4audio');
 	
-		this.key1 = game.add.sprite(-1000, -1000, 'assets', 'box');
-		this.key2 = game.add.sprite(-1000, -1000, 'assets', 'box');
-		this.key3 = game.add.sprite(-1000, -1000, 'assets', 'box');
+		this.key1 = game.add.sprite(1125, 340, 'assets', 'music-block');
+		this.key1.anchor.set(0.5);
+		this.key1.scale.set(0.33 * this.levelScale);
+		this.key1.alpha = 0.5;
+		this.key1Lock = false;
+
+		this.key2 = game.add.sprite(1250, 450, 'assets', 'music-block');
+		this.key2.anchor.set(0.5);
+		this.key2.scale.set(0.33 * this.levelScale);
+		this.key2.alpha = 0.5;
+		this.key2Lock = false;
+
+		this.key3 = game.add.sprite(1000, 450, 'assets', 'music-block');
+		this.key3.anchor.set(0.5);
+		this.key3.scale.set(0.33 * this.levelScale);
+		this.key3.alpha = 0.5;
+		this.key3Lock = false;
+
+		this.keyLock = game.add.sprite(850, 250, 'lvl2', 'clocktower');
+		this.keyLock.scale.set(0.8);
+		this.keyLock.anchor.setTo(0.5, 1);
+		game.physics.arcade.enable(this.keyLock);
+		this.keyLock.body.immovable = true;
 
 		/***** GROUPS AND INVISIBLE BOUNDARIES *****/
 		// Create elevators group
@@ -49,6 +72,13 @@ Level5.prototype = {
 		game.physics.arcade.enable(this.ground);
 		this.ground.body.immovable = true;
 		this.ground.visible = false;
+
+		// pedestal
+		this.pedestal = platforms.create(1360, 420, 'atlas', 'sky');
+		this.pedestal.scale.setTo(1, 1);
+		game.physics.arcade.enable(this.pedestal);
+		this.pedestal.body.immovable = true;
+		this.pedestal.alpha = 0;
 
 		// Create invisible ceiling platform for player to hit their little heads on, extends both bgs
 		this.ceiling = platforms.create(0, 0, 'atlas', 'sky'); 
@@ -93,9 +123,16 @@ Level5.prototype = {
 		this.number4.scale.set(0);
 		this.number4.fixedToCamera = true;
 
+		// Creates a collectible "gear" that will enable player to unlock an ability
+		this.gear = game.add.sprite(1420, 370, 'assets', 'gear'); 
+		game.physics.arcade.enable(this.gear);
+		this.gear.body.immovable = true;
+		this.gear.scale.setTo(0.75);
+		this.gear.anchor.set(0.5);	
+
 		/***** PLAYER SPRITE *****/ 
 		//this.players = game.add.group();
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 415, 485, this.levelScale);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 415, 485, this.levelScale); // -800
 		this.player.enableBody = true;
 		game.add.existing(this.player);
 
@@ -114,16 +151,33 @@ Level5.prototype = {
 	update: function() {
 		//console.log(level);
 		//console.log(inElevator);
-
 		this.checkCamBounds();
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   // player vs platforms
 		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); // player vs created platforms
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
+		this.hitKeyLock = game.physics.arcade.collide(this.player, this.keyLock); // player vs keyLock
+		this.boxHitKeyLock = game.physics.arcade.collide(this.box, this.keyLock); // box vs keyLock
 		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
 		game.physics.arcade.overlap(this.player, this.elevator, activateElevatorUp, null, this);
 
+
+		if(!this.lockDown && this.player.x > 1200) {
+			if(this.keyLock.y < 550) {
+				this.playerCanMove = false;
+				this.keyLock.y += 10;
+			}
+			else {
+				this.lockDown = true;
+				this.playerCanMove = true;
+			}
+		}
+		if(this.key1Lock && this.key2Lock && this.key3Lock && this.lockDown) {
+			this.keySolved = true;
+			if(this.keyLock.y > 250) 
+				this.keyLock.y -= 10;
+		}
 		/***** BOX STUFF *****/
 		if(!inElevator){
 			this.box.body.velocity.x = 0; // Box won't glide when pushed by player
@@ -142,7 +196,7 @@ Level5.prototype = {
 				this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
 				// Spawn platform directly under by pressing SPACEBAR
-				if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && numPlatforms > 0) {
+				if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0) {
 					// Kills all current sounds set to play before playing the music note sounds in order
 					game.time.events.removeAll();
 					game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
@@ -158,7 +212,7 @@ Level5.prototype = {
 					this.createdPlatform.body.checkCollision.right = false;
 					this.createdPlatform.body.immovable = true;
 					this.createdPlatform.scale.setTo(0.33);
-					numPlatforms--;
+					this.numPlatforms--;
 				}
 
 				// Drop the box by pressing SHIFT
@@ -183,36 +237,36 @@ Level5.prototype = {
 			}
 		}
 
-		// numPlatforms doesn't refresh until the player hits the ground
+		// this.numPlatforms doesn't refresh until the player hits the ground
 		if(!inElevator){
 			if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
-				numPlatforms++;
+				this.numPlatforms++;
 				reloadOnGround--;	
 			}
 		}
-		// Top-left number updates with numPlatforms
-		if(numPlatforms == 0) {
+		// Top-left number updates with this.numPlatforms
+		if(this.numPlatforms == 0) {
 			this.number0.scale.set(0.5);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 1) {
+		else if(this.numPlatforms == 1) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0.5);
 			this.number2.scale.set(0);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 2) {
+		else if(this.numPlatforms == 2) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0.5);
 			this.number3.scale.set(0);
 			this.number4.scale.set(0);
 		}
-		else if(numPlatforms == 3) {
+		else if(this.numPlatforms == 3) {
 			this.number0.scale.set(0);
 			this.number1.scale.set(0);
 			this.number2.scale.set(0);
@@ -231,13 +285,18 @@ Level5.prototype = {
 			this.timer++;
 			if(this.timer >= 160){
 				this.bgm.destroy();
-				game.state.start('Level4');
+				game.state.start('Level4', true, false, this.numPlatforms);
 			}
 		}
 		
+		// Animate Gear
+		this.gear.angle += 1;
 	},
 
 	render: function() {
+		game.debug.body(this.pedestal);
+		game.debug.body(this.player);
+		game.debug.body(this.box);
 		//game.debug.cameraInfo(game.camera, 32, 32);
 		//game.debug.rectangle({x:game.camera.bounds.x, y:game.camera.bounds.y, width:game.camera.bounds.width, height:game.camera.bounds.height});
 	},
@@ -310,4 +369,12 @@ function activateElevatorUp(Patches, elevator){
 			}
 		}
 	}
+}
+
+// Function for collecting "gears"
+function collectGear(Patches, gear){
+	gear.kill();
+	this.numPlatforms++;
+	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
+	this.gearAudio.play();
 }
