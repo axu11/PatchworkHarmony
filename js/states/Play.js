@@ -2,8 +2,8 @@
 var Play = function(game) {};
 Play.prototype = {
 
-	init: function(numPlatforms) {
-		this.numPlatforms = numPlatforms;
+	init: function(maxPlatforms) {
+		this.numPlatforms = maxPlatforms;
 		reloadOnGround = 0;
 		self = this;
 		this.currentScene = 1;
@@ -11,6 +11,7 @@ Play.prototype = {
 		this.gearInBox = false;
 		this.playerCanMove = true;
 		this.keySolved = true;
+		this.canCreate = true;
 	},
 	
 	create: function() {
@@ -178,6 +179,7 @@ Play.prototype = {
 		this.box.body.drag = 0.5;
 		this.attached = false; 	// Initially not picked up by player
 
+		// Box animation cutscene
 		this.boxScene = game.add.sprite(800, 0, 'boxscene', 'cutscene1');
 		this.boxScene.visible = false;
 		this.boxScene.animations.add('boxscene', Phaser.Animation.generateFrameNames('boxscene', 'cutscene', 1, 4), 10, true);
@@ -202,7 +204,14 @@ Play.prototype = {
 		//console.log(this.player.x + 'and' + this.player.y);
 		//console.log(this.box.x + 'and' + this.box.y);
 
+		/***** CAMERA, TRANSITIONS, AND CUTSCECNES *****/
 		this.checkCamBounds(); // Keep checking camera bounds
+		// Fade in bg, player, and box
+		if(this.bg.alpha < 1){
+        	this.bg.alpha += 0.01;
+        	this.player.alpha += 0.01;
+        	this.box.alpha += 0.01;
+        }
 
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, this.platforms);   				// player vs platforms
@@ -211,18 +220,10 @@ Play.prototype = {
 		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches); 					// player vs switch
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, this.platforms); 			    // box vs platforms
 		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches); 					// box vs switch
-		game.physics.arcade.overlap(this.player, this.gear, gearCollect, null, this);				// player vs gear, call gearCollect
+		game.physics.arcade.overlap(this.player, this.gear, collectFirstGear, null, this);			// player vs gear, call collectFirstGear
 		game.physics.arcade.overlap(this.gear, this.box, flyToBox, null, this);						// gear vs box, call flyToBox
-		//game.phyiscs.arcade.overlap(this.player, this.window);                                      // player vs window
 
-		// fade in bg and player and box
-		if(this.bg.alpha < 1){
-        	this.bg.alpha += 0.01;
-        	this.player.alpha += 0.01;
-        	this.box.alpha += 0.01;
-        }
-
-		/***** SWITCH STUFF *****/
+		/***** SWITCH + ACTIVATED PLATFORM STUFF *****/
 		// Switch logic for player pressing down on switch 
 		if(this.hitSwitch && this.player.x > this.switch.x - this.switch.width/2 && this.player.x < this.switch.x + this.switch.width/2) {
 			this.playerOnSwitch = true;
@@ -285,7 +286,7 @@ Play.prototype = {
 			}
 		}
 
-		// Change platform offset bounding box
+		// Change platform offset bounding box as it lowers
 		this.activatedPlatform.body.setSize(this.activatedPlatformXSize, this.activatedPlatformYSize, this.activatedPlatformXOffset, this.activatedPlatformYOffset); 
 
 		/***** BOX STUFF *****/
@@ -304,7 +305,7 @@ Play.prototype = {
 			this.box.body.gravity.y = 0;         // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
-			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0) {
+			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0 && this.canCreate) {
 				// Kills all current sounds set to play before playing the music note sounds in order
 				game.time.events.removeAll();
 				game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
@@ -435,9 +436,15 @@ Play.prototype = {
 }
 
 // Function for collecting "gears"
-function gearCollect(){
+function collectFirstGear(){
 	cutscenePlaying = true;
+	maxPlatforms = 1;
 	this.numPlatforms = 1;
+}
+
+// Function for allowing user to create music note blocks, used to pause music note creation during cutscenes via delay
+function allowCreate(){
+	this.canCreate = true;
 }
 
 // Function called when gear flies into the box
@@ -450,6 +457,6 @@ function flyToBox(){
 
 // Function called to transition to next level and kill bgm
 function transitionToRooftops(){
-	game.state.start('Level2', true, false, false, this.numPlatforms);
+	game.state.start('Level2', true, false, false, maxPlatforms);
 	this.bgm.destroy();
 }

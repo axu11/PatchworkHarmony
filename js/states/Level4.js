@@ -1,12 +1,8 @@
 var Level4 = function(game) {};
 Level4.prototype = {
-	init: function(numPlatforms) {
-		if(!wallShifted){
-			this.numPlatforms = 2;	
-		}
-		else{
-			this.numPlatforms = 3;	
-		}
+	init: function(maxPlatforms) {
+		maxPlatforms = 2;
+		this.numPlatforms = maxPlatforms;
 		reloadOnGround = 0;
 		self = this;	
 		level = 4;
@@ -139,13 +135,13 @@ Level4.prototype = {
 			this.shiftingWall1.body.immovable = true;
 		}
 
-		// if(!wallShifted){
-		// 	// Creates the right bookshelf that goes up last gear is obtained 
-		// 	this.shiftingWall2 = platforms.create(700, 50, 'lvl3', 'bookshelf2'); 
-		// 	this.shiftingWall2.scale.setTo(1, 1);
-		// 	game.physics.arcade.enable(this.shiftingWall2);
-		// 	this.shiftingWall2.body.immovable = true;	
-		// }
+		if(!wallShifted){
+			// Creates the right bookshelf that goes up last gear is obtained 
+			this.shiftingWall2 = platforms.create(700, 50, 'lvl3', 'bookshelf2'); 
+			this.shiftingWall2.scale.setTo(1, 1);
+			game.physics.arcade.enable(this.shiftingWall2);
+			this.shiftingWall2.body.immovable = true;	
+		}
 
 		/***** FLYING BOOKS ROOM (BG1) *****/
 		this.bookshelf = platforms.create(-800, 260, 'lvl3', 'bookshelf3'); 
@@ -332,7 +328,7 @@ Level4.prototype = {
 		// //game.debug.body(this.leverHandle);
 		// //game.debug.body(this.leftWall);
 		//game.debug.body(this.rightWall);
-		game.debug.body(this.door);
+		// game.debug.body(this.door);
 		// //this.elevator.y += 5;
 		// console.log(this.key1Lock + ' ' + this.key2Lock + ' ' + this.key3Lock);
 		// console.log(this.keyLock.y);
@@ -357,12 +353,14 @@ Level4.prototype = {
 
 		}
 
-		if(this.player.overlap(this.door) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.hitPlatform){
-			cutscenePlaying = true;
-			game.camera.fade(0x000000, 3000);
-			game.time.events.add(Phaser.Timer.SECOND * 3.0, transitionToBench, this);
+		if(!inElevator){
+			if(this.player.overlap(this.door) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.hitPlatform){
+				cutscenePlaying = true;
+				game.camera.fade(0x000000, 3000);
+				game.time.events.add(Phaser.Timer.SECOND * 3.0, transitionToBench, this);
+			}
 		}
-
+		
 		// if(this.player.overlap(this.door)){
 		// 	console.log('overlapping');
 		// }
@@ -637,7 +635,7 @@ Level4.prototype = {
 			this.timer++;
 			if(this.timer >= 120){
 				this.bgm.destroy();
-				game.state.start('Level5', true, false, this.numPlatforms);
+				game.state.start('Level5', true, false, maxPlatforms);
 			}
 		}
 
@@ -820,7 +818,7 @@ function oneSecond(){
 // Function called to transition to next level and kill bgm
 function transitionToBench(){
 	cutscenePlaying = false;
-	game.state.start('Level7', true, false, false, this.numPlatforms);
+	game.state.start('Level7', true, false, false, maxPlatforms);
 	this.bgm.destroy();
 }
 

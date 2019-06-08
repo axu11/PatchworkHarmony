@@ -2,14 +2,18 @@
 var Level2 = function(game) {};
 Level2.prototype = {
 
-	init: function(bgmOn, numPlatforms) {
-		this.numPlatforms = numPlatforms;
+	init: function(bgmOn, maxPlatforms) {
+		maxPlatforms = 1;
+		this.numPlatforms = maxPlatforms;
 		reloadOnGround = 0;
 		this.levelScale = 0.45;
 		self = this;
+		cutscenePlaying = false;
+		this.hasSecondGear = false;
 		this.bgmOn = bgmOn;
 		this.playerCanMove = true;
 		this.keySolved = true;
+		this.canCreate = true;
 	},
 
 	create: function() {
@@ -135,6 +139,9 @@ Level2.prototype = {
 		this.box.body.gravity.y = 300; // Has gravity while not held by player
 		this.box.body.drag = 0.5;
 		this.attached = true; // Held from last level
+
+		this.rooftopCutscene = game.add.image(0, 0, 'cutscene5');
+		this.rooftopCutscene.alpha = 0;
 	},
 
 	update: function(){
@@ -151,14 +158,28 @@ Level2.prototype = {
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
 		this.hitTrampoline = game.physics.arcade.collide(this.player, this.trampoline);
-		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
+		game.physics.arcade.overlap(this.player, this.gear, collectSecondGear, null, this);
+
+		if(!playedCutscene5){
+			if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.rooftopCutscene.alpha >= 1) {
+				this.rooftopCutscene.destroy();
+				game.time.events.add(Phaser.Timer.SECOND * 1, allowCreate, this);
+				cutscenePlaying = false;
+				playedCutscene5 = true;
+			}
+
+			if(this.rooftopCutscene.alpha < 1 && this.hasSecondGear){
+				this.rooftopCutscene.alpha += 0.02;
+				this.canCreate = false;
+			}
+		}
 		
 		// Trampoline bounce logic
 		if((this.player.x + this.player.width/2 >= (this.trampoline.x - this.trampoline.width/2 - 2) && this.player.x - this.player.width/2 <= (this.trampoline.x + this.trampoline.width/2 + 2)) &&
 			(((this.player.y + this.player.height/2) >= (this.trampoline.y - this.trampoline.height - 15)) && this.player.y + this.player.height/2 <= this.trampoline.y - this.trampoline.height + 1)) {
 			this.player.body.bounce.y = 1;
 			// play bounce sound on bounce
-			if(this.hitTrampoline){
+			if(this.hitTrampoline && !cutscenePlaying){
 				this.jump.play();
 			}
 		}
@@ -168,7 +189,7 @@ Level2.prototype = {
 
 		// Reset state when player falls
 		if(this.player.y + this.player.height/2 >= this.world.height - 1) {
-			game.state.start('Level2', true, false, this.bgmOn, 1);
+			game.state.start('Level2', true, false, this.bgmOn, maxPlatforms);
 		}
 		
 		/***** BOX STUFF *****/
@@ -188,7 +209,7 @@ Level2.prototype = {
 			this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
-			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0) {
+			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0 && this.canCreate) {
 				// Kills all current sounds set to play before playing the music note sounds in order
 				game.time.events.removeAll();
 				game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
@@ -275,15 +296,24 @@ Level2.prototype = {
 		if(this.player.x + Math.abs(this.player.width/2) > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
 			// Stop music and go to crane level
 			this.bgm.stop();
-			game.state.start('Level3', true, false, false, this.numPlatforms);	
+			game.state.start('Level3', true, false, false, maxPlatforms);	
 		} 
 	}
 }
 
 // Function for collecting "gears"
-function collectGear(Patches, gear){
+function collectSecondGear(Patches, gear){
 	gear.kill();
+	maxPlatforms++;
+	this.hasSecondGear = true;
 	this.numPlatforms++;
 	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
 	this.gearAudio.play();
+	cutscenePlaying = true;
+	game.camera.flash(0xffffff, 1000);
+}
+
+// Function for allowing user to create music note blocks, used to pause music note creation during cutscenes via delay
+function allowCreate(){
+	this.canCreate = true;
 }

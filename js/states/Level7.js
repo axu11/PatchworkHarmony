@@ -1,7 +1,8 @@
 var Level7 = function(game) {};
 Level7.prototype = {
-	init: function(numPlatforms) {
-		this.numPlatforms = 3;
+	init: function(maxPlatforms) {
+		maxPlatforms = 3;
+		this.numPlatforms = maxPlatforms;
 		reloadOnGround = 0;
 		self = this;
 		level = 5;

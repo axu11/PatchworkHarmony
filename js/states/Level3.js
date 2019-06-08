@@ -1,7 +1,8 @@
 var Level3 = function(game) {};
 Level3.prototype = {
-	init: function(bgmOn, numPlatforms) {
-		this.numPlatforms = numPlatforms;
+	init: function(bgmOn, maxPlatforms) {
+		maxPlatforms = 2;
+		this.numPlatforms = maxPlatforms
 		reloadOnGround = 0;
 		this.levelScale = 0.6;
 		self = this;
@@ -109,8 +110,8 @@ Level3.prototype = {
 		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); 				// player vs created platforms
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         								// player vs box
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   								// box vs platforms
-		this.carryDroppedPlatform = game.physics.arcade.collide(this.droppedPlatform, this.createdPlatforms);   // dropped vs  created platforms
-		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
+		this.carryDroppedPlatform = game.physics.arcade.collide(this.droppedPlatform, this.createdPlatforms);   // dropped vs created platforms
+		//game.physics.arcade.overlap(this.player, this.gear, collectSecondGear, null, this);
 		// game.physics.arcade.overlap(this.player, this.ladder, transitionToLibrary, null, this);
 
 		if(game.input.keyboard.addKey(Phaser.KeyCode.Q).justPressed()){
@@ -157,7 +158,7 @@ Level3.prototype = {
 
 		// Reset state when player falls
 		if(this.player.y + this.player.height/2 >= this.world.height - 1) {			
-			game.state.start('Level3', true, false, true, 2);
+			game.state.start('Level3', true, false, true, maxPlatforms);
 		}
 
 		/***** BOX STUFF *****/
@@ -268,6 +269,6 @@ function ready(){
 
 // Function called to transition to next level and kill bgm
 function transitionToLibrary(){
-	game.state.start('Level4', true, false, false, this.numPlatforms);
+	game.state.start('Level4', true, false, false, maxPlatforms);
 	this.bgm.destroy();
 }
