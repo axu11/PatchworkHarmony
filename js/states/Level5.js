@@ -35,7 +35,7 @@ Level5.prototype = {
 		game.world.setBounds(0, -600, 1600, this.bg1.height + 600);
 
 		// Create bgm for game, looped and played
-		this.bgm = game.add.audio('lvl1', 0.5, true);
+		this.bgm = game.add.audio('lvl3', 0.4, true);
 		this.bgm.play();
 
 		// Create sound effects for when a music block platform is created
@@ -44,7 +44,11 @@ Level5.prototype = {
 		this.platform3audio = game.add.audio('platform3audio');
 		this.platform4audio = game.add.audio('platform4audio');
 	
+		// Creates sound effect for gear collection
 		this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
+
+		// Creates sound effect for music block locking into place
+		this.lockAudio = game.add.audio('locking', 1, false);
 
 		if(!wallShifted){
 			this.key1 = game.add.sprite(1125, 340, 'assets', 'music-block');
@@ -453,6 +457,10 @@ function platformSound3(){
 
 function platformSound4(){
 	this.platform4audio.play();
+}
+
+function lockSound(){
+	this.lockAudio.play();
 }
 
 // Function for activating the elevator to go up

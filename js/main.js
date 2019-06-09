@@ -18,13 +18,13 @@ var keySolved = false;
 var hasThirdGear = false;
 var style1 = { fontSize: '32px', fill: '#000' };
 var style2 = { fontSize: '16px', fill: '#000' };
-var palette = ['#1B1B3A', '#693668', '#A74482', '#F84AA7', '#FF3562', '#000'];
+var palette = ['#1B1B3A', '#693668', '#A74482', '#F84AA7', '#FF3562', '#000', '#FFFFFF'];
 var textStyle = {
-			font: 'Pacifico',
+			font: 'Gaegu',
 			fontSize: 24,
 			wordWrap: true,
 			wordWrapWidth: 586,
-			fill: palette[4]
+			fill: palette[7]
 		};
 
 var textStyle2 = {
