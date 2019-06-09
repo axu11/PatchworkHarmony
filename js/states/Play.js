@@ -3,33 +3,34 @@ var Play = function(game) {};
 Play.prototype = {
 
 	init: function(maxPlatforms) {
-		this.numPlatforms = maxPlatforms;
-		reloadOnGround = 0;
+		reloadOnGround = 0;	
 		self = this;
-		this.cutscenePlaying = true;
-		this.hasFirstGear = false;
-		this.currentScene = 1;
-		this.playScene = false;
-		this.gearInBox = false;
-		this.playerCanMove = true;
-		this.keySolved = true;
-		this.canCreate = true;
-		this.currentInstruction = 1;
-		this.moveOn = true;
-		this.timer = 0;
-		this.timerValue = 10;
+
+		this.level = 1;						// current level is 1
+		this.levelScale = 1.0;				// levelScale that affects the sizing of assets in prefabs
+		this.numPlatforms = maxPlatforms;	// current platforms set to maxPlatforms
+
+		this.cutscenePlaying = true;    	// starts off true because tutorial instructions pop up
+
+		this.hasFirstGear = false;			// true after inBox() called, used in boxscene
+		this.playedBoxScene	= false;		// true after done playing box scene 
+
+		this.canCreate = false;				// usually set to true, used primarily in timers so you don't make a block as you exit a scene
+		this.currentInstruction = 1;		// number from 1 to 5, one for each instruction bubble, ends at 6 to indicate no more bubbles
+		
+		this.timer = 0;						// timer for cutscenes, ticks up 
+		this.TIMER_VALUE = 60;				// modify this here depending on how long the delay should be before spacebar can be pressed
 	},
 	
 	create: function() {
-
 		/***** BG, BGM, AND SOUND EFFECTS *****/
 		// Create backgrounds for both scenes, set bounds to include both bg (1600 x 600)
-		this.bg = game.add.image(0, 0, 'bg0');
-		this.bg.alpha = 0;
-		this.bg2 = game.add.image(800, 0, 'bg1');
-		game.world.setBounds(0, 0, this.bg.width + 800, this.bg.height);
+		this.bg0 = game.add.image(0, 0, 'bg0');
+		this.bg0.alpha = 0;	
+		this.bg1 = game.add.image(800, 0, 'bg1');
+		game.world.setBounds(0, 0, this.bg0.width + 800, this.bg0.height);
 
-		// Create bgm for game, looped and played
+		// Create bgm for level 1, looped and played
 		this.bgm = game.add.audio('lvl1', 0.25, true);
 		this.bgm.play();
 
@@ -62,11 +63,6 @@ Play.prototype = {
 		this.number4 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number4');
 		this.number4.scale.set(0);
 		this.number4.fixedToCamera = true;
-
-		// dummy sprites so the code doesn't break
-		this.key1 = game.add.sprite(-1000, -1000, 'assets', 'box');
-		this.key2 = game.add.sprite(-1000, -1000, 'assets', 'box');
-		this.key3 = game.add.sprite(-1000, -1000, 'assets', 'box');
 
 		/***** SWITCH MECHANIC *****/
 		this.switches = game.add.group();
@@ -104,12 +100,11 @@ Play.prototype = {
 		this.ground.visible = false;
 
 		// Create invisible wall preventing player from returning to first screen (scene 1)
-		this.wall = this.platforms.create(700, 0, 'atlas', 'sky');
-		this.wall.scale.setTo(0.75,10);
+		this.wall = this.platforms.create(780, 0, 'atlas', 'sky');
+		this.wall.scale.setTo(0.3,10);
 		game.physics.arcade.enable(this.wall);
 		this.wall.body.immovable = true;
 		this.wall.alpha = 0;
-		this.wall.body.checkCollision.left = false;
 
 		// Creates invisible platform on top of desk (scene 1)
 		this.desk = this.platforms.create(30, 400, 'atlas', 'sky');
@@ -122,7 +117,7 @@ Play.prototype = {
 		this.desk.body.checkCollision.right = false;
 
 		// Create invisible platform on top of drawer, only collides on top (scene 2)
-		this.drawer = this.platforms.create(1020, 395, 'atlas','sky');
+		this.drawer = this.platforms.create(1020, 410, 'atlas','sky');
 		game.physics.arcade.enable(this.drawer);
 		this.drawer.scale.setTo(0.65, 0.075);
 		this.drawer.body.immovable = true;
@@ -141,13 +136,13 @@ Play.prototype = {
 		this.table.body.checkCollision.right = false;
 		this.table.alpha = 0;
 
-		// Create platform right below window
+		// Create platform right below window (scene 2)
 		this.shelf = this.platforms.create(1470, 240, 'assets', 'shelf-platform');
 		this.shelf.anchor.set(0.5);
 		this.shelf.scale.setTo(0.6, 0.4);
 		this.shelf.body.immovable = true;
 
-		// Creates a visible platform that lowers once switch is activated
+		// Creates a visible platform that lowers once switch is activated (scene 2)
 		this.activatedPlatform = this.platforms.create(800, 300, 'assets', 'shelf-platform');
 		this.activatedPlatform.scale.set(0.55);
 		this.activatedPlatform.angle += 270;  // activated platform starts rotated up
@@ -159,16 +154,14 @@ Play.prototype = {
 		game.physics.arcade.enable(this.activatedPlatform);
 		this.activatedPlatform.body.immovable = true;
 
-		/***** MISC COLLECTIBLES AND SPRITES *****/	
-	
-		// Creates a collectible "gear" that will enable player to unlock an ability
+		// Creates a collectible "gear" that will enable player to unlock an ability (scene 2)
 		this.gear = game.add.sprite(920, 95, 'assets', 'gear'); 
 		game.physics.arcade.enable(this.gear);
 		this.gear.body.immovable = true;
 		this.gear.scale.setTo(0.5, 0.5);	
 		this.gear.anchor.set(0.5, 0.5);
 
-		// Creates a bed for the switch to rest on
+		// Creates a bed for the switch to rest on (scene 2)
 		this.switchHolder = game.add.sprite(1250, 525, 'assets', 'switch-holder');
 		this.switchHolder.anchor.set(0.5, 1);
 		this.platforms.add(this.switchHolder);
@@ -176,7 +169,7 @@ Play.prototype = {
 		this.switchHolder.body.immovable = true;
 
 		/***** PLAYER SPRITE *****/ 
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 76, 332, 1);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 76, 332, this.levelScale);
 		this.player.enableBody = true;
 		this.player.alpha = 0;
 		game.add.existing(this.player);
@@ -192,47 +185,61 @@ Play.prototype = {
 		this.box.body.drag = 0.5;
 		this.attached = false; 	// Initially not picked up by player
 
+		/***** INSTRUCTIONS AND CUTSCENES *****/		
 		// Box animation cutscene
 		this.boxScene = game.add.sprite(800, 0, 'boxscene', 'cutscene1');
 		this.boxScene.visible = false;
 		this.boxScene.animations.add('boxscene', Phaser.Animation.generateFrameNames('boxscene', 'cutscene', 1, 4), 10, true);
 		this.boxScene.animations.play('boxscene');
 
-		this.instructions5 = game.add.sprite(this.player.x, this.player.y, 'atlas', 'sky');		
-		this.instructions4 = this.instructions.create(850, 400, 'atlas', 'red');		
-		this.instructions3 = this.instructions.create(850, 400, 'atlas', 'sky');
-		this.instructions2 = this.instructions.create(100, 200, 'atlas', 'red');		
-		this.instructions1 = this.instructions.create(100, 200, 'atlas', 'sky');
-		
-		this.instructions.alpha = 0;
+		// Instructions played in the tutorial
+		this.instructions5 = game.add.sprite(this.player.x, this.player.y, 'instructions', 'bubble4');	// spacebar to create block	
+		this.instructions4 = this.instructions.create(880, 200, 'instructions', 'bubble3');			// gear with question mark
+		this.instructions3 = this.instructions.create(880, 200, 'instructions', 'bubble2');			// arrow pointing towards window
+		this.instructions2 = this.instructions.create(100, 75, 'instructions', 'bubble1');			// patches bringing box to lindsey
+		this.instructions1 = this.instructions.create(100, 75, 'instructions', 'bubble'); 			// arrow keys and shift
+		this.instructions4.alpha = 0;
+		this.instructions3.alpha = 0;
+		this.instructions2.alpha = 0;
+		this.instructions1.alpha = 0;
 		this.instructions5.alpha = 0;
 
-		this.spacebar = game.add.sprite(200, 300, 'spacebar', 'spacebar1');
+		// Spacebar indicators for instructions 1 and 2
+		this.spacebar = game.add.sprite(320, 300, 'instructions', 'spacebar1'); 
 		this.spacebar.scale.setTo(0.33);
-		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 'spacebar', 1, 4), 10, true);
+		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 5, true);
 		this.spacebar.animations.play('spacebarAni');
 		this.spacebar.alpha = 0;
 
-		this.spacebar2 = game.add.sprite(970, 500, 'spacebar', 'spacebar1');
+		// Spacebar indicators for instructions 3 and 4
+		this.spacebar2 = game.add.sprite(1100, 400, 'instructions', 'spacebar1'); 
 		this.spacebar2.scale.setTo(0.33);
-		this.spacebar2.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 'spacebar', 1, 4), 10, true);
+		this.spacebar2.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 5, true);
 		this.spacebar2.animations.play('spacebarAni');
 		this.spacebar2.alpha = 0;
 
-		this.spacebar3 = game.add.sprite(this.player.x, this.player.y, 'spacebar', 'spacebar1');
+		// Spacebar indicator for instructions 5
+		this.spacebar3 = game.add.sprite(this.player.x, this.player.y, 'instructions', 'spacebar1'); 
 		this.spacebar3.scale.setTo(0.33);
-		this.spacebar3.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 'spacebar', 1, 4), 10, true);
+		this.spacebar3.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 5, true);
 		this.spacebar3.animations.play('spacebarAni');
 		this.spacebar3.alpha = 0;
 
-		this.downArrow = game.add.sprite(1460, 20, 'patchesAtlas2', 'right1');
-		this.downArrow.scale.setTo(0.15);
-		this.downArrow.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('patchesAtlas2', 'right', 1, 3), 10, true);
-		this.downArrow.animations.play('spacebarAni');
+		// Spacebar indicator for box cutscene
+		this.spacebar4 = game.add.sprite(1450, 550, 'instructions', 'spacebar1'); 
+		this.spacebar4.scale.setTo(0.33);
+		this.spacebar4.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 5, true);
+		this.spacebar4.animations.play('spacebarAni');
+		this.spacebar4.alpha = 0;
+
+		// Down arrow indicator for exiting through window
+		this.downArrow = game.add.sprite(1440, 20, 'instructions', 'down1');
+		this.downArrow.scale.setTo(0.33);
+		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4), 10, true);
+		this.downArrow.animations.play('arrowAni');
 		this.downArrow.alpha = 0;
 
 		// this.pauseMenu = new PauseMenu('assets', 'gear', 650, 50, this);
-
 	},
 
 	update: function() {
@@ -253,30 +260,6 @@ Play.prototype = {
 		//console.log(this.box.x + 'and' + this.box.y);
 		//console.log('player x: ' + this.player.x);
 
-		/***** CAMERA, TRANSITIONS, AND CUTSCECNES *****/
-		this.checkCamBounds(); // Keep checking camera bounds
-		// Fade in bg, player, and box
-		if(this.bg.alpha < 1){
-        	this.bg.alpha += 0.01;
-        	this.player.alpha += 0.01;
-        	this.box.alpha += 0.01;
-        	this.instructions.alpha += 0.01;
-        }
-        if(this.attached){
-	        this.instructions5.x = this.player.x - 150;
-	        this.spacebar3.x = this.player.x - 50;
-	        this.instructions5.y = this.player.y - 150;
-	        this.spacebar3.y = this.player.y - 50;
-	    }
-
-	    if(this.player.overlap(this.window)){
-	    	this.downArrow.alpha = 1;
-	    }
-	    else{
-	    	this.downArrow.alpha = 0;
-	    }
-        //console.log(this.timer);
-
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, this.platforms);   				// player vs platforms
 		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); 	// player vs created platforms
@@ -285,77 +268,152 @@ Play.prototype = {
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, this.platforms); 			    // box vs platforms
 		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches); 					// box vs switch
 		game.physics.arcade.overlap(this.player, this.gear, collectFirstGear, null, this);			// player vs gear, call collectFirstGear
-		game.physics.arcade.overlap(this.gear, this.box, flyToBox, null, this);						// gear vs box, call flyToBox
+		game.physics.arcade.overlap(this.gear, this.box, inBox, null, this);						// gear vs box, call inBox
 
+		/***** CAMERA, TRANSITIONS, AND CUTSCENES *****/
+		this.checkCamBounds(); // Keep checking camera bounds
+
+		// Fade in bg, player, box, and instructions
+		if(this.bg0.alpha < 1){
+        	this.bg0.alpha += 0.01;
+        	this.player.alpha += 0.01;
+        	this.box.alpha += 0.01;
+        	this.instructions1.alpha += 0.01;
+        	this.timer = 0;
+        }
+
+   		// When player gets to the window, go to level 2 (town scene 1)
+		if(this.player.overlap(this.window) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.player.body.touching.down){
+			this.cutscenePlaying = true;
+			game.camera.fade(0x000000, 3000);
+			game.time.events.add(Phaser.Timer.SECOND * 3.0, transitionToRooftops, this);
+		}
+
+		// Down arrow shows when player approaches window
+	    if(this.player.overlap(this.window))
+	    	this.downArrow.alpha = 1;
+	    else
+	   		this.downArrow.alpha = 0;
+
+		// Animate Gear
+		this.gear.angle += 1;
+
+		// When you collect the gear, but has yet to finish flying into the box
+		if(this.numPlatforms > 0 && !this.hasFirstGear){
+			if(this.gear.x < this.box.x)
+				this.gear.x += 5;
+			if(this.gear.y < this.box.y)
+				this.gear.y += 5;
+			game.camera.flash(0xffffff, 1000);	// 1000ms flash effect
+		}
+
+		// Can't go to scene 2 if not carrying box
+		if(this.attached)
+			this.wall.body.checkCollision.left = false;
+		else
+			this.wall.body.checkCollision.left = true;
+
+		// Code for exiting away from the boxscene
+		if(this.cutscenePlaying && this.hasFirstGear){
+			this.timer++;
+			
+			// If this.timer passed the spacebar delay, show the spacebar
+			if(this.timer >= this.TIMER_VALUE)
+				this.spacebar4.alpha = 1;
+
+			// If spacebar showing and you press space, player can now move, cutscene killed, spacebar killed
+			if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.timer >= this.TIMER_VALUE) {
+				this.boxScene.destroy();
+				this.spacebar4.destroy();
+				this.playedBoxScene = true;
+				this.cutscenePlaying = false;
+			}
+		}
+		
+
+		/***** INSTRUCTIONS *****/
+		// Instruction code for instructions 1 and 2
 		if(this.currentInstruction < 3 && this.player.overlap(this.instructions)){
 			this.timer++;
-			if(this.timer >= this.timerValue && this.currentInstruction == 1){
+
+			// If this.timer passed the spacebar delay, show the spacebar
+			if(this.timer >= this.TIMER_VALUE)
 				this.spacebar.alpha = 1;
-			}
+
+			// If spacebar showing and you press space, proceed to second instruction bubble
 			if(this.spacebar.alpha == 1 && game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.currentInstruction == 1){
 				this.instructions1.destroy();
+				this.instructions2.alpha = 1;
 				this.currentInstruction++;
-				this.timer = 0;
-				//game.time.events.add(Phaser.Timer.SECOND, nextInstruction, this);
 				this.spacebar.alpha = 0;
+				this.timer = 0;
 			}
-			if(this.timer >= this.timerValue && this.currentInstruction == 2){
-				this.spacebar.alpha = 1;
-			}
+
+			// If spacebar showing and you press space, player can now move, instructions killed, spacebar killed
 			if(this.spacebar.alpha == 1 && game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.currentInstruction == 2){
 				this.instructions2.destroy();
+				this.instructions3.alpha = 1;
+				this.spacebar.destroy();				
 				this.currentInstruction++;		
-				//game.time.events.add(Phaser.Timer.SECOND, allowCreate, this);
 				this.cutscenePlaying = false;
-				this.spacebar.alpha = 0;
 				this.timer = 0;
 			}
 		}
-		//console.log(this.currentInstruction);
+
+		// Instruction code for instructions 3 and 4
 		if(this.currentInstruction >= 3 && this.currentInstruction < 5 && this.player.overlap(this.instructions)){
 			this.cutscenePlaying = true;
 			this.timer++;
 
-			if(this.timer >= this.timerValue && this.currentInstruction == 3){
+			// If this.timer passed the spacebar delay, show the spacebar
+			if(this.timer >= (this.TIMER_VALUE - 20))
 				this.spacebar2.alpha = 1;
-			}
 
+			// If spacebar showing and you press space, proceed to fourth instruction bubble
 			if(this.spacebar2.alpha == 1 && game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.currentInstruction == 3){
 				this.instructions3.destroy();
+				this.instructions4.alpha = 1;
 				this.currentInstruction++;		
-				this.timer = 0;
-				//game.time.events.add(Phaser.Timer.SECOND, nextInstruction, this);
 				this.spacebar2.alpha = 0;
+				this.timer = 0;
 			}
 
-			if(this.timer >= this.timerValue && this.currentInstruction == 4){
-				this.spacebar2.alpha = 1;
-			}
-
+			// If spacebar showing and you press space, player can now move, instructions killed, spacebar killed
 			if(this.spacebar2.alpha == 1 && game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.currentInstruction == 4){
 				this.instructions4.destroy();
+				this.spacebar2.destroy();
 				this.currentInstruction++;		
-				//game.time.events.add(Phaser.Timer.SECOND, allowCreate, this);
 				this.cutscenePlaying = false;
-				this.spacebar2.alpha = 0;
 				this.timer = 0;
 			}
 		}
+
+		// Set position of last instruction and spacebar to be wherever the player is once box picked up
+        if(this.attached){
+	        this.instructions5.x = 1000;
+	        this.instructions5.y = 150;
+            this.spacebar3.x = 1200;
+	        this.spacebar3.y = 300;
+	    }
+
+		// Instruction code for instruction 5		
 		if(this.currentInstruction == 5 && this.attached && this.hasFirstGear){
 			this.instructions5.alpha = 1;
 			this.cutscenePlaying = true;
 			this.timer++;
-			this.canCreate = false;
-			if(this.timer >= this.timerValue && this.currentInstruction == 5){
+
+			// If this.timer passed the spacebar delay, show the spacebar
+			if(this.timer >= this.TIMER_VALUE)
 				this.spacebar3.alpha = 1;
-			}
+
+			// If spacebar showing and you press space, player can now move, instructions killed, spacebar killed
 			if(this.spacebar3.alpha == 1 && game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.currentInstruction == 5){
 				this.instructions5.destroy();
+				this.spacebar3.destroy();
 				this.currentInstruction++;		
 				this.cutscenePlaying = false;
-				game.time.events.add(Phaser.Timer.SECOND, allowCreate, this);
-				this.spacebar3.alpha = 0;
 				this.timer = 0;
+				game.time.events.add(Phaser.Timer.SECOND, allowCreate, this); // enable music block creation only after a second delay
 			}
 		}		
 
@@ -365,6 +423,7 @@ Play.prototype = {
 			this.playerOnSwitch = true;
 			this.switchPressed = true;
 		}
+
 		if(this.playerOnSwitch && !this.hitSwitch && (this.player.x + this.player.width/2 < this.switch.x - this.switch.width/2 || this.player.x - this.player.width/2 > this.switch.x + this.switch.width/2 || this.player.y + this.player.height/2 < this.switch.y - this.switch.height - 30))  {
 			this.playerOnSwitch = false;
 		}
@@ -374,6 +433,7 @@ Play.prototype = {
 			this.boxOnSwitch = true;
 			this.switchPressed = true;
 		}
+
 		if(this.boxOnSwitch && !this.boxHitSwitch && (this.box.x + this.box.width/2 < this.switch.x - this.switch.width/2 || this.box.x - this.box.width/2 > this.switch.x + this.switch.width/2)) {
 			this.boxOnSwitch = false;
 		}
@@ -441,7 +501,7 @@ Play.prototype = {
 			this.box.body.gravity.y = 0;         // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
-			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0 && this.canCreate && !this.cutscenePlaying) {
+			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0 && this.canCreate) {
 				// Kills all current sounds set to play before playing the music note sounds in order
 				game.time.events.removeAll();
 				game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
@@ -486,21 +546,6 @@ Play.prototype = {
 			}
 		}
 
-		if(this.numPlatforms > 0 && this.currentScene == 1 && this.gearInBox){
-			this.boxScene.visible = true;
-		}
-		else{
-			this.boxScene.visible = false;
-		}
-
-		if(this.numPlatforms > 0 && !this.gearInBox){
-			if(this.gear.x < this.box.x)
-				this.gear.x += 5;
-			if(this.gear.y < this.box.y)
-				this.gear.y += 5;
-			game.camera.flash(0xffffff, 1000);
-		}
-
 		// Top-left number updates with this.numPlatforms
 		if(this.numPlatforms == 0) {
 			this.number0.scale.set(0.5);
@@ -537,28 +582,6 @@ Play.prototype = {
 			this.number3.scale.set(0);
 			this.number4.scale.set(0.5);
 		}
-
-		// When player gets to the window, go to level 2 (town scene 1)
-		//this.player.x > 1400 && this.player.y < 240
-		if(this.player.overlap(this.window) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.player.body.touching.down){
-			this.cutscenePlaying = true;
-			game.camera.fade(0x000000, 3000);
-			game.time.events.add(Phaser.Timer.SECOND * 3.0, transitionToRooftops, this);
-		}
-
-		// Animate Gear
-		this.gear.angle += 1;
-
-		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.currentScene == 1 && this.numPlatforms > 0) {
-			this.boxScene.destroy();
-			this.currentScene++;
-			this.cutscenePlaying = false;
-		}
-	},
-
-	render: function() {
-		//game.debug.cameraInfo(game.camera, 32, 32);
-		//game.debug.rectangle({x:game.camera.bounds.x, y:game.camera.bounds.y, width:game.camera.bounds.width, height:game.camera.bounds.height});
 	},
 
 	checkCamBounds: function() {
@@ -575,12 +598,20 @@ Play.prototype = {
 	}
 }
 
-// Function for collecting "gears"
+// Function for collecting the first gear, updates numplatforms
 function collectFirstGear(){
 	this.cutscenePlaying = true;
 	maxPlatforms = 1;
-	this.hasFirstGear = true;
 	this.numPlatforms = 1;
+}
+
+// Function called when gear flies into the box
+function inBox(){
+	this.gearAudio.play();
+	this.gear.destroy();
+	this.hasFirstGear = true;
+	this.boxScene.visible = true;
+	this.cutscenePlaying = true;
 }
 
 // Function for allowing user to create music note blocks, used to pause music note creation during cutscenes via delay
@@ -588,26 +619,13 @@ function allowCreate(){
 	this.canCreate = true;
 }
 
-// Function called when gear flies into the box
-function flyToBox(){
-	this.gearInBox = true;
-	//console.log(this.gearInBox);
-	this.gearAudio.play();
-	this.gear.destroy();
+// Function for disabling cutscenePlaying, which was preventing movement
+function stopCutscene(){
+	this.cutscenePlaying = false;
 }
 
 // Function called to transition to next level and kill bgm
 function transitionToRooftops(){
 	game.state.start('Level2', true, false, false, maxPlatforms);
 	this.bgm.destroy();
-}
-
-function nextInstruction(){
-	this.moveOn = true;
-	this.timer = 0;
-}
-
-// Function for allowing user to create music note blocks, used to pause music note creation during cutscenes via delay
-function allowCreate(){
-	this.canCreate = true;
 }
