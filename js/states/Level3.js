@@ -81,13 +81,13 @@ Level3.prototype = {
 		this.secondRooftop.body.immovable = true;
 
 		// Library
-		this.library = platforms.create(600, 250, 'library');
+		this.library = platforms.create(630, 100, 'library');
 		this.library.scale.setTo(1, 1);
 		game.physics.arcade.enable(this.library);
 		this.library.body.setSize(200, 200, 0, 170);
 		this.library.body.immovable = true;
 
-		this.ladder = game.add.sprite(650, 350, 'atlas', 'sky');
+		this.ladder = game.add.sprite(680, 200, 'atlas', 'sky');
 		game.physics.arcade.enable(this.ladder);
 		this.ladder.body.setSize(50, 70, 0, 0);
 		this.ladder.body.immovable = true;

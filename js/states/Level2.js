@@ -127,7 +127,7 @@ Level2.prototype = {
 
 		/***** PLAYER SPRITE *****/ 
 		this.players = game.add.group();
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 100, 450, this.levelScale);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 40, 500, this.levelScale);
 		this.player.enableBody = true;
 		this.players.add(this.player);
 
