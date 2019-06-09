@@ -75,6 +75,12 @@ Play.prototype = {
 		this.switch.body.immovable = true;
 		this.switch.scale.setTo(0.2, 0.25);
 
+		// Creates a window for player to get to in order to clear level
+		this.window = game.add.sprite(1320, 70, 'windowAni', 'window0');
+		this.window.scale.setTo(0.5, 0.5);
+		this.window.animations.add('windowBillow', Phaser.Animation.generateFrameNames('windowAni', 'window', 0, 2), 4, true);
+		this.window.animations.play('windowBillow');	
+		
 		/***** PLATFORMS *****/
 		// Create this.platforms group for general platform collision (usually invisible)
 		this.platforms = game.add.group();
@@ -150,12 +156,7 @@ Play.prototype = {
 		game.physics.arcade.enable(this.activatedPlatform);
 		this.activatedPlatform.body.immovable = true;
 
-		/***** MISC COLLECTIBLES AND SPRITES *****/
-		// Creates a window for player to get to in order to clear level
-		this.window = game.add.sprite(1320, 70, 'windowAni', 'window0');
-		this.window.scale.setTo(0.5, 0.5);
-		this.window.animations.add('windowBillow', Phaser.Animation.generateFrameNames('windowAni', 'window', 0, 2), 4, true);
-		this.window.animations.play('windowBillow');		
+		/***** MISC COLLECTIBLES AND SPRITES *****/	
 	
 		// Creates a collectible "gear" that will enable player to unlock an ability
 		this.gear = game.add.sprite(920, 95, 'assets', 'gear'); 
