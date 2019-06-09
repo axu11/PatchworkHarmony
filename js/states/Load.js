@@ -18,6 +18,11 @@ Load.prototype = {
 		loadingBar.anchor.set(0.5);
 		game.load.setPreloadSprite(loadingBar);
 
+		this.spacebar = game.add.sprite(game.width/2 - 50, game.height/2 - 200, 'patchesAtlas2', 'right1');
+		this.spacebar.scale.setTo(0.5);
+		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('patchesAtlas2', 'right', 1, 3), 10, true);
+		this.spacebar.animations.play('spacebarAni');
+
 		// Load all assets, beginning with images and spritesheets, then audio
 		this.load.path = 'assets/';
 		game.load.image('logo', 'img/PH-logo.png');
@@ -29,8 +34,8 @@ Load.prototype = {
 		game.load.image('cutscene2', 'img/cutscene2.png');
 		game.load.image('cutscene3', 'img/cutscene3.png');	
 		game.load.image('cutscene5', 'img/cutscene5.png');	
-		game.load.image('cutscene6', 'img/cutscene6.png');	
-
+		game.load.image('cutscene6', 'img/cutscene6.png');
+		game.load.image('cutscene7', 'img/cutscene7.png');			
 
 		game.load.image('library', 'img/library.png');
 		game.load.image('crane-platform', 'img/crane-platform.png');
@@ -41,11 +46,12 @@ Load.prototype = {
 		this.load.atlas('assets', 'img/assetsheet.png', 'img/assets.json')
 		this.load.atlas('numbers', 'img/numbersheet.png', 'img/numbers.json');
 		this.load.atlas('windowAni', 'img/windowAni.png', 'img/windowAni.json');
-		this.load.atlas('patchesAtlas2', 'img/patches2.png', 'img/patches2.json');
+		//this.load.atlas('patchesAtlas2', 'img/patches2.png', 'img/patches2.json');
 		this.load.atlas('lvl2', 'img/lvl2-spritesheet.png', 'img/lvl2-spritesheet.json');
 		this.load.atlas('lvl3', 'img/lvl3-spritesheet.png', 'img/lvl3-sprites.json');
 		this.load.atlas('lvl3-bg', 'img/lvl3-bgs.png', 'img/lvl3-bgs.json');
 		this.load.atlas('boxscene', 'img/boxscene.png', 'img/boxscene.json');
+		this.load.atlas('spacebar', 'img/spacebar.png', 'img/spacebar.json');
 
 		// Music
 		game.load.audio('intro', 'audio/mp3/intro-music.mp3');

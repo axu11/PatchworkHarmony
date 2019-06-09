@@ -1,7 +1,12 @@
 var Level4 = function(game) {};
 Level4.prototype = {
 	init: function(maxPlatforms) {
-		maxPlatforms = 2;
+		if(hasThirdGear){
+			maxPlatforms = 3;
+		}
+		else{
+			maxPlatforms = 2;
+		}
 		this.numPlatforms = maxPlatforms;
 		reloadOnGround = 0;
 		self = this;	
@@ -309,6 +314,24 @@ Level4.prototype = {
 		this.box.body.drag = 0.5;
 		this.attached = true; 
 
+		this.spacebar = game.add.sprite(325, 260, 'spacebar', 'spacebar1');
+		this.spacebar.scale.setTo(0.33);
+		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 'spacebar', 1, 4), 10, true);
+		this.spacebar.animations.play('spacebarAni');
+		this.spacebar.alpha = 0;
+
+		this.shift = game.add.sprite(-1520, 100, 'patchesAtlas2', 'right1');
+		this.shift.scale.setTo(0.15);
+		this.shift.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('patchesAtlas2', 'right', 1, 3), 10, true);
+		this.shift.animations.play('spacebarAni');
+		this.shift.alpha = 0;
+
+		this.downArrow = game.add.sprite(1500, 200, 'patchesAtlas2', 'right1');
+		this.downArrow.scale.setTo(0.15);
+		this.downArrow.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('patchesAtlas2', 'right', 1, 3), 10, true);
+		this.downArrow.animations.play('spacebarAni');
+		this.downArrow.alpha = 0;
+
 	},
 	update: function() {
 		/***** DEBUG *****/
@@ -340,7 +363,31 @@ Level4.prototype = {
 				}
 			}
 		}
+		if(!inElevator){
+			if(this.player.overlap(this.leverHandle) && !elevatorActivated){
+	    	this.shift.alpha = 1;
+		    }
+		    else{
+		    	this.shift.alpha = 0;
+		    }
+			
+
+			if(this.player.overlap(this.elevators) && !inElevator && elevatorActivated){
+		    	this.spacebar.alpha = 1;
+		    }
+		    else{
+		    	this.spacebar.alpha = 0;
+		    }
+
+			if(this.player.overlap(this.door)){
+		    	this.downArrow.alpha = 1;
+		    }
+		    else{
+		    	this.downArrow.alpha = 0;
+		    }
+		}
 		
+
 		// CheckCamBounds will be disabled while the panning process is occuring
 		if(!leverActivated){
 			this.checkCamBounds();			

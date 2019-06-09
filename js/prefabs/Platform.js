@@ -34,16 +34,18 @@ Platform.prototype.update = function() {
 	}
 	if(!keySolved || !wallShifted){
 		if(this.x >= self.key1.x - this.keyLeniency && this.x <= self.key1.x + this.keyLeniency && this.y >= self.key1.y - this.keyLeniency && this.y <= self.key1.y + this.keyLeniency) {
-		//console.log('filled 1');
-		self.key1Lock = true;
-		if(!self.keySolved)
-			this.decaying = false;
-		else
-			this.decaying = true;
+			//console.log('filled 1');
+			self.key1Lock = true;
+			self.key1.destroy();
+			if(!self.keySolved)
+				this.decaying = false;
+			else
+				this.decaying = true;
 		}
 		else if(this.x >= self.key2.x - this.keyLeniency && this.x <= self.key2.x + this.keyLeniency && this.y >= self.key2.y - this.keyLeniency && this.y <= self.key2.y + this.keyLeniency) {
 			//console.log('filled 2');
 			self.key2Lock = true;
+			self.key2.destroy();
 			if(!self.keySolved)
 				this.decaying = false;
 			else
@@ -52,6 +54,7 @@ Platform.prototype.update = function() {
 		else if(this.x >= self.key3.x - this.keyLeniency && this.x <= self.key3.x + this.keyLeniency && this.y >= self.key3.y - this.keyLeniency && this.y <= self.key3.y + this.keyLeniency) {
 			//console.log('filled 3');
 			self.key3Lock = true;
+			self.key3.destroy();
 			if(!self.keySolved)
 				this.decaying = false;
 			else

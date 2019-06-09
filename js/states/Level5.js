@@ -1,7 +1,12 @@
 var Level5 = function(game) {};
 Level5.prototype = {
 	init: function(maxPlatforms) {
-		maxPlatforms = 2;
+		if(hasThirdGear){
+			maxPlatforms = 3;
+		}
+		else{
+			maxPlatforms = 2;
+		}
 		this.numPlatforms = maxPlatforms;
 		reloadOnGround = 0;
 		self = this;
@@ -13,7 +18,6 @@ Level5.prototype = {
 		this.lockDown = false;
 		this.playerCanMove = true;
 		this.canCreate = true;
-		this.hasThirdGear = false;
 		if(wallShifted){
 			this.keySolved = true;
 		}
@@ -51,18 +55,21 @@ Level5.prototype = {
 			this.key1.scale.set(0.33 * this.levelScale);
 			this.key1.alpha = 0.5;
 			this.key1Lock = false;
+			this.key1.alpha = 0;
 
 			this.key2 = game.add.sprite(1250, 450, 'assets', 'music-block');
 			this.key2.anchor.set(0.5);
 			this.key2.scale.set(0.33 * this.levelScale);
 			this.key2.alpha = 0.5;
 			this.key2Lock = false;
+			this.key2.alpha = 0;
 
 			this.key3 = game.add.sprite(1000, 450, 'assets', 'music-block');
 			this.key3.anchor.set(0.5);
 			this.key3.scale.set(0.33 * this.levelScale);
 			this.key3.alpha = 0.5;
 			this.key3Lock = false;
+			this.key3.alpha = 0;
 
 			this.keyLock = game.add.sprite(800, -1050, 'lvl3', 'bookshelf1');
 			this.keyLock.scale.set(1);
@@ -182,6 +189,12 @@ Level5.prototype = {
 		this.libraryCutscene = game.add.image(800, 0, 'cutscene6');
 		this.libraryCutscene.alpha = 0;
 
+		this.spacebar = game.add.sprite(325, 270, 'spacebar', 'spacebar1');
+		this.spacebar.scale.setTo(0.33);
+		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 'spacebar', 1, 4), 10, true);
+		this.spacebar.animations.play('spacebarAni');
+		this.spacebar.alpha = 0;
+
 	},
 	update: function() {
 		//console.log(level);
@@ -198,7 +211,7 @@ Level5.prototype = {
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
 		this.hitKeyLock = game.physics.arcade.collide(this.player, this.keyLock); // player vs keyLock
 		this.boxHitKeyLock = game.physics.arcade.collide(this.box, this.keyLock); // box vs keyLock
-		if(!this.hasThirdGear){
+		if(!hasThirdGear){
 			game.physics.arcade.overlap(this.player, this.gear, collectLastGear, null, this);
 		}
 		game.physics.arcade.overlap(this.player, this.elevator, activateElevatorUp, null, this);
@@ -214,6 +227,16 @@ Level5.prototype = {
 			reactivateCamera();
 		}
 
+		if(!inElevator){
+			if(this.player.overlap(this.elevators) && !inElevator && elevatorActivated){
+		    	this.spacebar.alpha = 1;
+		    }
+		    else{
+		    	this.spacebar.alpha = 0;
+		    }
+
+		}
+
 		if(!playedCutscene6){
 			if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.libraryCutscene.alpha >= 1) {
 				this.libraryCutscene.destroy();
@@ -222,7 +245,7 @@ Level5.prototype = {
 				playedCutscene6 = true;
 			}
 
-			if(this.libraryCutscene.alpha < 1 && this.hasThirdGear){
+			if(this.libraryCutscene.alpha < 1 && hasThirdGear){
 				this.libraryCutscene.alpha += 0.02;
 				this.canCreate = false;
 			}
@@ -239,6 +262,15 @@ Level5.prototype = {
 				this.playerCanMove = true;
 			}
 		}
+
+		if(this.lockDown){
+			if(this.key1.alpha < 1){
+				this.key1.alpha += 0.01;
+				this.key2.alpha += 0.01;
+				this.key3.alpha += 0.01;
+			}
+		}
+
 		if(this.key1Lock && this.key2Lock && this.key3Lock && this.lockDown) {
 			this.keySolved = true;
 			if(this.keyLock.y > -1000) 
@@ -458,7 +490,7 @@ function activateElevatorUp(Patches, elevator){
 function collectLastGear(){
 	maxPlatforms = 3;					// set maxPlatforms to 3
 	this.numPlatforms++;				// increase this.numPlatforms by one
-	this.hasThirdGear = true;			// doesn't have to be a global because used in nested loop within "!playedCutscene6"
+	hasThirdGear = true;			// doesn't have to be a global because used in nested loop within "!playedCutscene6"
 	this.gearAudio.play();				// play gear audio
 	this.gear.destroy();				// destroy the gear
 	cutscenePlaying = true;				// cutscene plays on gear collect, therefore no movement is allowed
@@ -473,6 +505,9 @@ function allowCreate(){
 // Function for shifting the wall blocking the way to the door on top floor
 function shiftWall(){
 	this.shiftingWall2.body.velocity.y = -150							// wow it flies up
+	// this.key1.alpha == 0;
+	// this.key2.alpha == 0;
+	// this.key3.alpha == 0;
 	game.camera.fade(0x000000, 4000);									// fade effect, duration 4000ms
 	game.time.events.add(Phaser.Timer.SECOND * 4, cameraReset, this);	// at the same time, after 4 seconds, reset the camera
 }

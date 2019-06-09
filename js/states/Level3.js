@@ -66,6 +66,12 @@ Level3.prototype = {
 		this.droppedPlatform.body.setSize(260, 20, 0, 75);
 		this.droppedPlatform.body.immovable = true;
 		this.droppingPlatform = true;
+
+		this.rightWall = platforms.create(750, 0, 'atlas', 'sky');
+		this.rightWall.scale.setTo(0.5, 10);
+		game.physics.arcade.enable(this.rightWall);
+		this.rightWall.body.immovable = true;
+		this.rightWall.alpha = 0;
 	
 		// Rooftop on left side
 		this.secondRooftop = platforms.create(-100, 490, 'lvl2', 'rooftop');
@@ -102,8 +108,23 @@ Level3.prototype = {
 		this.box.body.drag = 0.5;
 		this.attached = true; // Held from last level
 
+		this.downArrow = game.add.sprite(620, 300, 'patchesAtlas2', 'right1');
+		this.downArrow.scale.setTo(0.15);
+		this.downArrow.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('patchesAtlas2', 'right', 1, 3), 10, true);
+		this.downArrow.animations.play('spacebarAni');
+		this.downArrow.alpha = 0;
+
 	},
 	update: function() {
+		// game.debug.body(this.rightWall);
+
+		// game.debug.body(this.library);
+		// game.debug.body(this.ladder);
+		// console.log('droppingplatform: ' + this.droppingPlatform);
+		// console.log('readyToFall: ' + this.readyToFall);
+		// if(this.carryDroppedPlatform){
+		// 	console.log('hit');
+		// }
 
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   								// player vs platforms
@@ -119,13 +140,13 @@ Level3.prototype = {
 
 		}
 
-		// game.debug.body(this.library);
-		// game.debug.body(this.ladder);
-		// console.log('droppingplatform: ' + this.droppingPlatform);
-		// console.log('readyToFall: ' + this.readyToFall);
-		// if(this.carryDroppedPlatform){
-		// 	console.log('hit');
-		// }
+		if(this.player.overlap(this.ladder)){
+	    	this.downArrow.alpha = 1;
+	    }
+	    else{
+	    	this.downArrow.alpha = 0;
+	    }
+
 
 		if(this.player.overlap(this.ladder) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.player.body.touching.down){
 			cutscenePlaying = true;
