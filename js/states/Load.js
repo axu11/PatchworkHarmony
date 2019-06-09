@@ -3,7 +3,7 @@ WebFontConfig = {
 
     //  The Google Fonts we want to load (specify as many as you like in the array)
     google: {
-      families: ['Indie Flower']
+      families: ['Gaegu']
     }
 
 };
@@ -14,11 +14,12 @@ Load.prototype = {
 	
 	preload: function() {
 		// Setup loading bar
-		var loadingBar = this.add.sprite(game.width/2, game.height/2, 'loading');
+		var loadingBar = this.add.sprite(game.width/2, game.height/2 + 50, 'loading');
 		loadingBar.anchor.set(0.5);
 		game.load.setPreloadSprite(loadingBar);
 
-		this.spacebar = game.add.sprite(game.width/2 - 50, game.height/2 - 200, 'patchesAtlas2', 'right1');
+		// Add loading animation
+		this.spacebar = game.add.sprite(game.width/2 - 50, game.height/2 - 150, 'patchesAtlas2', 'right1');
 		this.spacebar.scale.setTo(0.5);
 		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('patchesAtlas2', 'right', 1, 3), 10, true);
 		this.spacebar.animations.play('spacebarAni');
@@ -58,12 +59,13 @@ Load.prototype = {
 		game.load.audio('menu', 'audio/mp3/menu-music.mp3');
 		game.load.audio('lvl1', 'audio/ogg/level-1.ogg');
 		game.load.audio('lvl2', 'audio/ogg/level-2.ogg');
+		game.load.audio('lvl3', 'audio/ogg/level-3.ogg');
 
-		
 		// Sound Effects
 		game.load.audio('collectGear', 'audio/ogg/collect-gear.ogg');
 		game.load.audio('collision', 'audio/ogg/collision.ogg');
 		game.load.audio('jump', 'audio/ogg/jump.ogg');
+		game.load.audio('door', 'audio/ogg/door-close.ogg');
 		game.load.audio('switchTrigger', 'audio/ogg/switch-trigger.ogg');
 		game.load.audio('platform1audio', 'audio/ogg/platform-1.ogg');
 		game.load.audio('platform2audio', 'audio/ogg/platform-2.ogg');
@@ -74,6 +76,7 @@ Load.prototype = {
 		game.load.audio('jump', 'audio/ogg/jump.ogg');
 		game.load.audio('switch-trigger', 'audio/ogg/switch-trigger.ogg');
 		game.load.audio('trampoline', 'audio/ogg/trampoline.ogg');
+		game.load.audio('locking', 'audio/ogg/locking.ogg');
 	},
 
 	create: function() {
@@ -90,6 +93,6 @@ Load.prototype = {
 		game.input.keyboard.addKeyCapture(Phaser.KeyCode.LEFT);
 		game.input.keyboard.addKeyCapture(Phaser.KeyCode.RIGHT);
 		// Go to MainMenu state
-		game.state.start('MainMenu');
+		game.state.start('Level4');
 	}
 };

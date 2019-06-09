@@ -32,10 +32,11 @@ Platform.prototype.update = function() {
 	else {
 		this.decaying = true;
 	}
+
+	// block puzzle code
 	if(!keySolved || !wallShifted){
 		if(this.x >= self.key1.x - this.keyLeniency && this.x <= self.key1.x + this.keyLeniency && this.y >= self.key1.y - this.keyLeniency && this.y <= self.key1.y + this.keyLeniency) {
 			//console.log('filled 1');
-			self.key1Lock = true;
 			self.key1.destroy();
 			if(!self.keySolved)
 				this.decaying = false;

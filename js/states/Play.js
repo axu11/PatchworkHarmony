@@ -33,6 +33,9 @@ Play.prototype = {
 		this.bgm = game.add.audio('lvl1', 0.25, true);
 		this.bgm.play();
 
+		// Create sound effect for moving to next screen
+		this.doorClose = game.add.audio('door', 1, false);
+
 		// Create sound effects for when a music block platform is created
 		this.platform1audio = game.add.audio('platform1audio');
 		this.platform2audio = game.add.audio('platform2audio');
@@ -558,6 +561,10 @@ Play.prototype = {
 	checkCamBounds: function() {
 		// some funky, funky logic to check camera bounds for player movement
 		if(this.player.x > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
+			// Play door close sound effect
+			this.doorClose.play();
+
+			// Transition to second screen of Level 1
 			// move camera, then player
 			game.camera.x += game.width;
 			this.player.x = game.camera.x + Math.abs(this.player.width/2);	

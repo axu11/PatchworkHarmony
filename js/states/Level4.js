@@ -32,7 +32,7 @@ Level4.prototype = {
 		game.world.setBounds(-1600, 0, 3200, this.bg1.height);
 
 		// Create bgm for game, looped and played
-		this.bgm = game.add.audio('lvl1', 0.5, true);
+		this.bgm = game.add.audio('lvl3', 0.5, true);
 		this.bgm.play();
 
 		// Create sound effects for when a music block platform is created
@@ -43,6 +43,9 @@ Level4.prototype = {
 
 		// Creates sound effect for triggering the switch
 		this.switchTrigger = game.add.audio('switchTrigger');
+
+		// Create bounce sound for spring
+		this.bounce = game.add.audio('trampoline', 0.1, false);
 
 		/***** SWITCH MECHANIC *****/
 		this.switches = game.add.group();
@@ -631,6 +634,7 @@ Level4.prototype = {
 		// For detecting if player is on the spring or not
 		if((this.player.x + this.player.width/2 >= (this.spring.x - this.spring.width/2 - 2) && this.player.x - this.player.width/2 <= (this.spring.x + this.spring.width/2 + 2)) &&
 			(((this.player.y + this.player.height/2) >= (this.spring.y - this.spring.height)) && this.player.y + this.player.height/2 <= this.spring.y - this.spring.height + 1)) {
+					this.bounce.play();
 					this.player.body.velocity.y = -1200;
 			}
 
