@@ -25,7 +25,6 @@ Level5.prototype = {
 			this.keySolved = false;
 		}
 		this.playedCutscene6 = false;
-
 	},
 	create: function() {
 		/***** BG, BGM, AND SOUND EFFECTS *****/
@@ -262,7 +261,7 @@ Level5.prototype = {
 		}
 
 		if(this.lockDown){
-			if(this.key1.alpha < 1){
+			if(this.key1.alpha < 0.5){
 				this.key1.alpha += 0.01;
 				this.key2.alpha += 0.01;
 				this.key3.alpha += 0.01;
@@ -277,6 +276,8 @@ Level5.prototype = {
 
 		if(this.keySolved && !wallShifted){
 			this.cutscenePlaying = true;
+			this.savePlayerX = this.player.x;
+			this.savePlayerY = this.player.y;
 			if(game.camera.x > 0){
 				game.camera.x -= 16;
 			}
@@ -288,7 +289,8 @@ Level5.prototype = {
 				}
 			}
 		}
-
+		console.log('saved: ' + this.savePlayerX + ', ' + this.savePlayerY);
+		console.log('player: ' + this.player.x + ', ' + this.player.y);
 		/***** BOX STUFF *****/
 		if(!inElevator){
 			this.box.body.velocity.x = 0; // Box won't glide when pushed by player
@@ -514,7 +516,7 @@ function shiftWall(){
 function cameraReset(){
 	game.camera.resetFX();	// kill the fade
 	this.player.x = 1200;	// reset player x (a little bugged but w/e)
-	this.player.y = 475;	// reset player y (a little bugged but w/e)
+	this.player.y = 750;	// reset player y (a little bugged but w/e)
 	game.camera.x = 800;	// reset camera x
 	game.camera.y = 0;		// reset camera y
 	game.time.events.add(Phaser.Timer.SECOND * 1.0, enableMovement, this);	// after a second, enable movement
