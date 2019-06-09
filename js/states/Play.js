@@ -96,12 +96,11 @@ Play.prototype = {
 		this.ground.visible = false;
 
 		// Create invisible wall preventing player from returning to first screen (scene 1)
-		this.wall = this.platforms.create(700, 0, 'atlas', 'sky');
-		this.wall.scale.setTo(0.75,10);
+		this.wall = this.platforms.create(780, 0, 'atlas', 'sky');
+		this.wall.scale.setTo(0.3,10);
 		game.physics.arcade.enable(this.wall);
 		this.wall.body.immovable = true;
 		this.wall.alpha = 0;
-		this.wall.body.checkCollision.left = false;
 
 		// Creates invisible platform on top of desk (scene 1)
 		this.desk = this.platforms.create(30, 400, 'atlas', 'sky');
@@ -285,33 +284,30 @@ Play.prototype = {
 		}
 
 		// Down arrow shows when player approaches window
-	    if(this.player.overlap(this.window)){
+	    if(this.player.overlap(this.window))
 	    	this.downArrow.alpha = 1;
-	    }
-	    else{
+	    else
 	    	this.downArrow.alpha = 0;
-	    }
 
 		// Animate Gear
 		this.gear.angle += 1;
 
 		// When you collect the gear, but has yet to finish flying into the box
 		if(this.numPlatforms > 0 && !this.hasFirstGear){
-			if(this.gear.x < this.box.x){
+			if(this.gear.x < this.box.x)
 				this.gear.x += 5;
-			}
-			if(this.gear.y < this.box.y){
+			if(this.gear.y < this.box.y)
 				this.gear.y += 5;
-			}
 			game.camera.flash(0xffffff, 1000);	// 1000ms flash effect
 		}
 
-		// // If scene has not played yet and the gear has been collected, play the box scene
-		// if(!this.playedBoxScene && this.hasFirstGear){
-		// 	this.boxScene.visible = true;
-		// 	this.cutscenePlaying = true;
-		// }
+		// Can't go to scene 2 if not carrying box
+		if(this.attached)
+			this.wall.body.checkCollision.left = false;
+		else
+			this.wall.body.checkCollision.left = true;
 
+		// Code for exiting away from the boxscene
 		if(this.cutscenePlaying && this.hasFirstGear){
 			this.timer++;
 			
@@ -364,9 +360,8 @@ Play.prototype = {
 			this.timer++;
 
 			// If this.timer passed the spacebar delay, show the spacebar
-			if(this.timer >= (this.TIMER_VALUE - 20)){
+			if(this.timer >= (this.TIMER_VALUE - 20))
 				this.spacebar2.alpha = 1;
-			}
 
 			// If spacebar showing and you press space, proceed to fourth instruction bubble
 			if(this.spacebar2.alpha == 1 && game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.currentInstruction == 3){
@@ -402,9 +397,8 @@ Play.prototype = {
 			this.timer++;
 
 			// If this.timer passed the spacebar delay, show the spacebar
-			if(this.timer >= this.TIMER_VALUE){
+			if(this.timer >= this.TIMER_VALUE)
 				this.spacebar3.alpha = 1;
-			}
 
 			// If spacebar showing and you press space, player can now move, instructions killed, spacebar killed
 			if(this.spacebar3.alpha == 1 && game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.currentInstruction == 5){
@@ -423,6 +417,7 @@ Play.prototype = {
 			this.playerOnSwitch = true;
 			this.switchPressed = true;
 		}
+
 		if(this.playerOnSwitch && !this.hitSwitch && (this.player.x + this.player.width/2 < this.switch.x - this.switch.width/2 || this.player.x - this.player.width/2 > this.switch.x + this.switch.width/2 || this.player.y + this.player.height/2 < this.switch.y - this.switch.height - 30))  {
 			this.playerOnSwitch = false;
 		}
@@ -432,6 +427,7 @@ Play.prototype = {
 			this.boxOnSwitch = true;
 			this.switchPressed = true;
 		}
+
 		if(this.boxOnSwitch && !this.boxHitSwitch && (this.box.x + this.box.width/2 < this.switch.x - this.switch.width/2 || this.box.x - this.box.width/2 > this.switch.x + this.switch.width/2)) {
 			this.boxOnSwitch = false;
 		}
