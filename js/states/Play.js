@@ -7,6 +7,7 @@ Play.prototype = {
 		self = this;
 
 		this.level = 1;						// current level is 1
+		this.levelScale = 1.0;				// levelScale that affects the sizing of assets in prefabs
 		this.numPlatforms = maxPlatforms;	// current platforms set to maxPlatforms
 
 		this.cutscenePlaying = true;    	// starts off true because tutorial instructions pop up
@@ -168,7 +169,7 @@ Play.prototype = {
 		this.switchHolder.body.immovable = true;
 
 		/***** PLAYER SPRITE *****/ 
-		this.player = new Patches(game, 'patchesAtlas2', 'right1', 76, 332, 1);
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 76, 332, this.levelScale);
 		this.player.enableBody = true;
 		this.player.alpha = 0;
 		game.add.existing(this.player);
@@ -232,10 +233,10 @@ Play.prototype = {
 		this.spacebar4.alpha = 0;
 
 		// Down arrow indicator for exiting through window
-		this.downArrow = game.add.sprite(1460, 20, 'patchesAtlas2', 'right1');
-		this.downArrow.scale.setTo(0.15);
-		this.downArrow.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('patchesAtlas2', 'right', 1, 3), 10, true);
-		this.downArrow.animations.play('spacebarAni');
+		this.downArrow = game.add.sprite(1440, 20, 'instructions', 'down1');
+		this.downArrow.scale.setTo(0.33);
+		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4), 10, true);
+		this.downArrow.animations.play('arrowAni');
 		this.downArrow.alpha = 0;
 	},
 
@@ -290,7 +291,7 @@ Play.prototype = {
 	    if(this.player.overlap(this.window))
 	    	this.downArrow.alpha = 1;
 	    else
-	    	this.downArrow.alpha = 0;
+	   		this.downArrow.alpha = 0;
 
 		// Animate Gear
 		this.gear.angle += 1;

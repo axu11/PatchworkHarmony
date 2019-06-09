@@ -1,29 +1,33 @@
-// Second level state, rooftops
+// Rooftop level state, first part (clocktower)
 var Level2 = function(game) {};
 Level2.prototype = {
 
 	init: function(bgmOn, maxPlatforms) {
-		maxPlatforms = 1;
-		this.numPlatforms = maxPlatforms;
+		maxPlatforms = 1;	
 		reloadOnGround = 0;
-		this.levelScale = 0.45;
 		self = this;
-		this.cutscenePlaying = false;
-		this.playedCutscene5 = false;
-		this.hasSecondGear = false;
+
+		this.level = 2;						// current level is 2
+		this.levelScale = 0.45;				// levelScale that affects the sizing of assets in prefabs
+		this.numPlatforms = maxPlatforms;	// current platforms set to maxPlatforms
 		this.bgmOn = bgmOn;
-		this.playerCanMove = true;
-		this.keySolved = true;
-		this.canCreate = true;
+		
+		this.cutscenePlaying = false;		// var for whether or not there is a cutscene playing, essentially pauses game state
+		this.playedCutscene5 = false;		// determines whether or not the cutscene code in update is run	
+		this.hasSecondGear = false;			// triggers a cutscene when this is true
+
+		this.canCreate = true;				// set to false during cutscenes to prevent block creation
+
+		this.timer = 0;						// timer for cutscenes, ticks up 
+		this.TIMER_VALUE = 40;				// modify this here depending on how long the delay should be before spacebar can be pressed
 	},
 
 	create: function() {
-
-		/***** BG, BGM, AND NUMBER CIRCLE *****/
-		// Create backgrounds for both scenes, set bounds to image resolution (800 x 600)
-		this.bg = game.add.image(0, 0, 'bg2');
-		this.bg2 = game.add.image(800, 0, 'bg3');
-		game.world.setBounds(0, 0, this.bg.width+800, this.bg.height);
+		/***** BG, BGM, AND SOUND EFFECTS *****/
+		// Create backgrounds for both scenes, set bounds to image resolution (1600 x 600)
+		this.bg0 = game.add.image(0, 0, 'bg2');
+		this.bg1 = game.add.image(800, 0, 'bg3');
+		game.world.setBounds(0, 0, this.bg0.width+800, this.bg0.height);
 
 		// Create bgm for game, looped and played, continues on second screen
 		if(this.bgmOn == false) {
@@ -40,6 +44,10 @@ Level2.prototype = {
 
 		// Create bounce sound
 		this.jump = game.add.audio('trampoline', 0.1, false);
+
+		// Creates gear sound
+		this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
+
 
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
@@ -64,19 +72,15 @@ Level2.prototype = {
 		platforms = game.add.group();
 		platforms.enableBody = true;
 
-		this.key1 = game.add.sprite(-1000, -1000, 'assets', 'box');
-		this.key2 = game.add.sprite(-1000, -1000, 'assets', 'box');
-		this.key3 = game.add.sprite(-1000, -1000, 'assets', 'box');
-
-		//Create createdPlatforms group
+		// Create createdPlatforms group
 		this.createdPlatforms = game.add.group();
 		this.createdPlatforms.enableBody = true;
 
-		// Create invisible ground platform for player to stand on (both scenes)
-		this.ground = platforms.create(0, 530, 'lvl2', 'exterior'); 
-		this.ground.scale.setTo(0.5, 0.25);
-		game.physics.arcade.enable(this.ground);
-		this.ground.body.immovable = true;
+		// Workshop
+		this.workshop = platforms.create(0, 535, 'lvl2', 'exterior'); 
+		this.workshop.scale.setTo(0.5, 0.25);
+		game.physics.arcade.enable(this.workshop);
+		this.workshop.body.immovable = true;
 
 		// Billboard
 		this.billboard = platforms.create(170, 430, 'lvl2', 'billboard');
@@ -104,7 +108,6 @@ Level2.prototype = {
 		this.tower.body.setSize(170, 500, 0, 140);
 		this.tower.body.immovable = true;
 
-
 		// Trampoline
 		this.trampoline = game.add.sprite(100, 400, 'lvl2', 'trampoline');
 		this.trampoline.anchor.setTo(0.5, 1);
@@ -118,7 +121,7 @@ Level2.prototype = {
 		this.trampolineStand.scale.set(0.33);
 		this.trampolineStand.anchor.setTo(0.5, 0);
 
-		// Creates a collectible "gear" that will enable player to unlock an ability
+		// Creates the second collectible gear
 		this.gear = game.add.sprite(100, 100, 'assets', 'gear'); 
 		game.physics.arcade.enable(this.gear);
 		this.gear.body.immovable = true;
@@ -141,8 +144,16 @@ Level2.prototype = {
 		this.box.body.drag = 0.5;
 		this.attached = true; // Held from last level
 
+		// The second gear cutscene
 		this.rooftopCutscene = game.add.image(0, 0, 'cutscene5');
 		this.rooftopCutscene.alpha = 0;
+
+		// Spacebar indicator for gear cutscene
+		this.spacebar = game.add.sprite(650, 550, 'instructions', 'spacebar1'); 
+		this.spacebar.scale.setTo(0.33);
+		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 5, true);
+		this.spacebar.animations.play('spacebarAni');
+		this.spacebar.alpha = 0;
 	},
 
 	update: function(){
@@ -151,7 +162,41 @@ Level2.prototype = {
 		//game.debug.body(this.secondRooftop);
 		//game.debug.body(this.library);
 
-		this.checkCamBounds();
+		/***** CAMERA, TRANSITIONS, AND CUTSCENES *****/
+		this.checkCamBounds(); // Keep checking camera bounds
+
+		// If the cutscene hasn't played yet
+		if(!this.playedCutscene5){
+			if(this.rooftopCutscene.alpha >= 1)
+				this.timer++;
+
+			// If the cutscene is showing and the second gear has been collected, show the scene, disable music block creation
+			if(this.rooftopCutscene.alpha < 1 && this.hasSecondGear){
+				this.rooftopCutscene.alpha += 0.02;
+				this.canCreate = false;
+			}
+
+			// If this.timer passed the spacebar delay, show the spacebar
+			if(this.timer >= this.TIMER_VALUE)
+				this.spacebar.alpha = 1;
+
+			// If the spacebar is showing and the player presses space, destroy both the cutscene and the spacebar, end cutscene
+			if(this.spacebar.alpha == 1 && game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed()) {
+				this.rooftopCutscene.destroy();
+				this.spacebar.destroy();
+				this.cutscenePlaying = false;
+				this.playedCutscene5 = true;
+				game.time.events.add(Phaser.Timer.SECOND * 1, allowCreate, this);
+			}
+		}
+
+		// Animate Gear
+		this.gear.angle += 1;
+
+		// Reset state when player falls
+		if(this.player.y + this.player.height/2 >= this.world.height - 1) {
+			game.state.start('Level2', true, false, this.bgmOn, maxPlatforms);
+		}
 
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   // player vs platforms
@@ -160,37 +205,18 @@ Level2.prototype = {
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
 		this.hitTrampoline = game.physics.arcade.collide(this.player, this.trampoline);
 		game.physics.arcade.overlap(this.player, this.gear, collectSecondGear, null, this);
-
-		if(!this.playedCutscene5){
-			if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.rooftopCutscene.alpha >= 1) {
-				this.rooftopCutscene.destroy();
-				game.time.events.add(Phaser.Timer.SECOND * 1, allowCreate, this);
-				this.cutscenePlaying = false;
-				this.playedCutscene5 = true;
-			}
-
-			if(this.rooftopCutscene.alpha < 1 && this.hasSecondGear){
-				this.rooftopCutscene.alpha += 0.02;
-				this.canCreate = false;
-			}
-		}
 		
 		// Trampoline bounce logic
 		if((this.player.x + this.player.width/2 >= (this.trampoline.x - this.trampoline.width/2 - 2) && this.player.x - this.player.width/2 <= (this.trampoline.x + this.trampoline.width/2 + 2)) &&
 			(((this.player.y + this.player.height/2) >= (this.trampoline.y - this.trampoline.height - 15)) && this.player.y + this.player.height/2 <= this.trampoline.y - this.trampoline.height + 1)) {
 			this.player.body.bounce.y = 1;
-			// play bounce sound on bounce
+			// Play bounce sound on bounce
 			if(this.hitTrampoline && !this.cutscenePlaying){
 				this.jump.play();
 			}
 		}
 		else {
 			this.player.body.bounce.y = 0;
-		}
-
-		// Reset state when player falls
-		if(this.player.y + this.player.height/2 >= this.world.height - 1) {
-			game.state.start('Level2', true, false, this.bgmOn, maxPlatforms);
 		}
 		
 		/***** BOX STUFF *****/
@@ -229,7 +255,7 @@ Level2.prototype = {
 			}
 
 			// Drop the box by pressing SHIFT
-			if(game.input.keyboard.addKey(Phaser.KeyCode.SHIFT).justPressed()) {
+			if(game.input.keyboard.addKey(Phaser.KeyCode.SHIFT).justPressed() && !this.cutscenePlaying) {
 				this.attached = false;
 				this.box.body.checkCollision.none = false;
 			}
@@ -288,9 +314,6 @@ Level2.prototype = {
 			this.number3.scale.set(0);
 			this.number4.scale.set(0.5);
 		}
-
-		// Animate Gear
-		this.gear.angle += 1;
 	},
 
 	checkCamBounds: function() {
@@ -304,13 +327,12 @@ Level2.prototype = {
 
 // Function for collecting "gears"
 function collectSecondGear(Patches, gear){
-	gear.kill();
-	maxPlatforms++;
-	this.hasSecondGear = true;
+	maxPlatforms = 2;
 	this.numPlatforms++;
-	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
-	this.gearAudio.play();
 	this.cutscenePlaying = true;
+	this.hasSecondGear = true;
+	this.gearAudio.play();
+	gear.kill();
 	game.camera.flash(0xffffff, 1000);
 }
 

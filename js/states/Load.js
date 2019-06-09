@@ -94,6 +94,6 @@ Load.prototype = {
 		game.input.keyboard.addKeyCapture(Phaser.KeyCode.LEFT);
 		game.input.keyboard.addKeyCapture(Phaser.KeyCode.RIGHT);
 		// Go to MainMenu state
-		game.state.start('Level4');
+		game.state.start('MainMenu');
 	}
 };

@@ -41,7 +41,6 @@ Intro.prototype = {
 		// Fade in first cutscene
         if(this.cutscene1.alpha < 1){
         	this.cutscene1.alpha += 0.01;
-        	//this.spacebar.alpha += 0.01;
         }
 
         // If this.timer passed the spacebar delay, show the spacebar
