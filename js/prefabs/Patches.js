@@ -49,7 +49,6 @@ Patches.prototype.update = function() {
 
  	// If nothing pressed, velocity = 0
  	this.body.velocity.x = 0;
- 	if(self.playerCanMove) {
 	 	// Move left and right with arrow keys
 	 	if(this.cursors.left.isDown && !inElevator && !self.cutscenePlaying) {
 			this.body.velocity.x = -this.VELOCITY_X; // Move left
@@ -82,5 +81,5 @@ Patches.prototype.update = function() {
 			this.jump.play();
 			// this.player.animations.play('jump');
 		}
-	}
+	
 }

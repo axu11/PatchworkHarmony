@@ -32,7 +32,7 @@ Platform.prototype.update = function() {
 	else {
 		this.decaying = true;
 	}
-	if(!keySolved || !wallShifted){
+	if((self.level == 4 || self.level == 5) && (!keySolved || !wallShifted)){
 		if(this.x >= self.key1.x - this.keyLeniency && this.x <= self.key1.x + this.keyLeniency && this.y >= self.key1.y - this.keyLeniency && this.y <= self.key1.y + this.keyLeniency) {
 			//console.log('filled 1');
 			self.key1Lock = true;

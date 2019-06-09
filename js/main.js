@@ -1,8 +1,6 @@
 "use strict";
 
 // Define global variables to be used in the game
-var numPlatforms = 0;
-var level = 0;
 var game;
 var self;
 var reloadOnGround = 0;
