@@ -51,14 +51,14 @@ Patches.prototype.update = function() {
  	this.body.velocity.x = 0;
  	if(self.playerCanMove) {
 	 	// Move left and right with arrow keys
-	 	if(this.cursors.left.isDown && !inElevator && !cutscenePlaying) {
+	 	if(this.cursors.left.isDown && !inElevator && !self.cutscenePlaying) {
 			this.body.velocity.x = -this.VELOCITY_X; // Move left
 			// this.player.animations.play('left');
 			this.animations.play('moveLeft');
 			this.facing = "LEFT";
 		}
 
-		else if(this.cursors.right.isDown && !inElevator && !cutscenePlaying) {
+		else if(this.cursors.right.isDown && !inElevator && !self.cutscenePlaying) {
 			this.body.velocity.x = this.VELOCITY_X; // Move right
 			// this.player.animations.play('right');
 			this.animations.play('moveRight');
@@ -77,7 +77,7 @@ Patches.prototype.update = function() {
 		}
 
 		// Jump if the player is grounded
-		if(this.cursors.up.isDown && this.body.touching.down && !cutscenePlaying){
+		if(this.cursors.up.isDown && this.body.touching.down && !self.cutscenePlaying){
 			this.body.velocity.y = this.JUMP_SPEED;
 			this.jump.play();
 			// this.player.animations.play('jump');

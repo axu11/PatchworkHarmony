@@ -6,7 +6,7 @@ Play.prototype = {
 		this.numPlatforms = maxPlatforms;
 		reloadOnGround = 0;
 		self = this;
-		cutscenePlaying = true;
+		this.cutscenePlaying = true;
 		this.hasFirstGear = false;
 		this.currentScene = 1;
 		this.playScene = false;
@@ -300,14 +300,14 @@ Play.prototype = {
 				this.instructions2.destroy();
 				this.currentInstruction++;		
 				//game.time.events.add(Phaser.Timer.SECOND, allowCreate, this);
-				cutscenePlaying = false;
+				this.cutscenePlaying = false;
 				this.spacebar.alpha = 0;
 				this.timer = 0;
 			}
 		}
 		//console.log(this.currentInstruction);
 		if(this.currentInstruction >= 3 && this.currentInstruction < 5 && this.player.overlap(this.instructions)){
-			cutscenePlaying = true;
+			this.cutscenePlaying = true;
 			this.timer++;
 
 			if(this.timer >= this.timerValue && this.currentInstruction == 3){
@@ -330,14 +330,14 @@ Play.prototype = {
 				this.instructions4.destroy();
 				this.currentInstruction++;		
 				//game.time.events.add(Phaser.Timer.SECOND, allowCreate, this);
-				cutscenePlaying = false;
+				this.cutscenePlaying = false;
 				this.spacebar2.alpha = 0;
 				this.timer = 0;
 			}
 		}
 		if(this.currentInstruction == 5 && this.attached && this.hasFirstGear){
 			this.instructions5.alpha = 1;
-			cutscenePlaying = true;
+			this.cutscenePlaying = true;
 			this.timer++;
 			this.canCreate = false;
 			if(this.timer >= this.timerValue && this.currentInstruction == 5){
@@ -346,7 +346,7 @@ Play.prototype = {
 			if(this.spacebar3.alpha == 1 && game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.currentInstruction == 5){
 				this.instructions5.destroy();
 				this.currentInstruction++;		
-				cutscenePlaying = false;
+				this.cutscenePlaying = false;
 				game.time.events.add(Phaser.Timer.SECOND, allowCreate, this);
 				this.spacebar3.alpha = 0;
 				this.timer = 0;
@@ -435,7 +435,7 @@ Play.prototype = {
 			this.box.body.gravity.y = 0;         // box doesn't fall when you're holding it
 
 			// Spawn platform directly under by pressing SPACEBAR
-			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0 && this.canCreate && !cutscenePlaying) {
+			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0 && this.canCreate && !this.cutscenePlaying) {
 				// Kills all current sounds set to play before playing the music note sounds in order
 				game.time.events.removeAll();
 				game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
@@ -460,7 +460,7 @@ Play.prototype = {
 			}
 
 			// Drop the box by pressing SHIFT
-			if(game.input.keyboard.addKey(Phaser.KeyCode.SHIFT).justPressed() && !cutscenePlaying) {
+			if(game.input.keyboard.addKey(Phaser.KeyCode.SHIFT).justPressed() && !this.cutscenePlaying) {
 				this.attached = false;
 				this.box.body.checkCollision.none = false;
 			}
@@ -471,11 +471,11 @@ Play.prototype = {
 			this.box.body.gravity.y = 300;	// Box has gravity, will fall
 
 			// When picked up from left of box...
-			if(game.input.keyboard.addKey(this.player.facing == 'RIGHT' && Phaser.KeyCode.SHIFT).justPressed() && !cutscenePlaying && this.hitPlatform && Math.abs((this.player.x + this.player.width/2) - (this.box.x - this.box.width/2)) <= 5) {
+			if(game.input.keyboard.addKey(this.player.facing == 'RIGHT' && Phaser.KeyCode.SHIFT).justPressed() && !this.cutscenePlaying && this.hitPlatform && Math.abs((this.player.x + this.player.width/2) - (this.box.x - this.box.width/2)) <= 5) {
 				this.attached = true;
 			}
 			// When picked up from right of box... 
-			if(game.input.keyboard.addKey(this.player.facing == 'LEFT' && Phaser.KeyCode.SHIFT).justPressed() && !cutscenePlaying && this.hitPlatform && Math.abs((this.player.x - this.player.width/2) - (this.box.x + this.box.width/2)) <= 5) {
+			if(game.input.keyboard.addKey(this.player.facing == 'LEFT' && Phaser.KeyCode.SHIFT).justPressed() && !this.cutscenePlaying && this.hitPlatform && Math.abs((this.player.x - this.player.width/2) - (this.box.x + this.box.width/2)) <= 5) {
 				this.attached = true;
 			}
 		}
@@ -535,7 +535,7 @@ Play.prototype = {
 		// When player gets to the window, go to level 2 (town scene 1)
 		//this.player.x > 1400 && this.player.y < 240
 		if(this.player.overlap(this.window) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.player.body.touching.down){
-			cutscenePlaying = true;
+			this.cutscenePlaying = true;
 			game.camera.fade(0x000000, 3000);
 			game.time.events.add(Phaser.Timer.SECOND * 3.0, transitionToRooftops, this);
 		}
@@ -546,7 +546,7 @@ Play.prototype = {
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.currentScene == 1 && this.numPlatforms > 0) {
 			this.boxScene.destroy();
 			this.currentScene++;
-			cutscenePlaying = false;
+			this.cutscenePlaying = false;
 		}
 	},
 
@@ -567,7 +567,7 @@ Play.prototype = {
 
 // Function for collecting "gears"
 function collectFirstGear(){
-	cutscenePlaying = true;
+	this.cutscenePlaying = true;
 	maxPlatforms = 1;
 	this.hasFirstGear = true;
 	this.numPlatforms = 1;

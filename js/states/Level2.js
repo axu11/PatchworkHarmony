@@ -8,7 +8,8 @@ Level2.prototype = {
 		reloadOnGround = 0;
 		this.levelScale = 0.45;
 		self = this;
-		cutscenePlaying = false;
+		this.cutscenePlaying = false;
+		this.playedCutscene5 = false;
 		this.hasSecondGear = false;
 		this.bgmOn = bgmOn;
 		this.playerCanMove = true;
@@ -160,12 +161,12 @@ Level2.prototype = {
 		this.hitTrampoline = game.physics.arcade.collide(this.player, this.trampoline);
 		game.physics.arcade.overlap(this.player, this.gear, collectSecondGear, null, this);
 
-		if(!playedCutscene5){
+		if(!this.playedCutscene5){
 			if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.rooftopCutscene.alpha >= 1) {
 				this.rooftopCutscene.destroy();
 				game.time.events.add(Phaser.Timer.SECOND * 1, allowCreate, this);
-				cutscenePlaying = false;
-				playedCutscene5 = true;
+				this.cutscenePlaying = false;
+				this.playedCutscene5 = true;
 			}
 
 			if(this.rooftopCutscene.alpha < 1 && this.hasSecondGear){
@@ -179,7 +180,7 @@ Level2.prototype = {
 			(((this.player.y + this.player.height/2) >= (this.trampoline.y - this.trampoline.height - 15)) && this.player.y + this.player.height/2 <= this.trampoline.y - this.trampoline.height + 1)) {
 			this.player.body.bounce.y = 1;
 			// play bounce sound on bounce
-			if(this.hitTrampoline && !cutscenePlaying){
+			if(this.hitTrampoline && !this.cutscenePlaying){
 				this.jump.play();
 			}
 		}
@@ -309,7 +310,7 @@ function collectSecondGear(Patches, gear){
 	this.numPlatforms++;
 	this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
 	this.gearAudio.play();
-	cutscenePlaying = true;
+	this.cutscenePlaying = true;
 	game.camera.flash(0xffffff, 1000);
 }
 

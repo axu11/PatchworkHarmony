@@ -12,7 +12,7 @@ Level4.prototype = {
 		self = this;	
 		level = 4;
 		inElevator = false;
-		cutscenePlaying = false;
+		this.cutscenePlaying = false;
 		this.levelScale = 1.0;
 		this.bookTop = true;
 		this.bookTop2 = true;
@@ -402,7 +402,7 @@ Level4.prototype = {
 
 		if(!inElevator){
 			if(this.player.overlap(this.door) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.hitPlatform){
-				cutscenePlaying = true;
+				this.cutscenePlaying = true;
 				game.camera.fade(0x000000, 3000);
 				game.time.events.add(Phaser.Timer.SECOND * 3.0, transitionToBench, this);
 			}
@@ -665,7 +665,7 @@ Level4.prototype = {
 				}
 				else {
 					leverActivated = false;
-					cutscenePlaying = false;
+					this.cutscenePlaying = false;
 				}
 			}
 		}
@@ -785,7 +785,7 @@ function platformSound4(){
 function pullLever(){
 	if(game.input.keyboard.addKey(Phaser.KeyCode.SHIFT).justPressed() && !leverActivated){
 		leverActivated = true;
-		cutscenePlaying = true;
+		this.cutscenePlaying = true;
 		this.switchTrigger.play('', 0, 0.5, false);
 	}
 }
@@ -864,7 +864,7 @@ function oneSecond(){
 
 // Function called to transition to next level and kill bgm
 function transitionToBench(){
-	cutscenePlaying = false;
+	this.cutscenePlaying = false;
 	game.state.start('Level7', true, false, false, maxPlatforms);
 	this.bgm.destroy();
 }
