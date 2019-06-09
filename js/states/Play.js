@@ -231,6 +231,8 @@ Play.prototype = {
 		this.downArrow.animations.play('spacebarAni');
 		this.downArrow.alpha = 0;
 
+		// this.pauseMenu = new PauseMenu('assets', 'gear', 650, 50, this);
+
 	},
 
 	update: function() {
