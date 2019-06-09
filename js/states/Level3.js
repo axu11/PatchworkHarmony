@@ -1,19 +1,26 @@
+// Rooftop level state, second half (crane)
 var Level3 = function(game) {};
 Level3.prototype = {
+
 	init: function(bgmOn, maxPlatforms) {
 		maxPlatforms = 2;
-		this.numPlatforms = maxPlatforms
 		reloadOnGround = 0;
-		this.levelScale = 0.6;
 		self = this;
+
+		this.level = 3;						// current level is 1
+		this.levelScale = 0.6;				// levelScale that affects the sizing of assets in prefabs
+		this.numPlatforms = maxPlatforms	// current platforms set to maxPlatforms
 		this.bgmOn = bgmOn;
-		this.playerCanMove = true;
-		this.keySolved = true;
+
 		this.carryingPlatform = false;
 		this.readyToFall = true;
-		this.cutscenePlaying = false;
+
+		this.cutscenePlaying = false;		// var for whether or not there is a cutscene playing, essentially pauses game state
 	},
+
 	create: function() {
+		/***** BG, BGM, AND SOUND EFFECTS *****/
+		// Create backgrounds for the scene
 		this.bg = game.add.image(0, 0, 'bg3');
 
 		// Create bgm for game, looped and played
@@ -46,17 +53,13 @@ Level3.prototype = {
 		this.number4 = game.add.image(this.numberPosition, this.numberPosition, 'numbers', 'number4');
 		this.number4.scale.set(0);
 		this.number4.fixedToCamera = true;
-
-		this.key1 = game.add.sprite(-1000, -1000, 'assets', 'box');
-		this.key2 = game.add.sprite(-1000, -1000, 'assets', 'box');
-		this.key3 = game.add.sprite(-1000, -1000, 'assets', 'box');
 		
 		/***** PLATFORMS *****/
 		// Create platforms group
 		platforms = game.add.group();
 		platforms.enableBody = true;
 
-		//Create createdPlatforms group
+		// Create createdPlatforms group
 		this.createdPlatforms = game.add.group();
 		this.createdPlatforms.enableBody = true;
 
@@ -68,6 +71,7 @@ Level3.prototype = {
 		this.droppedPlatform.body.immovable = true;
 		this.droppingPlatform = true;
 
+		// Invisible wall on the right prevents player from hitting edge
 		this.rightWall = platforms.create(750, 0, 'atlas', 'sky');
 		this.rightWall.scale.setTo(0.5, 10);
 		game.physics.arcade.enable(this.rightWall);
@@ -80,13 +84,14 @@ Level3.prototype = {
 		game.physics.arcade.enable(this.secondRooftop);
 		this.secondRooftop.body.immovable = true;
 
-		// Library
+		// Library building
 		this.library = platforms.create(630, 100, 'library');
 		this.library.scale.setTo(1, 1);
 		game.physics.arcade.enable(this.library);
 		this.library.body.setSize(200, 200, 0, 170);
 		this.library.body.immovable = true;
 
+		// Library ladder
 		this.ladder = game.add.sprite(680, 200, 'atlas', 'sky');
 		game.physics.arcade.enable(this.ladder);
 		this.ladder.body.setSize(50, 70, 0, 0);
@@ -105,14 +110,15 @@ Level3.prototype = {
 		this.box.anchor.set(0.50);
 		this.box.scale.set(0.2 * this.levelScale);
 		this.box.body.collideWorldBounds = false;
-		this.box.body.gravity.y = 300; // Has gravity while not held by player
+		this.box.body.gravity.y = 300; 
 		this.box.body.drag = 0.5;
-		this.attached = true; // Held from last level
+		this.attached = true; 
 
-		this.downArrow = game.add.sprite(620, 300, 'patchesAtlas2', 'right1');
-		this.downArrow.scale.setTo(0.15);
-		this.downArrow.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('patchesAtlas2', 'right', 1, 3), 10, true);
-		this.downArrow.animations.play('spacebarAni');
+		// Down arrow indicator for exiting through window
+		this.downArrow = game.add.sprite(620, 300, 'instructions', 'down1');
+		this.downArrow.scale.setTo(0.33);
+		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4), 10, true);
+		this.downArrow.animations.play('arrowAni');
 		this.downArrow.alpha = 0;
 
 	},
@@ -135,11 +141,6 @@ Level3.prototype = {
 		this.carryDroppedPlatform = game.physics.arcade.collide(this.droppedPlatform, this.createdPlatforms);   // dropped vs created platforms
 		//game.physics.arcade.overlap(this.player, this.gear, collectSecondGear, null, this);
 		// game.physics.arcade.overlap(this.player, this.ladder, transitionToLibrary, null, this);
-
-		// if(game.input.keyboard.addKey(Phaser.KeyCode.Q).justPressed()){
-		// 	this.droppedPlatform.alpha-= 0.1;
-
-		// }
 
 		if(this.player.overlap(this.ladder)){
 	    	this.downArrow.alpha = 1;

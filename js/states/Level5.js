@@ -10,7 +10,7 @@ Level5.prototype = {
 		this.numPlatforms = maxPlatforms;
 		reloadOnGround = 0;
 		self = this;
-		level = 5;
+		this.level = 5;
 		inElevator = false;
 		this.cutscenePlaying = false
 		this.levelScale = 1.0;
@@ -293,8 +293,8 @@ Level5.prototype = {
 				}
 			}
 		}
-		console.log('saved: ' + this.savePlayerX + ', ' + this.savePlayerY);
-		console.log('player: ' + this.player.x + ', ' + this.player.y);
+		// console.log('saved: ' + this.savePlayerX + ', ' + this.savePlayerY);
+		// console.log('player: ' + this.player.x + ', ' + this.player.y);
 		/***** BOX STUFF *****/
 		if(!inElevator){
 			this.box.body.velocity.x = 0; // Box won't glide when pushed by player
@@ -527,10 +527,10 @@ function cameraReset(){
 	this.player.y = 750;	// reset player y (a little bugged but w/e)
 	game.camera.x = 800;	// reset camera x
 	game.camera.y = 0;		// reset camera y
-	game.time.events.add(Phaser.Timer.SECOND * 1.0, enableMovement, this);	// after a second, enable movement
+	game.time.events.add(Phaser.Timer.SECOND * 1.0, stopCutscene, this);	// after a second, enable movement
 }
 
 // Function for disabling cutscenePlaying, which was preventing movement
-function enableMovement(){
+function stopCutscene(){
 	this.cutscenePlaying = false;
 }
