@@ -12,7 +12,7 @@ Level5.prototype = {
 		self = this;
 		level = 5;
 		inElevator = false;
-		cutscenePlaying = false
+		this.cutscenePlaying = false
 		this.levelScale = 1.0;
 		this.timer = 0;
 		this.lockDown = false;
@@ -24,7 +24,7 @@ Level5.prototype = {
 		else{
 			this.keySolved = false;
 		}
-
+		this.playedCutscene6 = false;
 	},
 	create: function() {
 		/***** BG, BGM, AND SOUND EFFECTS *****/
@@ -202,7 +202,7 @@ Level5.prototype = {
 		//console.log(inElevator);
 		// console.log(game.camera.x);
 		// console.log(game.camera.y);
-		if(!cutscenePlaying){
+		if(!this.cutscenePlaying){
 			this.checkCamBounds();
 		}
 		/***** COLLISIONS *****/
@@ -219,7 +219,7 @@ Level5.prototype = {
 
 		if(game.input.keyboard.addKey(Phaser.KeyCode.Q).justPressed()){
 			elevatorActivated = true;
-			// cutscenePlaying = true;
+			// this.cutscenePlaying = true;
 			// this.keySolved = true;
 			//wallShifted = true;
 		}
@@ -238,12 +238,12 @@ Level5.prototype = {
 
 		}
 
-		if(!playedCutscene6){
+		if(!this.playedCutscene6){
 			if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.libraryCutscene.alpha >= 1) {
 				this.libraryCutscene.destroy();
 				game.time.events.add(Phaser.Timer.SECOND * 1, allowCreate, this);
-				cutscenePlaying = false;
-				playedCutscene6 = true;
+				this.cutscenePlaying = false;
+				this.playedCutscene6 = true;
 			}
 
 			if(this.libraryCutscene.alpha < 1 && hasThirdGear){
@@ -265,7 +265,7 @@ Level5.prototype = {
 		}
 
 		if(this.lockDown){
-			if(this.key1.alpha < 1){
+			if(this.key1.alpha < 0.5){
 				this.key1.alpha += 0.01;
 				this.key2.alpha += 0.01;
 				this.key3.alpha += 0.01;
@@ -279,7 +279,9 @@ Level5.prototype = {
 		}
 
 		if(this.keySolved && !wallShifted){
-			cutscenePlaying = true;
+			this.cutscenePlaying = true;
+			this.savePlayerX = this.player.x;
+			this.savePlayerY = this.player.y;
 			if(game.camera.x > 0){
 				game.camera.x -= 16;
 			}
@@ -291,7 +293,8 @@ Level5.prototype = {
 				}
 			}
 		}
-
+		console.log('saved: ' + this.savePlayerX + ', ' + this.savePlayerY);
+		console.log('player: ' + this.player.x + ', ' + this.player.y);
 		/***** BOX STUFF *****/
 		if(!inElevator){
 			this.box.body.velocity.x = 0; // Box won't glide when pushed by player
@@ -310,7 +313,7 @@ Level5.prototype = {
 				this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
 
 				// Spawn platform directly under by pressing SPACEBAR
-				if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0 && !cutscenePlaying && this.canCreate) {
+				if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0 && !this.cutscenePlaying && this.canCreate) {
 					// Kills all current sounds set to play before playing the music note sounds in order
 					game.time.events.removeAll();
 					game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
@@ -498,7 +501,7 @@ function collectLastGear(){
 	hasThirdGear = true;			// doesn't have to be a global because used in nested loop within "!playedCutscene6"
 	this.gearAudio.play();				// play gear audio
 	this.gear.destroy();				// destroy the gear
-	cutscenePlaying = true;				// cutscene plays on gear collect, therefore no movement is allowed
+	this.cutscenePlaying = true;				// cutscene plays on gear collect, therefore no movement is allowed
 	game.camera.flash(0xffffff, 1000);  // flash effect, duration 1000ms
 }
 
@@ -521,7 +524,7 @@ function shiftWall(){
 function cameraReset(){
 	game.camera.resetFX();	// kill the fade
 	this.player.x = 1200;	// reset player x (a little bugged but w/e)
-	this.player.y = 475;	// reset player y (a little bugged but w/e)
+	this.player.y = 750;	// reset player y (a little bugged but w/e)
 	game.camera.x = 800;	// reset camera x
 	game.camera.y = 0;		// reset camera y
 	game.time.events.add(Phaser.Timer.SECOND * 1.0, enableMovement, this);	// after a second, enable movement
@@ -529,5 +532,5 @@ function cameraReset(){
 
 // Function for disabling cutscenePlaying, which was preventing movement
 function enableMovement(){
-	cutscenePlaying = false;
+	this.cutscenePlaying = false;
 }

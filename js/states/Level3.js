@@ -11,6 +11,7 @@ Level3.prototype = {
 		this.keySolved = true;
 		this.carryingPlatform = false;
 		this.readyToFall = true;
+		this.cutscenePlaying = false;
 	},
 	create: function() {
 		this.bg = game.add.image(0, 0, 'bg3');
@@ -80,13 +81,13 @@ Level3.prototype = {
 		this.secondRooftop.body.immovable = true;
 
 		// Library
-		this.library = platforms.create(600, 250, 'library');
+		this.library = platforms.create(630, 100, 'library');
 		this.library.scale.setTo(1, 1);
 		game.physics.arcade.enable(this.library);
 		this.library.body.setSize(200, 200, 0, 170);
 		this.library.body.immovable = true;
 
-		this.ladder = game.add.sprite(650, 350, 'atlas', 'sky');
+		this.ladder = game.add.sprite(680, 200, 'atlas', 'sky');
 		game.physics.arcade.enable(this.ladder);
 		this.ladder.body.setSize(50, 70, 0, 0);
 		this.ladder.body.immovable = true;
@@ -135,10 +136,10 @@ Level3.prototype = {
 		//game.physics.arcade.overlap(this.player, this.gear, collectSecondGear, null, this);
 		// game.physics.arcade.overlap(this.player, this.ladder, transitionToLibrary, null, this);
 
-		if(game.input.keyboard.addKey(Phaser.KeyCode.Q).justPressed()){
-			this.droppedPlatform.alpha-= 0.1;
+		// if(game.input.keyboard.addKey(Phaser.KeyCode.Q).justPressed()){
+		// 	this.droppedPlatform.alpha-= 0.1;
 
-		}
+		// }
 
 		if(this.player.overlap(this.ladder)){
 	    	this.downArrow.alpha = 1;
@@ -149,32 +150,21 @@ Level3.prototype = {
 
 
 		if(this.player.overlap(this.ladder) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.player.body.touching.down){
-			cutscenePlaying = true;
+			this.cutscenePlaying = true;
 			game.camera.fade(0x000000, 3000);
 			game.time.events.add(Phaser.Timer.SECOND * 3.0, transitionToLibrary, this);
 		}
 
 		// Code for the dropping crane platform
-		if(this.carryDroppedPlatform){
+		if(this.carryDroppedPlatform)
 			this.droppingPlatform = false;
-		}
-		else {
+		else 
 			this.droppingPlatform = true;
-		}
 
 		if(this.droppingPlatform) {
-			if(this.readyToFall){
-				this.droppedPlatform.y += 4;
-			}
-
-			if(this.droppedPlatform.y > 600){
-				this.readyToFall = false;
-				game.time.events.add(Phaser.Timer.SECOND, respawnPlatform, this);
-			}
-		}
-
-		if(this.droppedPlatform.y == 245){
-			game.time.events.add(Phaser.Timer.SECOND * 2.0, ready, this);
+			this.droppedPlatform.y += 4;
+			if(this.droppedPlatform.y > 900)
+				this.droppedPlatform.y = 245;
 		}
 
 		// Reset state when player falls
@@ -278,14 +268,6 @@ Level3.prototype = {
 			this.number4.scale.set(0.5);
 		}
 	}
-}
-
-function respawnPlatform(){
-	this.droppedPlatform.y = 245;
-}
-
-function ready(){
-	this.readyToFall = true;
 }
 
 // Function called to transition to next level and kill bgm
