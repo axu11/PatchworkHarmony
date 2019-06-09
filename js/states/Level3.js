@@ -1,7 +1,8 @@
 var Level3 = function(game) {};
 Level3.prototype = {
-	init: function(bgmOn, numPlatforms) {
-		this.numPlatforms = numPlatforms;
+	init: function(bgmOn, maxPlatforms) {
+		maxPlatforms = 2;
+		this.numPlatforms = maxPlatforms
 		reloadOnGround = 0;
 		this.levelScale = 0.6;
 		self = this;
@@ -9,6 +10,8 @@ Level3.prototype = {
 		this.playerCanMove = true;
 		this.keySolved = true;
 		this.carryingPlatform = false;
+		this.readyToFall = true;
+		this.cutscenePlaying = false;
 	},
 	create: function() {
 		this.bg = game.add.image(0, 0, 'bg3');
@@ -19,6 +22,12 @@ Level3.prototype = {
 			this.bgm.play();
 			this.bgmOn = true;
 		}
+
+		// Create sound effects for when a music block platform is created
+		this.platform1audio = game.add.audio('platform1audio');
+		this.platform2audio = game.add.audio('platform2audio');
+		this.platform3audio = game.add.audio('platform3audio');
+		this.platform4audio = game.add.audio('platform4audio');
 
 		// Create number circle at top left of screen to indicate platforms remaining
 		this.numberPosition = 16;
@@ -51,30 +60,42 @@ Level3.prototype = {
 		this.createdPlatforms = game.add.group();
 		this.createdPlatforms.enableBody = true;
 
+		// Dropping platform from crane
 		this.droppedPlatform = platforms.create(185, 245, 'crane-platform'); 
 		this.droppedPlatform.scale.setTo(1.5, 1);
 		game.physics.arcade.enable(this.droppedPlatform);
 		this.droppedPlatform.body.setSize(260, 20, 0, 75);
 		this.droppedPlatform.body.immovable = true;
 		this.droppingPlatform = true;
+
+		this.rightWall = platforms.create(750, 0, 'atlas', 'sky');
+		this.rightWall.scale.setTo(0.5, 10);
+		game.physics.arcade.enable(this.rightWall);
+		this.rightWall.body.immovable = true;
+		this.rightWall.alpha = 0;
 	
+		// Rooftop on left side
 		this.secondRooftop = platforms.create(-100, 490, 'lvl2', 'rooftop');
 		this.secondRooftop.scale.setTo(0.6, 0.4);
 		game.physics.arcade.enable(this.secondRooftop);
-		//this.tower.body.setSize(200, 500, 0, 140);
 		this.secondRooftop.body.immovable = true;
 
-		// big ass tower
-		this.library = platforms.create(600, 250, 'library');
+		// Library
+		this.library = platforms.create(630, 100, 'library');
 		this.library.scale.setTo(1, 1);
 		game.physics.arcade.enable(this.library);
 		this.library.body.setSize(200, 200, 0, 170);
 		this.library.body.immovable = true;
 
+		this.ladder = game.add.sprite(680, 200, 'atlas', 'sky');
+		game.physics.arcade.enable(this.ladder);
+		this.ladder.body.setSize(50, 70, 0, 0);
+		this.ladder.body.immovable = true;
+		this.ladder.visible = false;
+
 		/***** PLAYER SPRITE *****/ 
 		this.players = game.add.group();
 		this.player = new Patches(game, 'patchesAtlas2', 'right1', 50, 430, this.levelScale);
-		//this.player = new Patches(game, 'patchesAtlas2', 'right1', 850, 300, this.levelScale);
 		this.player.enableBody = true;
 		this.players.add(this.player);
 
@@ -88,31 +109,67 @@ Level3.prototype = {
 		this.box.body.drag = 0.5;
 		this.attached = true; // Held from last level
 
+		this.downArrow = game.add.sprite(620, 300, 'patchesAtlas2', 'right1');
+		this.downArrow.scale.setTo(0.15);
+		this.downArrow.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('patchesAtlas2', 'right', 1, 3), 10, true);
+		this.downArrow.animations.play('spacebarAni');
+		this.downArrow.alpha = 0;
+
 	},
 	update: function() {
-		if(this.droppingPlatform) {
-			this.droppedPlatform.y += 4;
-			if(this.droppedPlatform.y > 900){
-				this.droppedPlatform.y = 245;
-			}
-		}
+		// game.debug.body(this.rightWall);
+
+		// game.debug.body(this.library);
+		// game.debug.body(this.ladder);
+		// console.log('droppingplatform: ' + this.droppingPlatform);
+		// console.log('readyToFall: ' + this.readyToFall);
+		// if(this.carryDroppedPlatform){
+		// 	console.log('hit');
+		// }
 
 		/***** COLLISIONS *****/
-		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   // player vs platforms
-		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); // player vs created platforms
-		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
-		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
-		this.carryDroppedPlatform = game.physics.arcade.collide(this.droppedPlatform, this.createdPlatforms);   // dropped vs  created platforms
-		game.physics.arcade.overlap(this.player, this.gear, collectGear, null, this);
+		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   								// player vs platforms
+		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); 				// player vs created platforms
+		this.hitBox = game.physics.arcade.collide(this.player, this.box);         								// player vs box
+		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   								// box vs platforms
+		this.carryDroppedPlatform = game.physics.arcade.collide(this.droppedPlatform, this.createdPlatforms);   // dropped vs created platforms
+		//game.physics.arcade.overlap(this.player, this.gear, collectSecondGear, null, this);
+		// game.physics.arcade.overlap(this.player, this.ladder, transitionToLibrary, null, this);
 
+		// if(game.input.keyboard.addKey(Phaser.KeyCode.Q).justPressed()){
+		// 	this.droppedPlatform.alpha-= 0.1;
+
+		// }
+
+		if(this.player.overlap(this.ladder)){
+	    	this.downArrow.alpha = 1;
+	    }
+	    else{
+	    	this.downArrow.alpha = 0;
+	    }
+
+
+		if(this.player.overlap(this.ladder) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.player.body.touching.down){
+			this.cutscenePlaying = true;
+			game.camera.fade(0x000000, 3000);
+			game.time.events.add(Phaser.Timer.SECOND * 3.0, transitionToLibrary, this);
+		}
+
+		// Code for the dropping crane platform
 		if(this.carryDroppedPlatform)
 			this.droppingPlatform = false;
 		else 
 			this.droppingPlatform = true;
 
-		// reset state when player falls
+		if(this.droppingPlatform) {
+			this.droppedPlatform.y += 4;
+			if(this.droppedPlatform.y > 900)
+				this.droppedPlatform.y = 245;
+		}
+
+		// Reset state when player falls
 		if(this.player.y + this.player.height/2 >= this.world.height - 1) {			
-			game.state.start('Level3', true, false, true, 2);
+			game.state.start('Level3', true, false, true, maxPlatforms);
 		}
 
 		/***** BOX STUFF *****/
@@ -133,15 +190,20 @@ Level3.prototype = {
 
 			// Spawn platform directly under by pressing SPACEBAR
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0) {
-				this.platform1audio = game.add.audio('platform1audio');
-				this.platform1audio.play();
+				// Kills all current sounds set to play before playing the music note sounds in order
+				game.time.events.removeAll();
+				game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
+				game.time.events.add(Phaser.Timer.SECOND * 0.5, platformSound2, this);
+				game.time.events.add(Phaser.Timer.SECOND * 1.0, platformSound3, this);
+				game.time.events.add(Phaser.Timer.SECOND * 1.5, platformSound4, this);
+
 				this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
 				this.createdPlatforms.add(this.createdPlatform); 
 				game.physics.arcade.enable(this.createdPlatform);
 				this.createdPlatform.body.checkCollision.down = false;
 				this.createdPlatform.body.checkCollision.left = false;
 				this.createdPlatform.body.checkCollision.right = false;
-				this.createdPlatform.body.immovable = true;
+				this.createdPlatform.body.immovable = true;	
 				this.numPlatforms--;
 			}
 
@@ -164,10 +226,11 @@ Level3.prototype = {
 		}
 
 		// this.numPlatforms doesn't refresh until the player hits the ground
-			if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
-				this.numPlatforms++;
-				reloadOnGround--;	
-			}
+		if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
+			this.numPlatforms++;
+			reloadOnGround--;	
+		}
+
 		// Top-left number updates with this.numPlatforms
 		if(this.numPlatforms == 0) {
 			this.number0.scale.set(0.5);
@@ -205,4 +268,10 @@ Level3.prototype = {
 			this.number4.scale.set(0.5);
 		}
 	}
+}
+
+// Function called to transition to next level and kill bgm
+function transitionToLibrary(){
+	game.state.start('Level4', true, false, false, maxPlatforms);
+	this.bgm.destroy();
 }
