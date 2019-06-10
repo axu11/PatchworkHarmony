@@ -37,7 +37,7 @@ MainMenu.prototype = {
 
 	update: function() {
 		// Go to Play state once SPACEBAR pressed
-		game.state.start('Play', true, false, false, 0, 0);
+		// game.state.start('Play', true, false, false, 0, 0);
 			// game.state.start('Level2', true, false, false, 1, 0);
 			// game.state.start('Level3', true, false, false, 2, 0);
 			// game.state.start('Level4', true, false, false, 2, 0);

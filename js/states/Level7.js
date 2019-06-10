@@ -50,6 +50,7 @@ Level7.prototype = {
 		this.box.scale.set(0.15 * this.levelScale);
 		this.attached = true; // Held from last level
 
+		this.pauseMenu = new PauseMenu(game);
 	},
 	update: function() {
 		//console.log(level);

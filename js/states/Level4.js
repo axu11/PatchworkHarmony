@@ -1,12 +1,6 @@
 var Level4 = function(game) {};
 Level4.prototype = {
 	init: function(bgmOn, numPlatforms, reloadOnGround) {
-		// if(hasThirdGear){
-		// 	maxPlatforms = 3;
-		// }
-		// else{
-		// 	maxPlatforms = 2;
-		// }
 		this.numPlatforms = numPlatforms;
 		this.reloadOnGround = reloadOnGround;
 		self = this;	
@@ -343,29 +337,10 @@ Level4.prototype = {
 		this.downArrow.animations.play('spacebarAni');
 		this.downArrow.alpha = 0;
 
+		this.pauseMenu = new PauseMenu(game);
 	},
 	update: function() {
-		/***** DEBUG *****/
-		//console.log(this.player.x);
-		//console.log(this.player.y);
-		//console.log(level);
-		//console.log(inElevator);
-		//console.log(bookTop);
-		//console.log(this.leverHandle.angle);
-		//console.log(this.player.x);
-		//console.log(elevatorActivated);
-		//console.log(this.player.body.touching.down && elevatorActivated && this.attached)
-		// console.log(this.box.x + '    ' + this.box.y)
-		// //game.debug.body(this.elevatorPlatform);
-		// //game.debug.body(this.ground);
-		// //game.debug.body(this.shiftingWall1);
-		// //game.debug.body(this.leverHandle);
-		// //game.debug.body(this.leftWall);
-		//game.debug.body(this.rightWall);
-		// game.debug.body(this.door);
-		// //this.elevator.y += 5;
-		// console.log(this.key1Lock + ' ' + this.key2Lock + ' ' + this.key3Lock);
-		// console.log(this.keyLock.y);
+
 		if(!this.keySolved){
 			if(this.key1Lock && this.key2Lock && this.key3Lock) {
 				this.keySolved = true;
@@ -422,16 +397,6 @@ Level4.prototype = {
 				game.time.events.add(Phaser.Timer.SECOND * 3.0, this.transitionToBench, this);
 			}
 		}
-		
-		// if(this.player.overlap(this.door)){
-		// 	console.log('overlapping');
-		// }
-		// if(this.player.body.touching.down){
-		// 	console.log('touching');
-		// }
-		// if(game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed()){
-		// 	console.log('down');
-		// }
 
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   					// player vs platforms
@@ -901,13 +866,3 @@ Level4.prototype = {
 			game.state.start('Level5', true, false, false, 2, 0);
 	}
 }
-
-
-// this.player.body.checkCollision.up = false;
-	 //    this.player.body.checkCollision.down = false;
-	 //    this.player.body.checkCollision.left = false;
-	 //    this.player.body.checkCollision.right = false;
-	 //    this.player.body.collideWorldBounds = false;
-	 //    this.player.body.gravity.y = 0;
-		// this.player.body.velocity.y = 75;
-		// this.elevator.body.velocity.y = 75;

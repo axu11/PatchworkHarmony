@@ -155,13 +155,11 @@ Level2.prototype = {
 		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 5, true);
 		this.spacebar.animations.play('spacebarAni');
 		this.spacebar.alpha = 0;
+
+		this.pauseMenu = new PauseMenu(game);
 	},
 
 	update: function(){
-		//game.debug.body(this.billboard);
-		//game.debug.body(this.tower);
-		//game.debug.body(this.secondRooftop);
-		//game.debug.body(this.library);
 
 		/***** CAMERA, TRANSITIONS, AND CUTSCENES *****/
 		this.checkCamBounds(); // Keep checking camera bounds
@@ -274,9 +272,9 @@ Level2.prototype = {
 		}
 
 		// this.numPlatforms doesn't refresh until the player hits the ground or a trampoline
-		if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform || this.hitTrampoline)) {
+		if(this.reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform || this.hitTrampoline)) {
 			this.numPlatforms++;
-			reloadOnGround--;	
+			this.reloadOnGround--;	
 		}
 
 		// Top-left number updates with this.numPlatforms
@@ -341,7 +339,7 @@ Level2.prototype = {
 	platformSound4: function(){
 		this.platform4audio.play();
 	},
-	
+
 	// Function for collecting "gears"
 	collectSecondGear: function(Patches, gear){
 		if(!this.platformAdded) {
@@ -377,7 +375,7 @@ Level2.prototype = {
 	},
 
 	skipLevel: function() {
-		game.state.start('Level3', true, false, false, 2, 0);
 		this.bgm.destroy();
+		game.state.start('Level3', true, false, false, 2, 0);
 	}
 }

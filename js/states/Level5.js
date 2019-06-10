@@ -1,12 +1,6 @@
 var Level5 = function(game) {};
 Level5.prototype = {
 	init: function(bgmOn, numPlatforms, reloadOnGround) {
-		// if(hasThirdGear){
-		// 	maxPlatforms = 3;
-		// }
-		// else{
-		// 	maxPlatforms = 2;
-		// }
 		this.numPlatforms = numPlatforms;
 		this.reloadOnGround = reloadOnGround;
 		self = this;
@@ -233,12 +227,10 @@ Level5.prototype = {
 		this.skipLevelButton.alpha = 0;
 		this.skipLevelButton.fixedToCamera = true;
 
+		this.pauseMenu = new PauseMenu(game);
 	},
 	update: function() {
-		//console.log(level);
-		//console.log(inElevator);
-		// console.log(game.camera.x);
-		// console.log(game.camera.y);
+
 		if(!this.cutscenePlaying){
 			this.checkCamBounds();
 		}
@@ -289,7 +281,6 @@ Level5.prototype = {
 			}
 		}
 		
-		console.log(this.lockDown + ', ' + this.player.x + ', ' + wallShifted);
 		if(!this.lockDown && this.player.x > 1200 && !wallShifted) {
 			if(this.keyLock.y < 50) {
 				this.cutscenePlaying = true;
@@ -334,8 +325,7 @@ Level5.prototype = {
 				}
 			}
 		}
-		// console.log('saved: ' + this.savePlayerX + ', ' + this.savePlayerY);
-		// console.log('player: ' + this.player.x + ', ' + this.player.y);
+		
 		/***** BOX STUFF *****/
 		if(!inElevator){
 			this.box.body.velocity.x = 0; // Box won't glide when pushed by player

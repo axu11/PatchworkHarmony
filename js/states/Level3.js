@@ -120,17 +120,9 @@ Level3.prototype = {
 		this.downArrow.animations.play('arrowAni');
 		this.downArrow.alpha = 0;
 
+		this.pauseMenu = new PauseMenu(game);
 	},
 	update: function() {
-		// game.debug.body(this.rightWall);
-
-		// game.debug.body(this.library);
-		// game.debug.body(this.ladder);
-		// console.log('droppingplatform: ' + this.droppingPlatform);
-		// console.log('readyToFall: ' + this.readyToFall);
-		// if(this.carryDroppedPlatform){
-		// 	console.log('hit');
-		// }
 
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   								// player vs platforms
@@ -283,7 +275,7 @@ Level3.prototype = {
 	platformSound4: function(){
 		this.platform4audio.play();
 	},
-	
+
 	// Function called to transition to next level and kill bgm
 	transitionToLibrary: function(){
 		game.state.start('Level4', true, false, false, this.numPlatforms, this.reloadOnGround);
@@ -307,7 +299,7 @@ Level3.prototype = {
 	},
 
 	skipLevel: function() {
-		game.state.start('Level4', true, false, false, 2, 0);
 		this.bgm.destroy();
+		game.state.start('Level4', true, false, false, 2, 0);
 	}
 }

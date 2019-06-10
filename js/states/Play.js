@@ -23,6 +23,7 @@ Play.prototype = {
 		this.TIMER_VALUE = 60;				// modify this here depending on how long the delay should be before spacebar can be pressed
 	
 		this.platformAdded = false;
+		this.pauseMenuOpen = false;
 	},
 	
 	create: function() {
@@ -245,59 +246,11 @@ Play.prototype = {
 		this.downArrow.animations.play('arrowAni');
 		this.downArrow.alpha = 0;
 
-		this.pauseMenuButton = game.add.button(750, 50, 'assets', this.openMenu, this, 'gear', 'gear', 'gear', 'gear');
-		this.pauseMenuButton.anchor.set(0.5);
-		this.pauseMenuButton.alpha = 1;
-		this.pauseMenuButton.fixedToCamera = true;
-		this.pauseMenuOpen = false;
-
-		this.menuBg = game.add.sprite(400, 300, 'atlas', 'sky');
-		this.menuBg.anchor.set(0.5);
-		this.menuBg.scale.setTo(5, 3.5);
-		this.menuBg.alpha = 0;
-		this.menuBg.fixedToCamera = true;
-
-		this.resumeButton = game.add.button(300, 350, 'assets', this.closeMenu, this, 'gear', 'gear', 'gear', 'gear');
-		this.resumeButton.anchor.set(0.5);
-		this.resumeButton.alpha = 0;
-		this.resumeButton.fixedToCamera = true;
-
-		this.mainMenuButton = game.add.button(300, 450, 'assets', this.goToMainMenu, this, 'gear', 'gear', 'gear', 'gear');
-		this.mainMenuButton.anchor.set(0.5);
-		this.mainMenuButton.alpha = 0;
-		this.mainMenuButton.fixedToCamera = true;
-
-		this.restartLevelButton = game.add.button(500, 350, 'assets', this.restartLevel, this, 'gear', 'gear', 'gear', 'gear');
-		this.restartLevelButton.anchor.set(0.5);
-		this.restartLevelButton.alpha = 0;
-		this.restartLevelButton.fixedToCamera = true;
-
-		this.skipLevelButton = game.add.button(500, 450, 'assets', this.skipLevel, this, 'gear', 'gear', 'gear', 'gear');
-		this.skipLevelButton.anchor.set(0.5);
-		this.skipLevelButton.alpha = 0;
-		this.skipLevelButton.fixedToCamera = true;
-
-		// this.pauseMenu = new PauseMenu('assets', 'gear', 650, 50, this);
+		this.pauseMenu = new PauseMenu(game);
 	},
 
 	update: function() {
-		console.log(this.numPlatforms + ', ' + this.reloadOnGround);
-		/***** DEBUG STUFF *****/
-		//game.debug.body(this.box);
-		//game.debug.body(this.ground);
-		//game.debug.body(this.wall);
-		//game.debug.body(this.activatedPlatform);
-		//game.debug.body(this.drawer);
-		//game.debug.body(this.switch);
-		//game.debug.body(this.desk);
-		//console.log('reload: ' + reloadOnGround + ' numPlatforms: ' + numPlatforms);
-		//console.log(this.boxScene.visible);
-		//console.log('playscene ' + this.playScene);
-		//console.log('reload: ' + reloadOnGround + ' this.numPlatforms: ' + this.numPlatforms);
-		//console.log(this.player.x + 'and' + this.player.y);
-		//console.log(this.box.x + 'and' + this.box.y);
-		//console.log('player x: ' + this.player.x);
-
+		// console.log('play: ' + this.pauseMenuOpen);
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, this.platforms);   				// player vs platforms
 		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); 	// player vs created platforms
@@ -310,34 +263,6 @@ Play.prototype = {
 
 		/***** CAMERA, TRANSITIONS, AND CUTSCENES *****/
 		this.checkCamBounds(); // Keep checking camera bounds
-
-		// pause menu stuff
-		if(this.pauseMenuOpen) {
-			this.menuBg.alpha = 1;
-			this.resumeButton.alpha = 1;
-			this.mainMenuButton.alpha = 1;
-			this.restartLevelButton.alpha = 1;
-			this.skipLevelButton.alpha = 1;
-
-			this.menuBg.inputEnabled = true;
-			this.resumeButton.inputEnabled = true;
-			this.mainMenuButton.inputEnabled = true;
-			this.restartLevelButton.inputEnabled = true;
-			this.skipLevelButton.inputEnabled = true;
-		}
-		else {
-			this.menuBg.alpha = 0;
-			this.resumeButton.alpha = 0;
-			this.mainMenuButton.alpha = 0;
-			this.restartLevelButton.alpha = 0;
-			this.skipLevelButton.alpha = 0;
-
-			this.menuBg.inputEnabled = false;
-			this.resumeButton.inputEnabled = false;
-			this.mainMenuButton.inputEnabled = false;
-			this.restartLevelButton.inputEnabled = false;
-			this.skipLevelButton.inputEnabled = false;
-		}
 		// Fade in bg, player, box, and instructions
 		if(this.bg0.alpha < 1){
         	this.bg0.alpha += 0.01;
@@ -731,7 +656,7 @@ Play.prototype = {
 	},
 
 	skipLevel: function() {
-		game.state.start('Level2', true, false, false, 1, 0);
 		this.bgm.destroy();
+		game.state.start('Level2', true, false, false, 1, 0);
 	}
 }
