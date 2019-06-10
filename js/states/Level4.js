@@ -409,8 +409,8 @@ Level4.prototype = {
 		}
 
 		if(game.input.keyboard.addKey(Phaser.KeyCode.Q).justPressed()){
-			game.time.events.add(Phaser.Timer.SECOND * 1, activateElevator, this);
-			game.time.events.add(Phaser.Timer.SECOND * 1, dropBox, this);
+			game.time.events.add(Phaser.Timer.SECOND * 1, this.activateElevator, this);
+			game.time.events.add(Phaser.Timer.SECOND * 1, this.dropBox, this);
 			this.numPlatforms = 3;
 
 		}
@@ -419,7 +419,7 @@ Level4.prototype = {
 			if(this.player.overlap(this.door) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.hitPlatform){
 				this.cutscenePlaying = true;
 				game.camera.fade(0x000000, 3000);
-				game.time.events.add(Phaser.Timer.SECOND * 3.0, transitionToBench, this);
+				game.time.events.add(Phaser.Timer.SECOND * 3.0, this.transitionToBench, this);
 			}
 		}
 		
@@ -445,8 +445,8 @@ Level4.prototype = {
 		this.springHitPlatform = game.physics.arcade.collide(this.spring, platforms);   			// spring vs platforms
 		this.hitKeyLock = game.physics.arcade.collide(this.player, this.keyLock); // player vs keyLock
 		this.boxHitKeyLock = game.physics.arcade.collide(this.box, this.keyLock); // box vs keyLock
-		game.physics.arcade.overlap(this.player, this.leverHandle, pullLever, null, this);
-		game.physics.arcade.overlap(this.player, this.elevators, activateElevatorDown, null, this);
+		game.physics.arcade.overlap(this.player, this.leverHandle, this.pullLever, null, this);
+		game.physics.arcade.overlap(this.player, this.elevators, this.activateElevatorDown, null, this);
 
 		/***** SWITCH STUFF *****/
 		// Switch logic for player pressing down on switch (code never run if elevator is active)
@@ -526,10 +526,10 @@ Level4.prototype = {
 				if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0) {
 					// Kills all current sounds set to play before playing the music note sounds in order
 					game.time.events.removeAll();
-					game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
-					game.time.events.add(Phaser.Timer.SECOND * 0.5, platformSound2, this);
-					game.time.events.add(Phaser.Timer.SECOND * 1.0, platformSound3, this);
-					game.time.events.add(Phaser.Timer.SECOND * 1.5, platformSound4, this);
+					game.time.events.add(Phaser.Timer.SECOND * 0.0, this.platformSound1, this);
+					game.time.events.add(Phaser.Timer.SECOND * 0.5, this.platformSound2, this);
+					game.time.events.add(Phaser.Timer.SECOND * 1.0, this.platformSound3, this);
+					game.time.events.add(Phaser.Timer.SECOND * 1.5, this.platformSound4, this);
 
 					this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
 					this.createdPlatforms.add(this.createdPlatform); 
@@ -671,8 +671,8 @@ Level4.prototype = {
 			if(game.camera.x < 0 && !elevatorActivated){
 				game.camera.x += 16;
 				if(game.camera.x == 0) {
-					game.time.events.add(Phaser.Timer.SECOND * 1, activateElevator, this);
-					game.time.events.add(Phaser.Timer.SECOND * 1, dropBox, this);			
+					game.time.events.add(Phaser.Timer.SECOND * 1, this.activateElevator, this);
+					game.time.events.add(Phaser.Timer.SECOND * 1, this.dropBox, this);			
 				}
 			}
 			else if(elevatorActivated){
@@ -768,121 +768,111 @@ Level4.prototype = {
 		 	game.camera.x -= game.width;
 		 	this.player.x = game.camera.x + game.width - Math.abs(this.player.width/2);	
 		} 
-		// else if(this.player.y + Math.abs(this.player.height/2) > game.height + game.camera.y && !this.player.body.blocked.down /*&& this.player.facing === "DOWN"*/) {
-		// 	// move camera, then player
-		// 	game.camera.y += game.height;
-		// 	this.player.y = game.camera.y + Math.abs(this.player.height/2);	
-		// } else if(this.player.y - Math.abs(this.player.height/2) < game.camera.y && !this.player.body.blocked.up /*&& this.player.facing === "UP"*/) {
-		// 	// move camera, then player
-		// 	game.camera.y -= game.height;
-		// 	this.player.y = game.camera.y + game.height - Math.abs(this.player.height/2);	
-		// }
-	}
-}
+	},
+	// Functions for playing the platform audio sounds
+	platformSound1: function(){
+		this.platform1audio.play();
+	},
 
-// Functions for playing the platform audio sounds
-function platformSound1(){
-	this.platform1audio.play();
-}
+	platformSound2: function(){
+		this.platform2audio.play();
+	},
 
-function platformSound2(){
-	this.platform2audio.play();
-}
+	platformSound3: function(){
+		this.platform3audio.play();
+	},
 
-function platformSound3(){
-	this.platform3audio.play();
-}
+	platformSound4: function(){
+		this.platform4audio.play();
+	},
 
-function platformSound4(){
-	this.platform4audio.play();
-}
+	// Function that checks to see if the player presses shift next to an unpulled lever
+	pullLever: function(){
+		if(game.input.keyboard.addKey(Phaser.KeyCode.SHIFT).justPressed() && !leverActivated){
+			leverActivated = true;
+			this.cutscenePlaying = true;
+			this.switchTrigger.play('', 0, 0.5, false);
+		}
+	},
 
-// Function that checks to see if the player presses shift next to an unpulled lever
-function pullLever(){
-	if(game.input.keyboard.addKey(Phaser.KeyCode.SHIFT).justPressed() && !leverActivated){
-		leverActivated = true;
-		this.cutscenePlaying = true;
-		this.switchTrigger.play('', 0, 0.5, false);
-	}
-}
+	// Function for activating the elevator to go down
+	activateElevatorDown: function(Patches, elevator){
+		if(!inElevator){
+			// When spacebar pressed and player is standing
+			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.player.body.touching.down && elevatorActivated && this.attached){
+				// Puts player in middle of elevator
+				this.player.x = 405;
+			    this.player.y = 470;	
+				inElevator = true;
 
-// Function for activating the elevator to go down
-function activateElevatorDown(Patches, elevator){
-	if(!inElevator){
-		// When spacebar pressed and player is standing
-		if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.player.body.touching.down && elevatorActivated && this.attached){
-			// Puts player in middle of elevator
-			this.player.x = 405;
-		    this.player.y = 470;	
-			inElevator = true;
+				// KILL THE PLAYER, BOX AND THE CURRENT ELEVATOR SPRITE
+				this.player.destroy();
+				this.box.destroy();
+				this.elevators.removeAll(true);
 
-			// KILL THE PLAYER, BOX AND THE CURRENT ELEVATOR SPRITE
-			this.player.destroy();
-			this.box.destroy();
-			this.elevators.removeAll(true);
+				// Creates a new elevator sprite with its doors closed, but active
+				this.closedElevator = this.elevators.create(310, 320, 'lvl3', 'elevator2'); 
+				this.closedElevator.scale.setTo(0.5);
 
-			// Creates a new elevator sprite with its doors closed, but active
-			this.closedElevator = this.elevators.create(310, 320, 'lvl3', 'elevator2'); 
-			this.closedElevator.scale.setTo(0.5);
+				this.closedElevator.body.velocity.y = 75;
 
-			this.closedElevator.body.velocity.y = 75;
-
-			// Fade out effect
-			if(inElevator){
-				game.camera.fade(0x000000, 4000);
+				// Fade out effect
+				if(inElevator){
+					game.camera.fade(0x000000, 4000);
+				}
 			}
 		}
+	},
+
+	// Function for turning on the elevator initially
+	activateElevator: function(){
+		// Kills the current elevator sprite (unpowered)
+		this.elevators.removeAll(true);
+
+		// Creates a new elevator sprite with its doors open and active
+		this.activatedElevator = this.elevators.create(310, 320, 'lvl3', 'elevator3'); 
+		this.activatedElevator.scale.setTo(0.5);
+		game.physics.arcade.enable(this.activatedElevator);
+		this.activatedElevator.body.immovable = true;
+		this.activatedElevator.body.checkCollision.up = false;
+	    this.activatedElevator.body.checkCollision.down = false;
+	    this.activatedElevator.body.checkCollision.left = false;
+	    this.activatedElevator.body.checkCollision.right = false;
+	    this.switchTrigger.play('', 0, 0.5, false);
+
+	    // After one second, move on
+		game.time.events.add(Phaser.Timer.SECOND * 1, this.oneSecond, this);
+	},
+
+	dropBox: function(){
+		this.slideAway = 100;
+		game.time.events.add(Phaser.Timer.SECOND * 2, this.boxMagicTrick, this);
+	},
+
+	boxMagicTrick: function(){
+		//this.box.destroy();
+		this.box = game.add.sprite(650, 500, 'assets','box');
+		game.physics.arcade.enable(this.box);
+		this.box.anchor.set(0.50);
+		this.box.scale.set(0.15 * this.levelScale);
+		this.box.body.collideWorldBounds = false;
+		this.box.body.gravity.y = 300;
+		this.box.body.immovable = false; 
+		this.box.body.drag = 0.5;
+		this.attached = false; 
+	},
+
+	// Function for setting global var "elevatorActivated" to true
+	oneSecond: function(){
+		elevatorActivated = true;
+	},
+
+	// Function called to transition to next level and kill bgm
+	transitionToBench: function(){
+		this.cutscenePlaying = false;
+		game.state.start('Level7', true, false, false, maxPlatforms);
+		this.bgm.destroy();
 	}
-}
-
-// Function for turning on the elevator initially
-function activateElevator(){
-	// Kills the current elevator sprite (unpowered)
-	this.elevators.removeAll(true);
-
-	// Creates a new elevator sprite with its doors open and active
-	this.activatedElevator = this.elevators.create(310, 320, 'lvl3', 'elevator3'); 
-	this.activatedElevator.scale.setTo(0.5);
-	game.physics.arcade.enable(this.activatedElevator);
-	this.activatedElevator.body.immovable = true;
-	this.activatedElevator.body.checkCollision.up = false;
-    this.activatedElevator.body.checkCollision.down = false;
-    this.activatedElevator.body.checkCollision.left = false;
-    this.activatedElevator.body.checkCollision.right = false;
-    this.switchTrigger.play('', 0, 0.5, false);
-
-    // After one second, move on
-	game.time.events.add(Phaser.Timer.SECOND * 1, oneSecond, this);
-}
-
-function dropBox(){
-	this.slideAway = 100;
-	game.time.events.add(Phaser.Timer.SECOND * 2, boxMagicTrick, this);
-}
-
-function boxMagicTrick(){
-	//this.box.destroy();
-	this.box = game.add.sprite(650, 500, 'assets','box');
-	game.physics.arcade.enable(this.box);
-	this.box.anchor.set(0.50);
-	this.box.scale.set(0.15 * this.levelScale);
-	this.box.body.collideWorldBounds = false;
-	this.box.body.gravity.y = 300;
-	this.box.body.immovable = false; 
-	this.box.body.drag = 0.5;
-	this.attached = false; 
-}
-
-// Function for setting global var "elevatorActivated" to true
-function oneSecond(){
-	elevatorActivated = true;
-}
-
-// Function called to transition to next level and kill bgm
-function transitionToBench(){
-	this.cutscenePlaying = false;
-	game.state.start('Level7', true, false, false, maxPlatforms);
-	this.bgm.destroy();
 }
 
 

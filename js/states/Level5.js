@@ -217,9 +217,9 @@ Level5.prototype = {
 		this.hitKeyLock = game.physics.arcade.collide(this.player, this.keyLock); // player vs keyLock
 		this.boxHitKeyLock = game.physics.arcade.collide(this.box, this.keyLock); // box vs keyLock
 		if(!hasThirdGear){
-			game.physics.arcade.overlap(this.player, this.gear, collectLastGear, null, this);
+			game.physics.arcade.overlap(this.player, this.gear, this.collectLastGear, null, this);
 		}
-		game.physics.arcade.overlap(this.player, this.elevator, activateElevatorUp, null, this);
+		game.physics.arcade.overlap(this.player, this.elevator, this.activateElevatorUp, null, this);
 
 		if(game.input.keyboard.addKey(Phaser.KeyCode.Q).justPressed()){
 			elevatorActivated = true;
@@ -245,7 +245,7 @@ Level5.prototype = {
 		if(!this.playedCutscene6){
 			if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.libraryCutscene.alpha >= 1) {
 				this.libraryCutscene.destroy();
-				game.time.events.add(Phaser.Timer.SECOND * 1, allowCreate, this);
+				game.time.events.add(Phaser.Timer.SECOND * 1, this.allowCreate, this);
 				this.cutscenePlaying = false;
 				this.playedCutscene6 = true;
 			}
@@ -297,7 +297,7 @@ Level5.prototype = {
 				game.camera.y -= 12;
 				if(game.camera.y == -600) {
 					wallShifted = true;
-					game.time.events.add(Phaser.Timer.SECOND * 0.5, shiftWall, this);
+					game.time.events.add(Phaser.Timer.SECOND * 0.5, this.shiftWall, this);
 				}
 			}
 		}
@@ -324,10 +324,10 @@ Level5.prototype = {
 				if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0 && !this.cutscenePlaying && this.canCreate) {
 					// Kills all current sounds set to play before playing the music note sounds in order
 					game.time.events.removeAll();
-					game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
-					game.time.events.add(Phaser.Timer.SECOND * 0.5, platformSound2, this);
-					game.time.events.add(Phaser.Timer.SECOND * 1.0, platformSound3, this);
-					game.time.events.add(Phaser.Timer.SECOND * 1.5, platformSound4, this);
+					game.time.events.add(Phaser.Timer.SECOND * 0.0, this.platformSound1, this);
+					game.time.events.add(Phaser.Timer.SECOND * 0.5, this.platformSound2, this);
+					game.time.events.add(Phaser.Timer.SECOND * 1.0, this.platformSound3, this);
+					game.time.events.add(Phaser.Timer.SECOND * 1.5, this.platformSound4, this);
 
 					this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
 					this.createdPlatforms.add(this.createdPlatform); 
@@ -447,98 +447,98 @@ Level5.prototype = {
 		// 	game.camera.y -= game.height;
 		// 	this.player.y = game.camera.y + game.height - Math.abs(this.player.height/2);	
 		// }
-	}
-}
+	},
 
-// Functions for playing the platform audio sounds
-function platformSound1(){
-	this.platform1audio.play();
-}
+	// Functions for playing the platform audio sounds
+	platformSound1: function(){
+		this.platform1audio.play();
+	},
 
-function platformSound2(){
-	this.platform2audio.play();
-}
+	platformSound2: function(){
+		this.platform2audio.play();
+	},
 
-function platformSound3(){
-	this.platform3audio.play();
-}
+	platformSound3: function(){
+		this.platform3audio.play();
+	},
 
-function platformSound4(){
-	this.platform4audio.play();
-}
+	platformSound4: function(){
+		this.platform4audio.play();
+	},
 
-function lockSound(){
-	this.lockAudio.play();
-}
+	lockSound: function(){
+		this.lockAudio.play();
+	},
 
-// Function for activating the elevator to go up
-function activateElevatorUp(Patches, elevator){
-	if(!inElevator){
-		// When spacebar pressed and player is standing
-		if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.player.body.touching.down){
-		
-			// Reset player x and y values to be inside elevator, set inElevator to true cuz you're literally in the elevator
-			this.player.x = 415;
-		    this.player.y = 485;	
-   			inElevator = true;
-		    
-		    // KILL THE PLAYER, BOX AND THE CURRENT ELEVATOR SPRITE AHHH
-			this.player.destroy();
-			this.box.destroy();
-			this.elevators.removeAll(true);
+	// Function for activating the elevator to go up
+	activateElevatorUp: function(Patches, elevator){
+		if(!inElevator){
+			// When spacebar pressed and player is standing
+			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.player.body.touching.down){
+			
+				// Reset player x and y values to be inside elevator, set inElevator to true cuz you're literally in the elevator
+				this.player.x = 415;
+			    this.player.y = 485;	
+	   			inElevator = true;
+			    
+			    // KILL THE PLAYER, BOX AND THE CURRENT ELEVATOR SPRITE AHHH
+				this.player.destroy();
+				this.box.destroy();
+				this.elevators.removeAll(true);
 
-			// Creates a new elevator sprite with its doors closed, but active
-			this.elevator = this.elevators.create(310, 330, 'lvl3', 'elevator2'); 
-			this.elevator.scale.setTo(0.5);
+				// Creates a new elevator sprite with its doors closed, but active
+				this.elevator = this.elevators.create(310, 330, 'lvl3', 'elevator2'); 
+				this.elevator.scale.setTo(0.5);
 
-			// Elevator zooooooooooooooms up
-			this.elevator.body.velocity.y = -75;
+				// Elevator zooooooooooooooms up
+				this.elevator.body.velocity.y = -75;
 
-			// Fade out effect, 4000 ms
-			if(inElevator){
-				game.camera.fade(0x000000, 4000);
+				// Fade out effect, 4000 ms
+				if(inElevator){
+					game.camera.fade(0x000000, 4000);
+				}
 			}
 		}
+	},
+
+	// Function for collecting the last gear, specific to this level
+	collectLastGear: function(){
+		maxPlatforms = 3;					// set maxPlatforms to 3
+		this.numPlatforms++;				// increase this.numPlatforms by one
+		hasThirdGear = true;			// doesn't have to be a global because used in nested loop within "!playedCutscene6"
+		this.gearAudio.play();				// play gear audio
+		this.gear.destroy();				// destroy the gear
+		this.cutscenePlaying = true;				// cutscene plays on gear collect, therefore no movement is allowed
+		game.camera.flash(0xffffff, 1000);  // flash effect, duration 1000ms
+	},
+
+	// Function for allowing user to create music note blocks, used to pause music note creation during cutscenes via delay
+	allowCreate: function(){
+		this.canCreate = true;
+	},
+
+	// Function for shifting the wall blocking the way to the door on top floor
+	shiftWall: function(){
+		this.shiftingWall2.body.velocity.y = -150							// wow it flies up
+		// this.key1.alpha == 0;
+		// this.key2.alpha == 0;
+		// this.key3.alpha == 0;
+		game.camera.fade(0x000000, 4000);									// fade effect, duration 4000ms
+		game.time.events.add(Phaser.Timer.SECOND * 4, this.cameraReset, this);	// at the same time, after 4 seconds, reset the camera
+	},
+
+	// Function for resetting the camera (just a fade, not a pan like top floor)
+	cameraReset: function(){
+		game.camera.resetFX();	// kill the fade
+		this.player.x = 1200;	// reset player x (a little bugged but w/e)
+		this.player.y = 750;	// reset player y (a little bugged but w/e)
+		game.camera.x = 800;	// reset camera x
+		game.camera.y = 0;		// reset camera y
+		game.time.events.add(Phaser.Timer.SECOND * 1.0, this.stopCutscene, this);	// after a second, enable movement
+	},
+
+	// Function for disabling cutscenePlaying, which was preventing movement
+	stopCutscene: function(){
+		this.cutscenePlaying = false;
 	}
-}
-
-// Function for collecting the last gear, specific to this level
-function collectLastGear(){
-	maxPlatforms = 3;					// set maxPlatforms to 3
-	this.numPlatforms++;				// increase this.numPlatforms by one
-	hasThirdGear = true;			// doesn't have to be a global because used in nested loop within "!playedCutscene6"
-	this.gearAudio.play();				// play gear audio
-	this.gear.destroy();				// destroy the gear
-	this.cutscenePlaying = true;				// cutscene plays on gear collect, therefore no movement is allowed
-	game.camera.flash(0xffffff, 1000);  // flash effect, duration 1000ms
-}
-
-// Function for allowing user to create music note blocks, used to pause music note creation during cutscenes via delay
-function allowCreate(){
-	this.canCreate = true;
-}
-
-// Function for shifting the wall blocking the way to the door on top floor
-function shiftWall(){
-	this.shiftingWall2.body.velocity.y = -150							// wow it flies up
-	// this.key1.alpha == 0;
-	// this.key2.alpha == 0;
-	// this.key3.alpha == 0;
-	game.camera.fade(0x000000, 4000);									// fade effect, duration 4000ms
-	game.time.events.add(Phaser.Timer.SECOND * 4, cameraReset, this);	// at the same time, after 4 seconds, reset the camera
-}
-
-// Function for resetting the camera (just a fade, not a pan like top floor)
-function cameraReset(){
-	game.camera.resetFX();	// kill the fade
-	this.player.x = 1200;	// reset player x (a little bugged but w/e)
-	this.player.y = 750;	// reset player y (a little bugged but w/e)
-	game.camera.x = 800;	// reset camera x
-	game.camera.y = 0;		// reset camera y
-	game.time.events.add(Phaser.Timer.SECOND * 1.0, stopCutscene, this);	// after a second, enable movement
-}
-
-// Function for disabling cutscenePlaying, which was preventing movement
-function stopCutscene(){
-	this.cutscenePlaying = false;
 }

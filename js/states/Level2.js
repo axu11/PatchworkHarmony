@@ -186,7 +186,7 @@ Level2.prototype = {
 				this.spacebar.destroy();
 				this.cutscenePlaying = false;
 				this.playedCutscene5 = true;
-				game.time.events.add(Phaser.Timer.SECOND * 1, allowCreate, this);
+				game.time.events.add(Phaser.Timer.SECOND * 1, this.allowCreate, this);
 			}
 		}
 
@@ -204,7 +204,7 @@ Level2.prototype = {
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
 		this.hitTrampoline = game.physics.arcade.collide(this.player, this.trampoline);
-		game.physics.arcade.overlap(this.player, this.gear, collectSecondGear, null, this);
+		game.physics.arcade.overlap(this.player, this.gear, this.collectSecondGear, null, this);
 		
 		// Trampoline bounce logic
 		if((this.player.x + this.player.width/2 >= (this.trampoline.x - this.trampoline.width/2 - 2) && this.player.x - this.player.width/2 <= (this.trampoline.x + this.trampoline.width/2 + 2)) &&
@@ -322,21 +322,21 @@ Level2.prototype = {
 			this.bgm.stop();
 			game.state.start('Level3', true, false, false, maxPlatforms);	
 		} 
+	},
+
+	// Function for collecting "gears"
+	collectSecondGear: function(Patches, gear){
+		maxPlatforms = 2;
+		this.numPlatforms++;
+		this.cutscenePlaying = true;
+		this.hasSecondGear = true;
+		this.gearAudio.play();
+		gear.kill();
+		game.camera.flash(0xffffff, 1000);
+	},
+
+	// Function for allowing user to create music note blocks, used to pause music note creation during cutscenes via delay
+	allowCreate: function(){
+		this.canCreate = true;
 	}
-}
-
-// Function for collecting "gears"
-function collectSecondGear(Patches, gear){
-	maxPlatforms = 2;
-	this.numPlatforms++;
-	this.cutscenePlaying = true;
-	this.hasSecondGear = true;
-	this.gearAudio.play();
-	gear.kill();
-	game.camera.flash(0xffffff, 1000);
-}
-
-// Function for allowing user to create music note blocks, used to pause music note creation during cutscenes via delay
-function allowCreate(){
-	this.canCreate = true;
 }

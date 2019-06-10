@@ -139,8 +139,6 @@ Level3.prototype = {
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         								// player vs box
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   								// box vs platforms
 		this.carryDroppedPlatform = game.physics.arcade.collide(this.droppedPlatform, this.createdPlatforms);   // dropped vs created platforms
-		//game.physics.arcade.overlap(this.player, this.gear, collectSecondGear, null, this);
-		// game.physics.arcade.overlap(this.player, this.ladder, transitionToLibrary, null, this);
 
 		if(this.player.overlap(this.ladder)){
 	    	this.downArrow.alpha = 1;
@@ -153,7 +151,7 @@ Level3.prototype = {
 		if(this.player.overlap(this.ladder) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.player.body.touching.down){
 			this.cutscenePlaying = true;
 			game.camera.fade(0x000000, 3000);
-			game.time.events.add(Phaser.Timer.SECOND * 3.0, transitionToLibrary, this);
+			game.time.events.add(Phaser.Timer.SECOND * 3.0, this.transitionToLibrary, this);
 		}
 
 		// Code for the dropping crane platform
@@ -268,11 +266,11 @@ Level3.prototype = {
 			this.number3.scale.set(0);
 			this.number4.scale.set(0.5);
 		}
-	}
-}
+	},
 
-// Function called to transition to next level and kill bgm
-function transitionToLibrary(){
-	game.state.start('Level4', true, false, false, maxPlatforms);
-	this.bgm.destroy();
+	// Function called to transition to next level and kill bgm
+	transitionToLibrary: function(){
+		game.state.start('Level4', true, false, false, maxPlatforms);
+		this.bgm.destroy();
+	}
 }
