@@ -90,19 +90,21 @@ Credits.prototype = {
 				this.timer = -200;
 			}
 		}
+	},
+
+	creditsScene: function () {
+		this.fadeIn = 0.01;
+		game.camera.resetFX();
 	}
+
+	transitionToMainMenu: function (){
+		this.bgm.destroy();
+		game.state.start('MainMenu');
+	}
+		
 	
 }
 
-function creditsScene(){
-	this.fadeIn = 0.01;
-	game.camera.resetFX();
-}
 
-function transitionToMainMenu(){
-	this.
-	game.state.start('MainMenu');
-}
-	
 
 
