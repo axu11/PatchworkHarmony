@@ -552,7 +552,7 @@ Level5.prototype = {
 	},
 
 	goToMainMenu: function() {
-		console.log('prss');
+		this.bgm.destroy();
 		game.state.start('MainMenu');
 	},
 

@@ -141,6 +141,7 @@ Level7.prototype = {
 	},
 
 	goToMainMenu: function() {
+		this.bgm.destroy();
 		game.state.start('MainMenu');
 	},
 
@@ -149,6 +150,7 @@ Level7.prototype = {
 	},
 
 	skipLevel: function() {
+		this.bgm.destroy();
 		game.state.start('Credits', true, false, this.bgm);
 	}	
 }
