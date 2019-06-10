@@ -1,15 +1,17 @@
+var elevatorActivated = false;
+var inElevator = false;
+var leverActivated = false;
+var cutscenePlaying = false;
+var wallShifted = false;
+var playedCutscene5 = false;
+var playedCutscene6 = false;
+var hasThirdGear = false;
+
 // MainMenu state used to display the game premise and title
 var MainMenu = function(game) {};
 MainMenu.prototype = {
 	create: function() {
-		var elevatorActivated = false;
-		var inElevator = false;
-		var leverActivated = false;
-		var cutscenePlaying = false;
-		var wallShifted = false;
-		var playedCutscene5 = false;
-		var playedCutscene6 = false;
-		var hasThirdGear = false;
+
 		// Temp background and placeholder text instructions
 		//game.stage.backgroundColor = "#facade";
 		
@@ -54,13 +56,13 @@ MainMenu.prototype = {
 			// game.state.start('Level7', true, false, false, 3, 0);
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
 			game.camera.fade(0x000000, 4000);
-			game.time.events.add(Phaser.Timer.SECOND * 4, transitionToCutscenes, this);
+			game.time.events.add(Phaser.Timer.SECOND * 4, this.transitionToCutscenes, this);
 			
 		}
-	}
-}
+	},
 
-function transitionToCutscenes(){
-	this.bgm.destroy();
-	game.state.start('Intro');
+	transitionToCutscenes: function(){
+		this.bgm.destroy();
+		game.state.start('Intro');
+	}
 }
