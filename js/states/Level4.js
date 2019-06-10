@@ -149,13 +149,13 @@ Level4.prototype = {
 			this.shiftingWall1.body.immovable = true;
 		}
 
-		if(!wallShifted){
-			// Creates the right bookshelf that goes up last gear is obtained 
-			this.shiftingWall2 = platforms.create(700, 50, 'lvl3', 'bookshelf2'); 
-			this.shiftingWall2.scale.setTo(1, 1);
-			game.physics.arcade.enable(this.shiftingWall2);
-			this.shiftingWall2.body.immovable = true;	
-		}
+		// if(!wallShifted){
+		// 	// Creates the right bookshelf that goes up last gear is obtained 
+		// 	this.shiftingWall2 = platforms.create(700, 50, 'lvl3', 'bookshelf2'); 
+		// 	this.shiftingWall2.scale.setTo(1, 1);
+		// 	game.physics.arcade.enable(this.shiftingWall2);
+		// 	this.shiftingWall2.body.immovable = true;	
+		// }
 
 		/***** FLYING BOOKS ROOM (BG1) *****/
 		this.bookshelf = platforms.create(-800, 260, 'lvl3', 'bookshelf3'); 
@@ -325,7 +325,7 @@ Level4.prototype = {
 		this.box.body.drag = 0.5;
 		this.attached = true; 
 
-		this.spacebar = game.add.sprite(300, 260, 'instructions', 'spacebar1');
+		this.spacebar = game.add.sprite(390, 260, 'instructions', 'spacebar1');
 		this.spacebar.anchor.setTo(0.5, 0);
 		this.spacebar.scale.setTo(0.33);
 		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3, '', 1), 4, true);
@@ -338,7 +338,7 @@ Level4.prototype = {
 		this.shift.animations.play('shiftAni');
 		this.shift.alpha = 0;
 
-		this.downArrow = game.add.sprite(1500, 200, 'instructions', 'down1');
+		this.downArrow = game.add.sprite(1480, 200, 'instructions', 'down1');
 		this.downArrow.scale.setTo(0.33);
 		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4, '', 1), 4, true);
 		this.downArrow.animations.play('arrowAni');
@@ -377,13 +377,6 @@ Level4.prototype = {
 		    	this.downArrow.alpha = 1;
 		    else
 		    	this.downArrow.alpha = 0;
-		}
-		
-		if(this.player.overlap(this.door)){
-		 	this.downArrow.alpha = 1;
-		}
-		else{
-	    	this.downArrow.alpha = 0;
 		}
 
 		// CheckCamBounds will be disabled while the panning process is occuring
