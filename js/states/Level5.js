@@ -190,7 +190,7 @@ Level5.prototype = {
 		this.libraryCutscene = game.add.image(800, 0, 'cutscene6');
 		this.libraryCutscene.alpha = 0;
 
-		this.spacebar = game.add.sprite(400, 270, 'instructions', 'spacebar1');
+		this.spacebar = game.add.sprite(390, 270, 'instructions', 'spacebar1');
 		this.spacebar.scale.setTo(0.33);
 		this.spacebar.anchor.setTo(0.5, 0);
 		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3, '', 1), 4, true);
@@ -565,6 +565,8 @@ Level5.prototype = {
 
 	skipLevel: function() {
 		this.bgm.destroy();
+		hasThirdGear = true;
+		wallShifted = true;
 		game.state.start('Level4', true, false, false, 3, 0);
 	}
 }

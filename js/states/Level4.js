@@ -325,7 +325,7 @@ Level4.prototype = {
 		this.box.body.drag = 0.5;
 		this.attached = true; 
 
-		this.spacebar = game.add.sprite(400, 260, 'instructions', 'spacebar1');
+		this.spacebar = game.add.sprite(390, 260, 'instructions', 'spacebar1');
 		this.spacebar.anchor.setTo(0.5, 0);
 		this.spacebar.scale.setTo(0.33);
 		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3, '', 1), 4, true);
@@ -852,17 +852,22 @@ Level4.prototype = {
 	},
 
 	restartLevel: function() {
-		if(hasThirdGear)
+		if(hasThirdGear){
 			game.state.start('Level4', true, false, this.bgmOn, 3, 0);
-		else
+		}
+		else{
 			game.state.start('Level4', true, false, this.bgmOn, 2, 0);
+		}
 	},
 
 	skipLevel: function() {
 		this.bgm.destroy();
-		if(hasThirdGear)
+		if(hasThirdGear){
 			game.state.start('Level7', true, false, false, 3, 0);
-		else 
+		}
+		else {
+			elevatorActivated = true;
 			game.state.start('Level5', true, false, false, 2, 0);
+		}
 	}
 }
