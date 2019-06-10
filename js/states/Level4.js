@@ -1,6 +1,6 @@
 var Level4 = function(game) {};
 Level4.prototype = {
-	init: function(maxPlatforms) {
+	init: function(bgmOn, maxPlatforms) {
 		if(hasThirdGear){
 			maxPlatforms = 3;
 		}
@@ -11,6 +11,7 @@ Level4.prototype = {
 		reloadOnGround = 0;
 		self = this;	
 		this.level = 4;
+		this.bgmOn = bgmOn;
 		inElevator = false;
 		this.cutscenePlaying = false;
 		this.levelScale = 1.0;
@@ -33,8 +34,11 @@ Level4.prototype = {
 		game.world.setBounds(-1600, 0, 3200, this.bg1.height);
 
 		// Create bgm for game, looped and played
-		this.bgm = game.add.audio('lvl3', 0.5, true);
-		this.bgm.play();
+		if(this.bgmOn == false) {
+			this.bgm = game.add.audio('lvl3', 0.25, true);
+			this.bgm.play();
+			this.bgmOn = true;
+		}
 
 		// Create sound effects for when a music block platform is created
 		this.platform1audio = game.add.audio('platform1audio');

@@ -1,11 +1,12 @@
 var Level7 = function(game) {};
 Level7.prototype = {
-	init: function(maxPlatforms) {
+	init: function(bgmOn, maxPlatforms) {
 		maxPlatforms = 3;
 		this.numPlatforms = maxPlatforms;
 		reloadOnGround = 0;
 		self = this;
 		level = 5;
+		this.bgmOn = bgmOn;
 		cutscenePlaying = false;
 		keySolved = true;
 		wallShifted = true;
@@ -23,8 +24,11 @@ Level7.prototype = {
 		
 		//this.asdadasdnasdsadsa = game.add.text(game.world.centerX, game.world.centerY, 'WE ARE ON THE LAST LEVEL ASDJSADBSADKSA', textStyle);
 		// Create bgm for game, looped and played
-		this.bgm = game.add.audio('lvl1', 0.5, true);
-		this.bgm.play();
+		if(this.bgmOn == false) {
+			this.bgm = game.add.audio('lvl1', 0.25, true);
+			this.bgm.play();
+			this.bgmOn = true;
+		}
 
 		// Create platforms group
 		platforms = game.add.group();

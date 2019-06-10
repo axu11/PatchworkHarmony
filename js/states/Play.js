@@ -2,13 +2,14 @@
 var Play = function(game) {};
 Play.prototype = {
 
-	init: function(maxPlatforms) {
+	init: function(bgmOn, maxPlatforms) {
 		reloadOnGround = 0;	
 		self = this;
 
 		this.level = 1;						// current level is 1
 		this.levelScale = 1.0;				// levelScale that affects the sizing of assets in prefabs
 		this.numPlatforms = maxPlatforms;	// current platforms set to maxPlatforms
+		this.bgmOn = bgmOn;
 
 		this.cutscenePlaying = true;    	// starts off true because tutorial instructions pop up
 
@@ -31,8 +32,11 @@ Play.prototype = {
 		game.world.setBounds(0, 0, this.bg0.width + 800, this.bg0.height);
 
 		// Create bgm for level 1, looped and played
-		this.bgm = game.add.audio('lvl1', 0.25, true);
-		this.bgm.play();
+		if(this.bgmOn == false) {
+			this.bgm = game.add.audio('lvl1', 0.25, true);
+			this.bgm.play();
+			this.bgmOn = true;
+		}
 
 		// Create sound effect for moving to next screen
 		this.doorClose = game.add.audio('door', 1, false);
@@ -690,7 +694,7 @@ Play.prototype = {
 	},
 
 	restartLevel: function() {
-		game.state.start('Play', true, false, 0);
+		game.state.start('Play', true, false, this.bgmOn, 0);
 	},
 
 	skipLevel: function() {
