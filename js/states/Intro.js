@@ -77,5 +77,5 @@ Intro.prototype = {
 // When fade completes, move to tutorial
 function transitionToTutorial(){
 	this.bgm.destroy();
-	game.state.start('Play', true, false, 0);
+	game.state.start('Play', true, false, false, 0, 0);
 }

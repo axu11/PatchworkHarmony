@@ -2,13 +2,13 @@
 var Play = function(game) {};
 Play.prototype = {
 
-	init: function(bgmOn, maxPlatforms) {
-		reloadOnGround = 0;	
+	init: function(bgmOn, numPlatforms, reloadOnGround) {
+		this.reloadOnGround = reloadOnGround;	
 		self = this;
 
 		this.level = 1;						// current level is 1
 		this.levelScale = 1.0;				// levelScale that affects the sizing of assets in prefabs
-		this.numPlatforms = maxPlatforms;	// current platforms set to maxPlatforms
+		this.numPlatforms = numPlatforms;	// current platforms set to maxPlatforms
 		this.bgmOn = bgmOn;
 
 		this.cutscenePlaying = true;    	// starts off true because tutorial instructions pop up
@@ -21,6 +21,8 @@ Play.prototype = {
 		
 		this.timer = 0;						// timer for cutscenes, ticks up 
 		this.TIMER_VALUE = 60;				// modify this here depending on how long the delay should be before spacebar can be pressed
+	
+		this.platformAdded = false;
 	},
 	
 	create: function() {
@@ -279,7 +281,7 @@ Play.prototype = {
 	},
 
 	update: function() {
-		
+		console.log(this.numPlatforms + ', ' + this.reloadOnGround);
 		/***** DEBUG STUFF *****/
 		//game.debug.body(this.box);
 		//game.debug.body(this.ground);
@@ -567,10 +569,10 @@ Play.prototype = {
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0 && this.canCreate) {
 				// Kills all current sounds set to play before playing the music note sounds in order
 				game.time.events.removeAll();
-				game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
-				game.time.events.add(Phaser.Timer.SECOND * 0.5, platformSound2, this);
-				game.time.events.add(Phaser.Timer.SECOND * 1.0, platformSound3, this);
-				game.time.events.add(Phaser.Timer.SECOND * 1.5, platformSound4, this);
+				game.time.events.add(Phaser.Timer.SECOND * 0.0, this.platformSound1, this);
+				game.time.events.add(Phaser.Timer.SECOND * 0.5, this.platformSound2, this);
+				game.time.events.add(Phaser.Timer.SECOND * 1.0, this.platformSound3, this);
+				game.time.events.add(Phaser.Timer.SECOND * 1.5, this.platformSound4, this);
 
 				this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30, 1);
 				this.createdPlatforms.add(this.createdPlatform); 
@@ -583,9 +585,9 @@ Play.prototype = {
 			}
 
 			// this.numPlatforms doesn't refresh until the player hits the ground
-			if(reloadOnGround > 0 && this.player.body.touching.down && this.hitPlatform) {
+			if(this.reloadOnGround > 0 && this.player.body.touching.down && this.hitPlatform) {
 				this.numPlatforms++;
-				reloadOnGround--;	
+				this.reloadOnGround--;	
 			}
 
 			// Drop the box by pressing SHIFT
@@ -660,11 +662,31 @@ Play.prototype = {
 		} 
 	},
 
+	// Functions for playing the platform audio sounds
+	platformSound1: function(){
+		this.platform1audio.play();
+	},
+
+	platformSound2: function(){
+		this.platform2audio.play();
+	},
+
+	platformSound3: function(){
+		this.platform3audio.play();
+	},
+
+	platformSound4: function(){
+		this.platform4audio.play();
+	},
+
 	// Function for collecting the first gear, updates numplatforms
   	collectFirstGear: function(){
 		this.cutscenePlaying = true;
-		maxPlatforms = 1;
-		this.numPlatforms = 1;
+		if(!this.platformAdded) {
+			this.numPlatforms++;
+			this.platformAdded = true;
+		}
+
 	},
 
 	// Function called when gear flies into the box
@@ -688,7 +710,7 @@ Play.prototype = {
 
 	// Function called to transition to next level and kill bgm
 	transitionToRooftops: function(){
-		game.state.start('Level2', true, false, false, maxPlatforms);
+		game.state.start('Level2', true, false, false, this.numPlatforms, this.reloadOnGround);
 		this.bgm.destroy();
 	},
 
@@ -705,11 +727,11 @@ Play.prototype = {
 	},
 
 	restartLevel: function() {
-		game.state.start('Play', true, false, this.bgmOn, 0);
+		game.state.start('Play', true, false, this.bgmOn, 0, 0);
 	},
 
 	skipLevel: function() {
-		game.state.start('Level2', true, false, false, 1);
+		game.state.start('Level2', true, false, false, 1, 0);
 		this.bgm.destroy();
 	}
 }

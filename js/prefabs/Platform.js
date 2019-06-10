@@ -71,6 +71,6 @@ Platform.prototype.update = function() {
 	// After some time, destroy the platform and enable player to create another
 	if(this.lifetime <= 0 ) {
 		this.destroy();
-		reloadOnGround++;
+		self.reloadOnGround++;
 	}
 }

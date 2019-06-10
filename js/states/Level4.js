@@ -1,14 +1,14 @@
 var Level4 = function(game) {};
 Level4.prototype = {
-	init: function(bgmOn, maxPlatforms) {
-		if(hasThirdGear){
-			maxPlatforms = 3;
-		}
-		else{
-			maxPlatforms = 2;
-		}
-		this.numPlatforms = maxPlatforms;
-		reloadOnGround = 0;
+	init: function(bgmOn, numPlatforms, reloadOnGround) {
+		// if(hasThirdGear){
+		// 	maxPlatforms = 3;
+		// }
+		// else{
+		// 	maxPlatforms = 2;
+		// }
+		this.numPlatforms = numPlatforms;
+		this.reloadOnGround = reloadOnGround;
 		self = this;	
 		this.level = 4;
 		this.bgmOn = bgmOn;
@@ -698,16 +698,16 @@ Level4.prototype = {
 			this.timer++;
 			if(this.timer >= 120){
 				this.bgm.destroy();
-				game.state.start('Level5', true, false, maxPlatforms);
+				game.state.start('Level5', true, false, false, this.numPlatforms, this.reloadOnGround);
 			}
 		}
 
 		/***** NUMPLATFORM STUFF *****/
 		// this.numPlatforms doesn't refresh until the player hits the ground
 		if(!inElevator){	
-			if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
+			if(this.reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
 				this.numPlatforms++;
-				reloadOnGround--;	
+				this.reloadOnGround--;	
 			}
 		}
 
@@ -870,7 +870,7 @@ Level4.prototype = {
 	// Function called to transition to next level and kill bgm
 	transitionToBench: function(){
 		this.cutscenePlaying = false;
-		game.state.start('Level7', true, false, false, maxPlatforms);
+		game.state.start('Level7', true, false, false, this.numPlatforms, this.reloadOnGround);
 		this.bgm.destroy();
 	},
 
@@ -888,17 +888,17 @@ Level4.prototype = {
 
 	restartLevel: function() {
 		if(hasThirdGear)
-			game.state.start('Level4', true, false, this.bgmOn, 3);
+			game.state.start('Level4', true, false, this.bgmOn, 3, 0);
 		else
-			game.state.start('Level4', true, false, this.bgmOn, 2);
+			game.state.start('Level4', true, false, this.bgmOn, 2, 0);
 	},
 
 	skipLevel: function() {
 		this.bgm.destroy();
 		if(hasThirdGear)
-			game.state.start('Level7', true, false, false, 3);
+			game.state.start('Level7', true, false, false, 3, 0);
 		else 
-			game.state.start('Level5', true, false, false, 2);
+			game.state.start('Level5', true, false, false, 2, 0);
 	}
 }
 

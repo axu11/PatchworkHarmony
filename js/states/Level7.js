@@ -1,9 +1,8 @@
 var Level7 = function(game) {};
 Level7.prototype = {
-	init: function(bgmOn, maxPlatforms) {
-		maxPlatforms = 3;
-		this.numPlatforms = maxPlatforms;
-		reloadOnGround = 0;
+	init: function(bgmOn, numPlatforms, reloadOnGround) {
+		this.numPlatforms = numPlatforms;
+		this.reloadOnGround = reloadOnGround;
 		self = this;
 		level = 5;
 		this.bgmOn = bgmOn;
@@ -91,7 +90,7 @@ Level7.prototype = {
 	},
 
 	restartLevel: function() {
-		game.state.start('Level7', true, false, this.bgmOn, 3);
+		game.state.start('Level7', true, false, this.bgmOn, 3, 0);
 	},
 
 	skipLevel: function() {

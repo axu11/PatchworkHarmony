@@ -1,14 +1,14 @@
 var Level5 = function(game) {};
 Level5.prototype = {
-	init: function(bgmOn, maxPlatforms) {
-		if(hasThirdGear){
-			maxPlatforms = 3;
-		}
-		else{
-			maxPlatforms = 2;
-		}
-		this.numPlatforms = maxPlatforms;
-		reloadOnGround = 0;
+	init: function(bgmOn, numPlatforms, reloadOnGround) {
+		// if(hasThirdGear){
+		// 	maxPlatforms = 3;
+		// }
+		// else{
+		// 	maxPlatforms = 2;
+		// }
+		this.numPlatforms = numPlatforms;
+		this.reloadOnGround = reloadOnGround;
 		self = this;
 		this.level = 5;
 		this.bgmOn = bgmOn;
@@ -27,6 +27,7 @@ Level5.prototype = {
 		}
 		this.playedCutscene6 = false;
 		this.lockAudioPlayed = false;
+		this.platformAdded  = false;
 	},
 	create: function() {
 		/***** BG, BGM, AND SOUND EFFECTS *****/
@@ -395,9 +396,9 @@ Level5.prototype = {
 
 		// this.numPlatforms doesn't refresh until the player hits the ground
 		if(!inElevator){
-			if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
+			if(this.reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
 				this.numPlatforms++;
-				reloadOnGround--;	
+				this.reloadOnGround--;	
 			}
 		}
 		// Top-left number updates with this.numPlatforms
@@ -442,7 +443,7 @@ Level5.prototype = {
 			this.timer++;
 			if(this.timer >= 160){
 				this.bgm.destroy();
-				game.state.start('Level4', true, false, maxPlatforms);
+				game.state.start('Level4', true, false, false, this.numPlatforms, this.reloadOnGround);
 			}
 		}
 		
@@ -535,12 +536,14 @@ Level5.prototype = {
 
 	// Function for collecting the last gear, specific to this level
 	collectLastGear: function(){
-		maxPlatforms = 3;					// set maxPlatforms to 3
-		this.numPlatforms++;				// increase this.numPlatforms by one
-		hasThirdGear = true;			// doesn't have to be a global because used in nested loop within "!playedCutscene6"
+		if(!this.platformAdded) {
+			this.numPlatforms++;			// increase this.numPlatforms by one
+			this.platformAdded = true;
+		}
+		hasThirdGear = true;				// doesn't have to be a global because used in nested loop within "!playedCutscene6"
 		this.gearAudio.play();				// play gear audio
 		this.gear.destroy();				// destroy the gear
-		this.cutscenePlaying = true;				// cutscene plays on gear collect, therefore no movement is allowed
+		this.cutscenePlaying = true;		// cutscene plays on gear collect, therefore no movement is allowed
 		game.camera.flash(0xffffff, 1000);  // flash effect, duration 1000ms
 	},
 
@@ -588,13 +591,13 @@ Level5.prototype = {
 
 	restartLevel: function() {
 		if(hasThirdGear)
-			game.state.start('Level5', true, false, this.bgmOn, 3);
+			game.state.start('Level5', true, false, this.bgmOn, 3, 0);
 		else
-			game.state.start('Level5', true, false, this.bgmOn, 2);
+			game.state.start('Level5', true, false, this.bgmOn, 2, 0);
 	},
 
 	skipLevel: function() {
 		this.bgm.destroy();
-		game.state.start('Level4', true, false, false, 3);
+		game.state.start('Level4', true, false, false, 3, 0);
 	}
 }
