@@ -17,7 +17,7 @@ function PauseMenu(game) {
 		this.pauseMenuButton.fixedToCamera = true;
 		// this.pauseMenuOpen = false;
 
-		this.menuBg = self.game.add.sprite(400, 300, 'atlas', 'sky');
+		this.menuBg = self.game.add.sprite(400, 300, 'pausemenu', 'menu-bg');
 		this.menuBg.anchor.set(0.5);
 		this.menuBg.scale.setTo(5, 3.5);
 		this.menuBg.alpha = 0;
@@ -67,7 +67,7 @@ PauseMenu.prototype.update = function() {
 			this.restartLevelButton.inputEnabled = true;
 			this.skipLevelButton.inputEnabled = true;
 
-			self.cutscenePlaying = true;	// stop player movement
+			// self.pauseOpen = true;	// stop player movement
 		}
 		else {
 			this.menuBg.alpha = 0;
@@ -82,7 +82,7 @@ PauseMenu.prototype.update = function() {
 			this.restartLevelButton.inputEnabled = false;
 			this.skipLevelButton.inputEnabled = false;
 
-			self.cutscenePlaying = false;	// allow player movement
+			// self.pauseOpen = false;	// allow player movement
 		}
 },
 

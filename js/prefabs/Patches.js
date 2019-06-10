@@ -49,7 +49,9 @@ Patches.prototype.update = function() {
 
 	this.body.velocity.x = 0;
  	// If nothing pressed, velocity = 0
- 	if(!self.cutscenePlaying){
+
+ 	if(!self.cutscenePlaying && !self.pauseMenuOpen){
+ 		this.body.velocity.x = 0;
  	
 	 	// Move left and right with arrow keys
 	 	if(this.cursors.left.isDown && !inElevator && !self.cutscenePlaying) {
@@ -78,7 +80,7 @@ Patches.prototype.update = function() {
 		}
 
 		// Jump if the player is grounded
-		if(this.cursors.up.isDown && this.body.touching.down && !self.cutscenePlaying){
+		if(this.cursors.up.isDown && this.body.touching.down && !self.cutscenePlaying && !self.pauseMenuOpen){
 			this.body.velocity.y = this.JUMP_SPEED;
 			this.jump.play();
 			// this.player.animations.play('jump');
