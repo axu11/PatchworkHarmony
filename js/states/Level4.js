@@ -872,6 +872,33 @@ Level4.prototype = {
 		this.cutscenePlaying = false;
 		game.state.start('Level7', true, false, false, maxPlatforms);
 		this.bgm.destroy();
+	},
+
+	openMenu: function() {
+		this.pauseMenuOpen = true;
+	},
+
+	closeMenu: function() {
+		this.pauseMenuOpen = false;
+	},
+
+	goToMainMenu: function() {
+		game.state.start('MainMenu');
+	},
+
+	restartLevel: function() {
+		if(hasThirdGear)
+			game.state.start('Level4', true, false, this.bgmOn, 3);
+		else
+			game.state.start('Level4', true, false, this.bgmOn, 2);
+	},
+
+	skipLevel: function() {
+		this.bgm.destroy();
+		if(hasThirdGear)
+			game.state.start('Level7', true, false, false, 3);
+		else 
+			game.state.start('Level5', true, false, false, 2);
 	}
 }
 

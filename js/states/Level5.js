@@ -200,6 +200,38 @@ Level5.prototype = {
 		this.spacebar.animations.play('spacebarAni');
 		this.spacebar.alpha = 0;
 
+		this.pauseMenuButton = game.add.button(750, 50, 'assets', this.openMenu, this, 'gear', 'gear', 'gear', 'gear');
+		this.pauseMenuButton.anchor.set(0.5);
+		this.pauseMenuButton.alpha = 1;
+		this.pauseMenuButton.fixedToCamera = true;
+		this.pauseMenuOpen = false;
+
+		this.menuBg = game.add.sprite(400, 300, 'atlas', 'sky');
+		this.menuBg.anchor.set(0.5);
+		this.menuBg.scale.setTo(5, 3.5);
+		this.menuBg.alpha = 0;
+		this.menuBg.fixedToCamera = true;
+
+		this.resumeButton = game.add.button(300, 350, 'assets', this.closeMenu, this, 'gear', 'gear', 'gear', 'gear');
+		this.resumeButton.anchor.set(0.5);
+		this.resumeButton.alpha = 0;
+		this.resumeButton.fixedToCamera = true;
+
+		this.mainMenuButton = game.add.button(300, 450, 'assets', this.goToMainMenu, this, 'gear', 'gear', 'gear', 'gear');
+		this.mainMenuButton.anchor.set(0.5);
+		this.mainMenuButton.alpha = 0;
+		this.mainMenuButton.fixedToCamera = true;
+
+		this.restartLevelButton = game.add.button(500, 350, 'assets', this.restartLevel, this, 'gear', 'gear', 'gear', 'gear');
+		this.restartLevelButton.anchor.set(0.5);
+		this.restartLevelButton.alpha = 0;
+		this.restartLevelButton.fixedToCamera = true;
+
+		this.skipLevelButton = game.add.button(500, 450, 'assets', this.skipLevel, this, 'gear', 'gear', 'gear', 'gear');
+		this.skipLevelButton.anchor.set(0.5);
+		this.skipLevelButton.alpha = 0;
+		this.skipLevelButton.fixedToCamera = true;
+
 	},
 	update: function() {
 		//console.log(level);
@@ -540,5 +572,29 @@ Level5.prototype = {
 	// Function for disabling cutscenePlaying, which was preventing movement
 	stopCutscene: function(){
 		this.cutscenePlaying = false;
+	},
+
+	openMenu: function() {
+		this.pauseMenuOpen = true;
+	},
+
+	closeMenu: function() {
+		this.pauseMenuOpen = false;
+	},
+
+	goToMainMenu: function() {
+		game.state.start('MainMenu');
+	},
+
+	restartLevel: function() {
+		if(hasThirdGear)
+			game.state.start('Level5', true, false, this.bgmOn, 3);
+		else
+			game.state.start('Level5', true, false, this.bgmOn, 2);
+	},
+
+	skipLevel: function() {
+		this.bgm.destroy();
+		game.state.start('Level4', true, false, false, 3);
 	}
 }

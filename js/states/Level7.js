@@ -78,8 +78,25 @@ Level7.prototype = {
 	
 	},
 
-	
+	openMenu: function() {
+		this.pauseMenuOpen = true;
+	},
 
-	
+	closeMenu: function() {
+		this.pauseMenuOpen = false;
+	},
+
+	goToMainMenu: function() {
+		game.state.start('MainMenu');
+	},
+
+	restartLevel: function() {
+		game.state.start('Level7', true, false, this.bgmOn, 3);
+	},
+
+	skipLevel: function() {
+		this.bgm.destroy();
+		//start credits
+	}	
 }
 

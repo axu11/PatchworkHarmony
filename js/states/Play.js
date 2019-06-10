@@ -316,6 +316,12 @@ Play.prototype = {
 			this.mainMenuButton.alpha = 1;
 			this.restartLevelButton.alpha = 1;
 			this.skipLevelButton.alpha = 1;
+
+			this.menuBg.inputEnabled = true;
+			this.resumeButton.inputEnabled = true;
+			this.mainMenuButton.inputEnabled = true;
+			this.restartLevelButton.inputEnabled = true;
+			this.skipLevelButton.inputEnabled = true;
 		}
 		else {
 			this.menuBg.alpha = 0;
@@ -323,6 +329,12 @@ Play.prototype = {
 			this.mainMenuButton.alpha = 0;
 			this.restartLevelButton.alpha = 0;
 			this.skipLevelButton.alpha = 0;
+
+			this.menuBg.inputEnabled = false;
+			this.resumeButton.inputEnabled = false;
+			this.mainMenuButton.inputEnabled = false;
+			this.restartLevelButton.inputEnabled = false;
+			this.skipLevelButton.inputEnabled = false;
 		}
 		// Fade in bg, player, box, and instructions
 		if(this.bg0.alpha < 1){
@@ -681,7 +693,6 @@ Play.prototype = {
 	},
 
 	openMenu: function() {
-		console.log('clicked');
 		this.pauseMenuOpen = true;
 	},
 
@@ -698,7 +709,7 @@ Play.prototype = {
 	},
 
 	skipLevel: function() {
-		game.state.start('Level2', true, false, false, maxPlatforms);
+		game.state.start('Level2', true, false, false, 1);
 		this.bgm.destroy();
-	},
+	}
 }

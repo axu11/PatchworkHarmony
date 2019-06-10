@@ -338,5 +338,26 @@ Level2.prototype = {
 	// Function for allowing user to create music note blocks, used to pause music note creation during cutscenes via delay
 	allowCreate: function(){
 		this.canCreate = true;
+	},
+
+	openMenu: function() {
+		this.pauseMenuOpen = true;
+	},
+
+	closeMenu: function() {
+		this.pauseMenuOpen = false;
+	},
+
+	goToMainMenu: function() {
+		game.state.start('MainMenu');
+	},
+
+	restartLevel: function() {
+		game.state.start('Level2', true, false, this.bgmOn, 1);
+	},
+
+	skipLevel: function() {
+		game.state.start('Level3', true, false, false, 2);
+		this.bgm.destroy();
 	}
 }

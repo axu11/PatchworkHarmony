@@ -272,5 +272,26 @@ Level3.prototype = {
 	transitionToLibrary: function(){
 		game.state.start('Level4', true, false, false, maxPlatforms);
 		this.bgm.destroy();
+	},
+
+	openMenu: function() {
+		this.pauseMenuOpen = true;
+	},
+
+	closeMenu: function() {
+		this.pauseMenuOpen = false;
+	},
+
+	goToMainMenu: function() {
+		game.state.start('MainMenu');
+	},
+
+	restartLevel: function() {
+		game.state.start('Level3', true, false, this.bgmOn, 2);
+	},
+
+	skipLevel: function() {
+		game.state.start('Level4', true, false, false, 2);
+		this.bgm.destroy();
 	}
 }
