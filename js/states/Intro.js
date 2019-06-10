@@ -23,7 +23,7 @@ Intro.prototype = {
 		this.cutscene1.alpha = 0;
 
 		// Play intro music
-		this.bgm = game.add.audio('intro', 0.25, true);
+		this.bgm = game.add.audio('intro', 0.25, true);        //********TEMP TO BE CHANGED*********
 		this.bgm.play();
 
 		// Spacebar indicators for all the cutscenes

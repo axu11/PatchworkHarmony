@@ -5,8 +5,8 @@ var game;
 var self;
 var reloadOnGround = 0;
 var maxPlatforms = 0;
-var inElevator = false;
 var elevatorActivated = false;
+var inElevator = false;
 var leverActivated = false;
 var cutscenePlaying = false;
 var wallShifted = false;
@@ -18,10 +18,10 @@ var style2 = { fontSize: '16px', fill: '#000' };
 var palette = ['#1B1B3A', '#693668', '#A74482', '#F84AA7', '#FF3562', '#000', '#FFFFFF'];
 var textStyle = {
 			font: 'Gaegu',
-			fontSize: 24,
+			fontSize: 40,
 			wordWrap: true,
 			wordWrapWidth: 586,
-			fill: palette[7]
+			fill: palette[6]
 		};
 
 var textStyle2 = {
@@ -57,6 +57,7 @@ window.onload = function() {
 	game.state.add('Level4', Level4);
 	game.state.add('Level5', Level5);
 	game.state.add('Level7', Level7);
+	game.state.add('Credits', Credits);
 
 	game.state.add('GameOver', GameOver);
 	game.state.add('TestingRealm', TestingRealm);
