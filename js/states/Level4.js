@@ -21,6 +21,7 @@ Level4.prototype = {
 		this.timer = 0;
 		this.slideAway = 0;
 		this.playerCanMove = true;
+		this.lockAudioPlayed = false;
 	},
 	create: function() {
 		/***** BG, BGM, AND SOUND EFFECTS *****/
@@ -46,6 +47,9 @@ Level4.prototype = {
 
 		// Create bounce sound for spring
 		this.bounce = game.add.audio('trampoline', 0.1, false);
+
+		// Creates sound effect for music block locking into place
+		this.lockAudio = game.add.audio('locking', 1, false);
 
 		/***** SWITCH MECHANIC *****/
 		this.switches = game.add.group();
@@ -238,7 +242,7 @@ Level4.prototype = {
 		this.holdingSpring = false; 
 
 		/***** MISCELLANEOUS *****/
-		if(!keySolved){
+		if(!this.keySolved){
 			this.key1 = game.add.sprite(1050, 230, 'assets', 'music-block');
 			this.key1.anchor.set(0.5);
 			this.key1.scale.set(0.33 * this.levelScale);
@@ -358,9 +362,13 @@ Level4.prototype = {
 		// //this.elevator.y += 5;
 		// console.log(this.key1Lock + ' ' + this.key2Lock + ' ' + this.key3Lock);
 		// console.log(this.keyLock.y);
-		if(!keySolved){
+		if(!this.keySolved){
 			if(this.key1Lock && this.key2Lock && this.key3Lock) {
-				keySolved = true;
+				this.keySolved = true;
+				if(!this.lockAudioPlayed){
+					this.lockAudio.play();
+					this.lockAudioPlayed = true;
+				}
 				if(this.keyLock.y > -1000){
 					this.keyLock.body.velocity.y = -150;
 				}

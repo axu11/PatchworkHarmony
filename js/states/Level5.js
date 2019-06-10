@@ -25,6 +25,7 @@ Level5.prototype = {
 			this.keySolved = false;
 		}
 		this.playedCutscene6 = false;
+		this.lockAudioPlayed = false;
 	},
 	create: function() {
 		/***** BG, BGM, AND SOUND EFFECTS *****/
@@ -252,15 +253,15 @@ Level5.prototype = {
 			}
 		}
 		
-
+		console.log(this.lockDown + ', ' + this.player.x + ', ' + wallShifted);
 		if(!this.lockDown && this.player.x > 1200 && !wallShifted) {
 			if(this.keyLock.y < 50) {
-				this.playerCanMove = false;
+				this.cutscenePlaying = true;
 				this.keyLock.y += 10;
 			}
 			else {
 				this.lockDown = true;
-				this.playerCanMove = true;
+				this.cutscenePlaying = false;
 			}
 		}
 
@@ -279,6 +280,10 @@ Level5.prototype = {
 		}
 
 		if(this.keySolved && !wallShifted){
+			if(!this.lockAudioPlayed){
+				this.lockAudio.play();
+				this.lockAudioPlayed = true;
+			}
 			this.cutscenePlaying = true;
 			this.savePlayerX = this.player.x;
 			this.savePlayerY = this.player.y;
