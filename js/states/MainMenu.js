@@ -33,7 +33,7 @@ MainMenu.prototype = {
 		// this.description.anchor.set(0.5);
 		
 		// Add developer title
-		this.devTitle = game.add.text(390, game.world.height, 'Developed by Grapple Studio');
+		this.devTitle = game.add.text(790, game.world.height, 'Developed by Grapple Studio');
 		this.devTitle.anchor.set(1);
 		this.devTitle.font = 'Gaegu';
 		this.devTitle.fontSize = 20;
