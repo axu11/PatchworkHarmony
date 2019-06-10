@@ -238,7 +238,33 @@ Play.prototype = {
 		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4), 10, true);
 		this.downArrow.animations.play('arrowAni');
 		this.downArrow.alpha = 0;
-		
+
+		this.pauseMenuButton = game.add.button(750, 50, 'assets', this.openMenu, this, 'gear', 'gear', 'gear', 'gear');
+		this.pauseMenuButton.anchor.set(0.5);
+		this.pauseMenuButton.alpha = 1;
+		this.pauseMenuButton.fixedToCamera = true;
+		this.pauseMenuOpen  = false;
+
+		this.resumeButton = game.add.button(300, 350, 'assets', this.closeMenu, this, 'gear', 'gear', 'gear', 'gear');
+		this.resumeButton.anchor.set(0.5);
+		this.resumeButton.alpha = 0;
+		this.resumeButton.fixedToCamera = true;
+
+		this.mainMenuButton = game.add.button(300, 450, 'assets', this.goToMainMenu, this, 'gear', 'gear', 'gear', 'gear');
+		this.mainMenuButton.anchor.set(0.5);
+		this.mainMenuButton.alpha = 0;
+		this.mainMenuButton.fixedToCamera = true;
+
+		this.restartLevelButton = game.add.button(500, 350, 'assets', this.restartLevel, this, 'gear', 'gear', 'gear', 'gear');
+		this.restartLevelButton.anchor.set(0.5);
+		this.restartLevelButton.alpha = 0;
+		this.restartLevelButton.fixedToCamera = true;
+
+		this.skipLevelButton = game.add.button(500, 450, 'assets', this.skipLevel, this, 'gear', 'gear', 'gear', 'gear');
+		this.skipLevelButton.anchor.set(0.5);
+		this.skipLevelButton.alpha = 0;
+		this.skipLevelButton.fixedToCamera = true;
+
 		// this.pauseMenu = new PauseMenu('assets', 'gear', 650, 50, this);
 	},
 
@@ -267,12 +293,25 @@ Play.prototype = {
 		this.hitSwitch = game.physics.arcade.collide(this.player, this.switches); 					// player vs switch
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, this.platforms); 			    // box vs platforms
 		this.boxHitSwitch = game.physics.arcade.collide(this.box, this.switches); 					// box vs switch
-		game.physics.arcade.overlap(this.player, this.gear, collectFirstGear, null, this);			// player vs gear, call collectFirstGear
-		game.physics.arcade.overlap(this.gear, this.box, inBox, null, this);						// gear vs box, call inBox
+		game.physics.arcade.overlap(this.player, this.gear, this.collectFirstGear, null, this);			// player vs gear, call collectFirstGear
+		game.physics.arcade.overlap(this.gear, this.box, this.inBox, null, this);						// gear vs box, call inBox
 
 		/***** CAMERA, TRANSITIONS, AND CUTSCENES *****/
 		this.checkCamBounds(); // Keep checking camera bounds
 
+		// pause menu stuff
+		if(this.pauseMenuOpen) {
+			this.resumeButton.alpha = 1;
+			this.mainMenuButton.alpha = 1;
+			this.restartLevelButton.alpha = 1;
+			this.skipLevelButton.alpha = 1;
+		}
+		else {
+			this.resumeButton.alpha = 0;
+			this.mainMenuButton.alpha = 0;
+			this.restartLevelButton.alpha = 0;
+			this.skipLevelButton.alpha = 0;
+		}
 		// Fade in bg, player, box, and instructions
 		if(this.bg0.alpha < 1){
         	this.bg0.alpha += 0.01;
@@ -286,7 +325,7 @@ Play.prototype = {
 		if(this.player.overlap(this.window) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.player.body.touching.down){
 			this.cutscenePlaying = true;
 			game.camera.fade(0x000000, 3000);
-			game.time.events.add(Phaser.Timer.SECOND * 3.0, transitionToRooftops, this);
+			game.time.events.add(Phaser.Timer.SECOND * 3.0, this.transitionToRooftops, this);
 		}
 
 		// Down arrow shows when player approaches window
@@ -413,7 +452,7 @@ Play.prototype = {
 				this.currentInstruction++;		
 				this.cutscenePlaying = false;
 				this.timer = 0;
-				game.time.events.add(Phaser.Timer.SECOND, allowCreate, this); // enable music block creation only after a second delay
+				game.time.events.add(Phaser.Timer.SECOND, this.allowCreate, this); // enable music block creation only after a second delay
 			}
 		}		
 
@@ -595,37 +634,58 @@ Play.prototype = {
 			game.camera.x += game.width;
 			this.player.x = game.camera.x + Math.abs(this.player.width/2);	
 		} 
-	}
-}
+	},
 
-// Function for collecting the first gear, updates numplatforms
-function collectFirstGear(){
-	this.cutscenePlaying = true;
-	maxPlatforms = 1;
-	this.numPlatforms = 1;
-}
+	// Function for collecting the first gear, updates numplatforms
+  	collectFirstGear: function(){
+		this.cutscenePlaying = true;
+		maxPlatforms = 1;
+		this.numPlatforms = 1;
+	},
 
-// Function called when gear flies into the box
-function inBox(){
-	this.gearAudio.play();
-	this.gear.destroy();
-	this.hasFirstGear = true;
-	this.boxScene.visible = true;
-	this.cutscenePlaying = true;
-}
+	// Function called when gear flies into the box
+	inBox: function(){
+		this.gearAudio.play();
+		this.gear.destroy();
+		this.hasFirstGear = true;
+		this.boxScene.visible = true;
+		this.cutscenePlaying = true;
+	},
 
-// Function for allowing user to create music note blocks, used to pause music note creation during cutscenes via delay
-function allowCreate(){
-	this.canCreate = true;
-}
+	// Function for allowing user to create music note blocks, used to pause music note creation during cutscenes via delay
+	allowCreate: function(){
+		this.canCreate = true;
+	},
 
-// Function for disabling cutscenePlaying, which was preventing movement
-function stopCutscene(){
-	this.cutscenePlaying = false;
-}
+	// Function for disabling cutscenePlaying, which was preventing movement
+	stopCutscene: function(){
+		this.cutscenePlaying = false;
+	},
 
-// Function called to transition to next level and kill bgm
-function transitionToRooftops(){
-	game.state.start('Level2', true, false, false, maxPlatforms);
-	this.bgm.destroy();
+	// Function called to transition to next level and kill bgm
+	transitionToRooftops: function(){
+		game.state.start('Level2', true, false, false, maxPlatforms);
+		this.bgm.destroy();
+	},
+
+	openMenu: function() {
+		console.log('clicked');
+		this.pauseMenuOpen = true;
+	},
+
+	closeMenu: function() {
+		this.pauseMenuOpen = false;
+	},
+
+	goToMainMenu: function() {
+		game.state.start('MainMenu');
+	},
+
+	restartLevel: function() {
+		game.state.start('Play', true, false, 0);
+	},
+
+	skipLevel: function() {
+
+	},
 }

@@ -37,11 +37,11 @@ MainMenu.prototype = {
 
 	update: function() {
 		// Go to Play state once SPACEBAR pressed
-		// game.state.start('Play', true, false, 0);
+		game.state.start('Play', true, false, 0);
 			// game.state.start('Level2', true, false, false, 1);
 			// game.state.start('Level3', true, false, false, 2);
 			// game.state.start('Level4', true, false, 2);
-			game.state.start('Level5', true, false, 2);
+			// game.state.start('Level5', true, false, 2);
 			this.bgm.destroy();
 			// game.state.start('Level7', true, false, 3);
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
