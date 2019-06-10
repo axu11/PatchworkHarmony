@@ -36,7 +36,8 @@ Load.prototype = {
 		game.load.image('cutscene3', 'img/cutscene3.png');	
 		game.load.image('cutscene5', 'img/cutscene5.png');	
 		game.load.image('cutscene6', 'img/cutscene6.png');
-		game.load.image('cutscene7', 'img/cutscene7.png');			
+		game.load.image('cutscene7', 'img/cutscene7.png');
+		game.load.image('cutscene9', 'img/cutscene9.png');			
 
 		game.load.image('library', 'img/library.png');
 		game.load.image('crane-platform', 'img/crane-platform.png');
@@ -54,6 +55,7 @@ Load.prototype = {
 		this.load.atlas('boxscene', 'img/boxscene.png', 'img/boxscene.json');
 		this.load.atlas('spacebar', 'img/spacebar.png', 'img/spacebar.json');
 		this.load.atlas('instructions', 'img/instructions.png', 'img/instructions.json');
+		this.load.atlas('cutscene8', 'img/cutscene8.png', 'img/cutscene8.json');
 		this.load.atlas('pausemenu', 'img/pause-menu.png', 'img/pause-menu.json');
 
 		// Music

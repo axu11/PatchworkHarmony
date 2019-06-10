@@ -1,49 +1,66 @@
 var Level7 = function(game) {};
 Level7.prototype = {
+
 	init: function(bgmOn, numPlatforms, reloadOnGround) {
 		this.numPlatforms = numPlatforms;
 		this.reloadOnGround = reloadOnGround;
-		self = this;
-		level = 5;
 		this.bgmOn = bgmOn;
-		cutscenePlaying = false;
-		keySolved = true;
-		wallShifted = true;
-		this.levelScale = 1.0;
-		this.timer = 0;
-		this.playerCanMove = true;
-
-
+		this.cutscenePlaying = true;
+		self = this;
 	},
+
 	create: function() {
+		
 		/***** BG, BGM, AND SOUND EFFECTS *****/
 		// Create backgrounds for top floor of the library level, set bounds to image resolution (1600 x 600)
-		this.bg0 = game.add.image(0, 0, 'cutscene7');   // Background 5 (elevator bottom floor)
-		game.world.setBounds(0, 0, 800, 600);
+		this.bg0 = game.add.image(0, 0, 'cutscene7');   		  	// Cutscene 7 (outside library)
+		this.bg0.alpha = 0;
+		this.bg1 = game.add.image(0, 0, 'cutscene8', 'scene1');		// Cutscene 8 (box open)
+		this.bg1.alpha = 0;
+		this.bg1.animations.add('cutscene8', Phaser.Animation.generateFrameNames('cutscene8', 'scene', 1, 3), 10, true);
+		this.bg1.animations.play('cutscene8');
+		game.world.setBounds(0, 0, 800, 800);
 		
-		//this.asdadasdnasdsadsa = game.add.text(game.world.centerX, game.world.centerY, 'WE ARE ON THE LAST LEVEL ASDJSADBSADKSA', textStyle);
 		// Create bgm for game, looped and played
 		if(this.bgmOn == false) {
-			this.bgm = game.add.audio('lvl1', 0.25, true);
+			this.bgm = game.add.audio('intro', 0.25, true);
 			this.bgm.play();
 			this.bgmOn = true;
 		}
 
+		// Sound effect for jumping
+		this.hop = game.add.audio('jump', 0.25, false);;
+
 		// Create platforms group
-		platforms = game.add.group();
-		platforms.enableBody = true;
+		this.platforms = game.add.group();
+		this.platforms.enableBody = true;
 
-		//Create createdPlatforms group 
-		this.createdPlatforms = game.add.group();
-		this.createdPlatforms.enableBody = true;
+		// Bench 
+		this.bench = game.add.sprite(445, 560, 'atlas', 'sky'); 
+		this.bench.scale.setTo(2, 0.25);
+		game.physics.arcade.enable(this.bench);
+		this.bench.body.immovable = true;
+		this.bench.alpha = 0;
+		this.bench.body.checkCollision.down = false;
+		this.bench.body.checkCollision.left = false;
+		this.bench.body.checkCollision.right = false;
 
-		
-		this.player = game.add.sprite(415, 485, 'patchesAtlas2', 'right1'); // -800
+		// Ground under the background
+		this.ground = this.platforms.create(-64, 650, 'atlas', 'sky'); 
+		this.ground.scale.setTo(13, 1);
+		game.physics.arcade.enable(this.ground);
+		this.ground.body.immovable = true;
+		this.ground.visible = false;
+
+		// Patches, but you can't actually move him
+		this.player = new Patches(game, 'patchesAtlas2', 'right1', 0, 550, 1); 
 		this.player.enableBody = true;
-		this.player.scale.setTo(0.33);
+		this.player.scale.setTo(0.5);
 		game.add.existing(this.player);
+		this.player.animations.add('moveRight', ['patchesAtlas2', 'right1', 'right2', 'right3'], 4, false);
+		this.player.animations.add('idleRight', ['patchesAtlas2', 'right1'], 60, false);
 
-		/***** MUSIC BOX *****/
+		// Music box stripped down, can only move and not be used to make blocks
 		this.box = game.add.sprite(350, 250, 'assets', 'box');
 		game.physics.arcade.enable(this.box);
 		this.box.anchor.set(0.50);
@@ -52,30 +69,67 @@ Level7.prototype = {
 
 		this.pauseMenu = new PauseMenu(game);
 	},
+
 	update: function() {
-		//console.log(level);
-		//console.log(inElevator);
-		// console.log(game.camera.x);
-		// console.log(game.camera.y);
-		/***** BOX STUFF *****/
 
-			this.box.body.velocity.x = 0; // Box won't glide when pushed by player
+		// Collisions
+		this.hitPlatform = game.physics.arcade.collide(this.player, this.platforms);   	// player vs platforms
+		this.hitBench = game.physics.arcade.collide(this.player, this.bench);			// player vs bench
 
-			// When holding the box...
-			if(this.attached) {
-				this.box.body.checkCollision.none = true;
-				// Box moves where player is facing
-				if(this.player.facing == "RIGHT") {
-					this.box.x = this.player.x + this.player.width/2 + this.box.width/2 - (37*this.levelScale);
-				}
-				else {
-					this.box.x = this.player.x - this.player.width/2 - this.box.width/2 + (30*this.levelScale);
-				}
-				this.box.y = this.player.y + (17*this.levelScale);	 // the box is off the ground and with the player
-				this.box.body.gravity.y = 0; // box doesn't fall when you're holding it
+		// If on top of the bench, stop animation and movement, fade to next scene
+		if(this.hitBench && this.bg0.alpha == 1){
+			this.player.body.velocity.x = 0;
+			this.player.animations.stop('moveRight');
+			this.player.animations.play('idleRight');
+			game.camera.fade(0x000000, 2000);
+			game.time.events.add(Phaser.Timer.SECOND * 2.0, transitionToCutscene8, this);
+		}
 
-				}
-	
+		// If not touching the bench, animate moving right
+		if(!this.hitBench && this.bg0.alpha == 1){
+			this.player.animations.play('moveRight');
+			this.player.body.velocity.x = 125;
+		}
+
+		// Fade in cutscene 7 if cutscene 8 is not showing
+		if(this.bg0.alpha < 1 && this.bg1.alpha == 0)
+			this.bg0.alpha += 0.01;
+
+		// Play the hop sounds as patches jumps in the animation
+		if(this.bg0.alpha > 1){
+			game.time.events.add(Phaser.Timer.SECOND, playHop, this);
+			game.time.events.add(Phaser.Timer.SECOND * 3.25, playHop, this);
+			game.time.events.add(Phaser.Timer.SECOND * 5.1, playHop, this);
+			this.bg0.alpha = 1;
+		}
+
+		// Box follows player
+		this.box.x = this.player.x + this.player.width/2 + this.box.width/2 - 42;
+		this.box.y = this.player.y + 17;
+		this.box.body.gravity.y = 0;
+		this.box.body.checkCollision.none = true;
+	},
+
+	// Function for playing the hop sounda and elevating player
+	playHop: function() {
+		this.hop.play();
+		this.player.body.velocity.y = -550;
+	},
+
+	// Resets the fade to go to credits
+	transitionToCutscene8: function() {
+		game.camera.resetFX();
+		this.player.alpha = 0;
+		this.box.alpha = 0;
+		this.bg1.alpha = 1;
+		this.bg0.alpha = 0;
+		game.camera.fade(0x000000, 4000);
+		game.time.events.add(Phaser.Timer.SECOND * 6.0, transitionToCredits, this);
+	},
+
+	// Goes the credits
+	transitionToCredits: function() {
+		game.state.start('Credits', true, false, this.bgm);
 	},
 
 	openMenu: function() {
@@ -95,8 +149,16 @@ Level7.prototype = {
 	},
 
 	skipLevel: function() {
-		this.bgm.destroy();
-		//start credits
+		game.state.start('Credits', true, false, this.bgm);
 	}	
 }
+
+
+	
+
+	
+
+
+	
+
 

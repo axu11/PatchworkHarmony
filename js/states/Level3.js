@@ -11,8 +11,7 @@ Level3.prototype = {
 		this.numPlatforms = numPlatforms;	// current platforms set to maxPlatforms
 		this.bgmOn = bgmOn;
 
-		this.carryingPlatform = false;
-		this.readyToFall = true;
+		this.carryingPlatform = false;		// used in Platform prefab to check if the music block is holding a platform
 
 		this.cutscenePlaying = false;		// var for whether or not there is a cutscene playing, essentially pauses game state
 	},
@@ -91,9 +90,9 @@ Level3.prototype = {
 		this.library.body.immovable = true;
 
 		// Library ladder
-		this.ladder = game.add.sprite(680, 200, 'atlas', 'sky');
+		this.ladder = game.add.sprite(680, 180, 'atlas', 'sky');
 		game.physics.arcade.enable(this.ladder);
-		this.ladder.body.setSize(50, 70, 0, 0);
+		this.ladder.body.setSize(50, 120, 0, 0);
 		this.ladder.body.immovable = true;
 		this.ladder.visible = false;
 
@@ -114,7 +113,7 @@ Level3.prototype = {
 		this.attached = true; 
 
 		// Down arrow indicator for exiting through window
-		this.downArrow = game.add.sprite(620, 300, 'instructions', 'down1');
+		this.downArrow = game.add.sprite(670, 130, 'instructions', 'down1');
 		this.downArrow.scale.setTo(0.33);
 		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4), 10, true);
 		this.downArrow.animations.play('arrowAni');
@@ -124,13 +123,15 @@ Level3.prototype = {
 	},
 	update: function() {
 
-		/***** COLLISIONS *****/
-		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   								// player vs platforms
-		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); 				// player vs created platforms
-		this.hitBox = game.physics.arcade.collide(this.player, this.box);         								// player vs box
-		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   								// box vs platforms
-		this.carryDroppedPlatform = game.physics.arcade.collide(this.droppedPlatform, this.createdPlatforms);   // dropped vs created platforms
+		/***** CAMERA, TRANSITIONS, AND CUTSCENES *****/
+   		// When player gets to the ladder, go to level 4 (library top floor)
+		if(this.player.overlap(this.ladder) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.player.body.touching.down){
+			this.cutscenePlaying = true;
+			game.camera.fade(0x000000, 3000);
+			game.time.events.add(Phaser.Timer.SECOND * 3.0, transitionToLibrary, this);
+		}
 
+		// Down arrow shows when player approaches ladder
 		if(this.player.overlap(this.ladder)){
 	    	this.downArrow.alpha = 1;
 	    }
@@ -138,13 +139,18 @@ Level3.prototype = {
 	    	this.downArrow.alpha = 0;
 	    }
 
-
-		if(this.player.overlap(this.ladder) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed() && this.player.body.touching.down){
-			this.cutscenePlaying = true;
-			game.camera.fade(0x000000, 3000);
-			game.time.events.add(Phaser.Timer.SECOND * 3.0, this.transitionToLibrary, this);
+   		// Reset state when player falls
+		if(this.player.y + this.player.height/2 >= this.world.height - 1) {			
+			game.state.start('Level3', true, false, this.bgmOn, 2, 0);
 		}
 
+		/***** COLLISIONS *****/
+		this.hitPlatform = game.physics.arcade.collide(this.player, platforms);   								// player vs platforms
+		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); 				// player vs created platforms
+		this.hitBox = game.physics.arcade.collide(this.player, this.box);         								// player vs box
+		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   								// box vs platforms
+		this.carryDroppedPlatform = game.physics.arcade.collide(this.droppedPlatform, this.createdPlatforms);   // dropped vs created platforms
+		
 		// Code for the dropping crane platform
 		if(this.carryDroppedPlatform)
 			this.droppingPlatform = false;
@@ -157,10 +163,7 @@ Level3.prototype = {
 				this.droppedPlatform.y = 245;
 		}
 
-		// Reset state when player falls
-		if(this.player.y + this.player.height/2 >= this.world.height - 1) {			
-			game.state.start('Level3', true, false, this.bgmOn, 2, 0);
-		}
+
 
 		/***** BOX STUFF *****/
 		this.box.body.velocity.x = 0; // Box won't glide when pushed by player
