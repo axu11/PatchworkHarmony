@@ -21,6 +21,7 @@ Level2.prototype = {
 		this.TIMER_VALUE = 40;				// modify this here depending on how long the delay should be before spacebar can be pressed
 	
 		this.platformAdded = false;
+		this.pauseMenuOpen = false;
 	},
 
 	create: function() {
@@ -152,7 +153,7 @@ Level2.prototype = {
 		// Spacebar indicator for gear cutscene
 		this.spacebar = game.add.sprite(650, 550, 'instructions', 'spacebar1'); 
 		this.spacebar.scale.setTo(0.33);
-		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 4, true);
+		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3, '', 1), 4, true);
 		this.spacebar.animations.play('spacebarAni');
 		this.spacebar.alpha = 0;
 

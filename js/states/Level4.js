@@ -12,6 +12,7 @@ Level4.prototype = {
 		this.bgmOn = bgmOn;
 		inElevator = false;
 		this.cutscenePlaying = false;
+		this.levelScale = 1.0;
 
 		this.bookTop = true;
 		this.bookTop2 = true;
@@ -20,6 +21,7 @@ Level4.prototype = {
 		this.slideAway = 0;
 
 		this.lockAudioPlayed = false;
+		this.pauseMenuOpen = false;
 	},
 	create: function() {
 		/***** BG, BGM, AND SOUND EFFECTS *****/
@@ -323,31 +325,28 @@ Level4.prototype = {
 		this.box.body.drag = 0.5;
 		this.attached = true; 
 
-		this.spacebar = game.add.sprite(325, 260, 'instructions', 'spacebar1');
+		this.spacebar = game.add.sprite(300, 260, 'instructions', 'spacebar1');
+		this.spacebar.anchor.setTo(0.5, 0);
 		this.spacebar.scale.setTo(0.33);
-		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 4, true);
+		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3, '', 1), 4, true);
 		this.spacebar.animations.play('spacebarAni');
 		this.spacebar.alpha = 0;
 
 		this.shift = game.add.sprite(-1520, 100, 'instructions', 'shift1');
 		this.shift.scale.setTo(0.33);
-		this.shift.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('shift', 1, 4), 4, true);
-		this.shift.animations.play('spacebarAni');
+		this.shift.animations.add('shiftAni', Phaser.Animation.generateFrameNames('shift', 1, 4, '', 1), 4, true);
+		this.shift.animations.play('shiftAni');
 		this.shift.alpha = 0;
 
-		this.downArrow = game.add.sprite(1480, 200, 'instructions', 'down1');
+		this.downArrow = game.add.sprite(1500, 200, 'instructions', 'down1');
 		this.downArrow.scale.setTo(0.33);
-		this.downArrow.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('down', 1, 4), 4, true);
-		this.downArrow.animations.play('spacebarAni');
+		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4, '', 1), 4, true);
+		this.downArrow.animations.play('arrowAni');
 		this.downArrow.alpha = 0;
 
 		this.pauseMenu = new PauseMenu(game);
 	},
 	update: function() {
-		//console.log('x: ' + this.player.x);
-		//console.log('y: ' + this.player.y);
-		// console.log(this.player.visible);
-		// console.log(this.player.alpha);
 
 		if(!this.keySolved){
 			if(this.key1Lock && this.key2Lock && this.key3Lock) {
@@ -364,24 +363,20 @@ Level4.prototype = {
 
 		//game.debug.body(this.leverHandle);
 		if(!inElevator){
-			
-			
 
-			if(this.player.overlap(this.elevators) && !inElevator && elevatorActivated){
+			if(this.player.x < -1460 && this.player.y < 220 && !elevatorActivated)
+	    		this.shift.alpha = 1;
+		    else
+		    	this.shift.alpha = 0;
+			if(this.player.overlap(this.elevators) && !inElevator && elevatorActivated)
 		    	this.spacebar.alpha = 1;
-		    }
-		    else{
+		    else
 		    	this.spacebar.alpha = 0;
-		    }
 
-
-		}
-
-		if(this.player.overlap(this.leverHandle)){//} && !elevatorActivated){
-	    	this.shift.alpha = 1;
-		}
-		else{
-		    this.shift.alpha = 0;
+			if(this.player.overlap(this.door))
+		    	this.downArrow.alpha = 1;
+		    else
+		    	this.downArrow.alpha = 0;
 		}
 		
 		if(this.player.overlap(this.door)){
@@ -630,7 +625,8 @@ Level4.prototype = {
 
 		/***** FALLING PLATFORM STUFF *****/
 		if(this.hitFallingPlatform){
-			this.fallingPlatform.body.velocity.y = 100;
+
+			this.fallingPlatform.body.velocity.y = 1000;
 		}		
 
 		/***** LEVER STUFF *****/

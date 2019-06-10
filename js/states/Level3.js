@@ -14,6 +14,7 @@ Level3.prototype = {
 		this.carryingPlatform = false;		// used in Platform prefab to check if the music block is holding a platform
 
 		this.cutscenePlaying = false;		// var for whether or not there is a cutscene playing, essentially pauses game state
+		this.pauseMenuOpen = false;
 	},
 
 	create: function() {
@@ -115,7 +116,7 @@ Level3.prototype = {
 		// Down arrow indicator for exiting through window
 		this.downArrow = game.add.sprite(670, 130, 'instructions', 'down1');
 		this.downArrow.scale.setTo(0.33);
-		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4), 4, true);
+		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4, '', 1), 4, true);
 		this.downArrow.animations.play('arrowAni');
 		this.downArrow.alpha = 0;
 
@@ -125,7 +126,7 @@ Level3.prototype = {
 		game.debug.body(this.ladder);
 		/***** CAMERA, TRANSITIONS, AND CUTSCENES *****/
    		// When player gets to the ladder, go to level 4 (library top floor)
-   		console.log(this.player.body.touching.down);
+
 		if(this.player.overlap(this.ladder) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed()){
 			this.cutscenePlaying = true;
 			game.camera.fade(0x000000, 3000);
