@@ -190,7 +190,7 @@ Level5.prototype = {
 		this.libraryCutscene = game.add.image(800, 0, 'cutscene6');
 		this.libraryCutscene.alpha = 0;
 
-		this.spacebar = game.add.sprite(400, 270, 'instructions', 'spacebar1');
+		this.spacebar = game.add.sprite(390, 270, 'instructions', 'spacebar1');
 		this.spacebar.scale.setTo(0.33);
 		this.spacebar.anchor.setTo(0.5, 0);
 		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3, '', 1), 4, true);
@@ -225,6 +225,10 @@ Level5.prototype = {
 
 		if(game.input.keyboard.addKey(Phaser.KeyCode.W).justPressed()){
 			reactivateCamera();
+		}
+
+		if(inElevator){
+			this.spacebar.destroy();
 		}
 
 		if(!inElevator){
@@ -478,6 +482,8 @@ Level5.prototype = {
 				this.player.destroy();
 				this.box.destroy();
 				this.elevators.removeAll(true);
+				this.spacebar.destroy();
+				this.cutscenePlaying = true;
 
 				// Creates a new elevator sprite with its doors closed, but active
 				this.elevator = this.elevators.create(310, 330, 'lvl3', 'elevator2'); 
@@ -559,6 +565,8 @@ Level5.prototype = {
 
 	skipLevel: function() {
 		this.bgm.destroy();
+		hasThirdGear = true;
+		wallShifted = true;
 		game.state.start('Level4', true, false, false, 3, 0);
 	}
 }

@@ -123,9 +123,10 @@ Level3.prototype = {
 		this.pauseMenu = new PauseMenu(game);
 	},
 	update: function() {
-
+		// game.debug.body(this.ladder);
 		/***** CAMERA, TRANSITIONS, AND CUTSCENES *****/
    		// When player gets to the ladder, go to level 4 (library top floor)
+
 		if(this.player.overlap(this.ladder) && game.input.keyboard.addKey(Phaser.KeyCode.DOWN).justPressed()){
 			this.cutscenePlaying = true;
 			game.camera.fade(0x000000, 3000);

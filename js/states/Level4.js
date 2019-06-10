@@ -6,6 +6,8 @@ Level4.prototype = {
 		this.numPlatforms = numPlatforms;
 		this.reloadOnGround = reloadOnGround;
 		self = this;	
+
+		this.levelScale = 1;
 		this.level = 4;
 		this.bgmOn = bgmOn;
 		inElevator = false;
@@ -57,7 +59,7 @@ Level4.prototype = {
 		this.switches.enableBody = true;
 
 		// Creates the button for the switch, only if elevator not activated
-		if(!this.elevatorActivated){
+		if(!elevatorActivated){
 			this.switch = new Switch(game, 'assets', 'switch-button', 650, 270); 
 			this.switches.add(this.switch);
 			this.switch.body.immovable = true;
@@ -299,16 +301,18 @@ Level4.prototype = {
 		this.number4.scale.set(0);
 		this.number4.fixedToCamera = true;
 
+		this.players = game.add.group();
+
 		/***** PLAYER SPRITE *****/ 
 		if(!elevatorActivated){
 			this.player = new Patches(game, 'patchesAtlas2', 'right1', 415, 100, this.levelScale);
 			this.player.enableBody = true;
-			game.add.existing(this.player);
+			this.players.add(this.player);
 		}
 		else{
 			this.player = new Patches(game, 'patchesAtlas2', 'right1', 415, 465, this.levelScale);
 			this.player.enableBody = true;
-			game.add.existing(this.player);
+			this.players.add(this.player);
 		}
 
 		/***** MUSIC BOX *****/
@@ -321,7 +325,7 @@ Level4.prototype = {
 		this.box.body.drag = 0.5;
 		this.attached = true; 
 
-		this.spacebar = game.add.sprite(400, 260, 'instructions', 'spacebar1');
+		this.spacebar = game.add.sprite(390, 260, 'instructions', 'spacebar1');
 		this.spacebar.anchor.setTo(0.5, 0);
 		this.spacebar.scale.setTo(0.33);
 		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3, '', 1), 4, true);
@@ -334,7 +338,7 @@ Level4.prototype = {
 		this.shift.animations.play('shiftAni');
 		this.shift.alpha = 0;
 
-		this.downArrow = game.add.sprite(1500, 200, 'instructions', 'down1');
+		this.downArrow = game.add.sprite(1480, 200, 'instructions', 'down1');
 		this.downArrow.scale.setTo(0.33);
 		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4, '', 1), 4, true);
 		this.downArrow.animations.play('arrowAni');
@@ -343,7 +347,7 @@ Level4.prototype = {
 		this.pauseMenu = new PauseMenu(game);
 	},
 	update: function() {
-		console.log(this.player.x + ', ' + this.player.y);
+
 		if(!this.keySolved){
 			if(this.key1Lock && this.key2Lock && this.key3Lock) {
 				this.keySolved = true;
@@ -356,7 +360,10 @@ Level4.prototype = {
 				}
 			}
 		}
+
+		//game.debug.body(this.leverHandle);
 		if(!inElevator){
+
 			if(this.player.x < -1460 && this.player.y < 220 && !elevatorActivated)
 	    		this.shift.alpha = 1;
 		    else
@@ -365,12 +372,12 @@ Level4.prototype = {
 		    	this.spacebar.alpha = 1;
 		    else
 		    	this.spacebar.alpha = 0;
+
 			if(this.player.overlap(this.door))
 		    	this.downArrow.alpha = 1;
 		    else
 		    	this.downArrow.alpha = 0;
 		}
-		
 
 		// CheckCamBounds will be disabled while the panning process is occuring
 		if(!leverActivated){
@@ -611,6 +618,7 @@ Level4.prototype = {
 
 		/***** FALLING PLATFORM STUFF *****/
 		if(this.hitFallingPlatform){
+
 			this.fallingPlatform.body.velocity.y = 1000;
 		}		
 
@@ -763,6 +771,9 @@ Level4.prototype = {
 				this.player.destroy();
 				this.box.destroy();
 				this.elevators.removeAll(true);
+				this.spacebar.destroy();
+				this.cutscenePlaying = true;
+
 
 				// Creates a new elevator sprite with its doors closed, but active
 				this.closedElevator = this.elevators.create(310, 320, 'lvl3', 'elevator2'); 
@@ -842,17 +853,22 @@ Level4.prototype = {
 	},
 
 	restartLevel: function() {
-		if(hasThirdGear)
+		if(hasThirdGear){
 			game.state.start('Level4', true, false, this.bgmOn, 3, 0);
-		else
+		}
+		else{
 			game.state.start('Level4', true, false, this.bgmOn, 2, 0);
+		}
 	},
 
 	skipLevel: function() {
 		this.bgm.destroy();
-		if(hasThirdGear)
+		if(hasThirdGear){
 			game.state.start('Level7', true, false, false, 3, 0);
-		else 
+		}
+		else {
+			elevatorActivated = true;
 			game.state.start('Level5', true, false, false, 2, 0);
+		}
 	}
 }

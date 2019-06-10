@@ -251,6 +251,7 @@ Play.prototype = {
 
 	update: function() {
 		// console.log('play: ' + this.pauseMenuOpen);
+		console.log(this.cutscenePlaying);
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, this.platforms);   				// player vs platforms
 		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); 	// player vs created platforms
@@ -269,7 +270,7 @@ Play.prototype = {
         	this.player.alpha += 0.01;
         	this.box.alpha += 0.01;
         	this.instructions1.alpha += 0.01;
-        	this.timer = 0;
+        	this.timer = 20;
         }
 
    		// When player gets to the window, go to level 2 (town scene 1)
