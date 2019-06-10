@@ -243,7 +243,13 @@ Play.prototype = {
 		this.pauseMenuButton.anchor.set(0.5);
 		this.pauseMenuButton.alpha = 1;
 		this.pauseMenuButton.fixedToCamera = true;
-		this.pauseMenuOpen  = false;
+		this.pauseMenuOpen = false;
+
+		this.menuBg = game.add.sprite(400, 300, 'atlas', 'sky');
+		this.menuBg.anchor.set(0.5);
+		this.menuBg.scale.setTo(5, 3.5);
+		this.menuBg.alpha = 0;
+		this.menuBg.fixedToCamera = true;
 
 		this.resumeButton = game.add.button(300, 350, 'assets', this.closeMenu, this, 'gear', 'gear', 'gear', 'gear');
 		this.resumeButton.anchor.set(0.5);
@@ -301,12 +307,14 @@ Play.prototype = {
 
 		// pause menu stuff
 		if(this.pauseMenuOpen) {
+			this.menuBg.alpha = 1;
 			this.resumeButton.alpha = 1;
 			this.mainMenuButton.alpha = 1;
 			this.restartLevelButton.alpha = 1;
 			this.skipLevelButton.alpha = 1;
 		}
 		else {
+			this.menuBg.alpha = 0;
 			this.resumeButton.alpha = 0;
 			this.mainMenuButton.alpha = 0;
 			this.restartLevelButton.alpha = 0;
@@ -686,6 +694,7 @@ Play.prototype = {
 	},
 
 	skipLevel: function() {
-
+		game.state.start('Level2', true, false, false, maxPlatforms);
+		this.bgm.destroy();
 	},
 }
