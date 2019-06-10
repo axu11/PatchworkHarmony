@@ -49,7 +49,7 @@ Credits.prototype = {
 
 		this.spacebar = game.add.sprite(650, 550, 'spacebar', 'spacebar1');
 		this.spacebar.scale.setTo(0.33);
-		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('instructions', 'spacebar', 1, 3), 3, true);
+		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('instructions', 'spacebar', 1, 3), 4, true);
 		this.spacebar.animations.play('spacebarAni');
 		this.spacebar.alpha = 0;
 

@@ -321,19 +321,19 @@ Level4.prototype = {
 
 		this.spacebar = game.add.sprite(325, 260, 'spacebar', 'spacebar1');
 		this.spacebar.scale.setTo(0.33);
-		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 'spacebar', 1, 4), 10, true);
+		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 'spacebar', 1, 4), 4, true);
 		this.spacebar.animations.play('spacebarAni');
 		this.spacebar.alpha = 0;
 
 		this.shift = game.add.sprite(-1520, 100, 'patchesAtlas2', 'right1');
 		this.shift.scale.setTo(0.15);
-		this.shift.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('patchesAtlas2', 'right', 1, 3), 10, true);
+		this.shift.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('patchesAtlas2', 'right', 1, 3), 4, true);
 		this.shift.animations.play('spacebarAni');
 		this.shift.alpha = 0;
 
 		this.downArrow = game.add.sprite(1500, 200, 'patchesAtlas2', 'right1');
 		this.downArrow.scale.setTo(0.15);
-		this.downArrow.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('patchesAtlas2', 'right', 1, 3), 10, true);
+		this.downArrow.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('patchesAtlas2', 'right', 1, 3), 4, true);
 		this.downArrow.animations.play('spacebarAni');
 		this.downArrow.alpha = 0;
 

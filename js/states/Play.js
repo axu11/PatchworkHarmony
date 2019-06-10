@@ -196,7 +196,7 @@ Play.prototype = {
 		// Box animation cutscene
 		this.boxScene = game.add.sprite(800, 0, 'boxscene', 'cutscene1');
 		this.boxScene.visible = false;
-		this.boxScene.animations.add('boxscene', Phaser.Animation.generateFrameNames('boxscene', 'cutscene', 1, 4), 10, true);
+		this.boxScene.animations.add('boxscene', Phaser.Animation.generateFrameNames('boxscene', 'cutscene', 1, 4), 4, true);
 		this.boxScene.animations.play('boxscene');
 
 		// Instructions played in the tutorial
@@ -214,35 +214,35 @@ Play.prototype = {
 		// Spacebar indicators for instructions 1 and 2
 		this.spacebar = game.add.sprite(320, 300, 'instructions', 'spacebar1'); 
 		this.spacebar.scale.setTo(0.33);
-		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 5, true);
+		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 4, true);
 		this.spacebar.animations.play('spacebarAni');
 		this.spacebar.alpha = 0;
 
 		// Spacebar indicators for instructions 3 and 4
 		this.spacebar2 = game.add.sprite(1100, 400, 'instructions', 'spacebar1'); 
 		this.spacebar2.scale.setTo(0.33);
-		this.spacebar2.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 5, true);
+		this.spacebar2.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 4, true);
 		this.spacebar2.animations.play('spacebarAni');
 		this.spacebar2.alpha = 0;
 
 		// Spacebar indicator for instructions 5
 		this.spacebar3 = game.add.sprite(this.player.x, this.player.y, 'instructions', 'spacebar1'); 
 		this.spacebar3.scale.setTo(0.33);
-		this.spacebar3.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 5, true);
+		this.spacebar3.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 4, true);
 		this.spacebar3.animations.play('spacebarAni');
 		this.spacebar3.alpha = 0;
 
 		// Spacebar indicator for box cutscene
 		this.spacebar4 = game.add.sprite(1450, 550, 'instructions', 'spacebar1'); 
 		this.spacebar4.scale.setTo(0.33);
-		this.spacebar4.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 5, true);
+		this.spacebar4.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3), 4, true);
 		this.spacebar4.animations.play('spacebarAni');
 		this.spacebar4.alpha = 0;
 
 		// Down arrow indicator for exiting through window
 		this.downArrow = game.add.sprite(1440, 20, 'instructions', 'down1');
 		this.downArrow.scale.setTo(0.33);
-		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4), 10, true);
+		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4), 4, true);
 		this.downArrow.animations.play('arrowAni');
 		this.downArrow.alpha = 0;
 
@@ -319,7 +319,7 @@ Play.prototype = {
 				this.cutscenePlaying = false;
 			}
 		}
-		
+		console.log(this.timer + ', ' + this.TIMER_VALUE);
 
 		/***** INSTRUCTIONS *****/
 		// Instruction code for instructions 1 and 2

@@ -17,7 +17,7 @@ Level7.prototype = {
 		this.bg0.alpha = 0;
 		this.bg1 = game.add.image(0, 0, 'cutscene8', 'scene1');		// Cutscene 8 (box open)
 		this.bg1.alpha = 0;
-		this.bg1.animations.add('cutscene8', Phaser.Animation.generateFrameNames('cutscene8', 'scene', 1, 3), 10, true);
+		this.bg1.animations.add('cutscene8', Phaser.Animation.generateFrameNames('cutscene8', 'scene', 1, 3), 4, true);
 		this.bg1.animations.play('cutscene8');
 		game.world.setBounds(0, 0, 800, 800);
 		

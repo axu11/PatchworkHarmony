@@ -115,7 +115,7 @@ Level3.prototype = {
 		// Down arrow indicator for exiting through window
 		this.downArrow = game.add.sprite(670, 130, 'instructions', 'down1');
 		this.downArrow.scale.setTo(0.33);
-		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4), 10, true);
+		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4), 4, true);
 		this.downArrow.animations.play('arrowAni');
 		this.downArrow.alpha = 0;
 
