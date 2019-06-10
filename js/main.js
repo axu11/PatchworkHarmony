@@ -5,7 +5,6 @@ var game;
 var self;
 var reloadOnGround = 0;
 var maxPlatforms = 0;
-var inElevator = false;
 var elevatorActivated = false;
 var leverActivated = false;
 var cutscenePlaying = false;

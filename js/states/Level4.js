@@ -1,5 +1,7 @@
+// Library level state, top half
 var Level4 = function(game) {};
 Level4.prototype = {
+
 	init: function(maxPlatforms) {
 		if(hasThirdGear){
 			maxPlatforms = 3;
@@ -7,20 +9,21 @@ Level4.prototype = {
 		else{
 			maxPlatforms = 2;
 		}
-		this.numPlatforms = maxPlatforms;
 		reloadOnGround = 0;
-		self = this;	
+		self = this;
+
 		this.level = 4;
-		inElevator = false;
-		this.cutscenePlaying = false;
 		this.levelScale = 1.0;
+		this.numPlatforms = maxPlatforms;
+
+		this.inElevator = false;
+		this.cutscenePlaying = false;
+
 		this.bookTop = true;
 		this.bookTop2 = true;
-		this.holdingSpring = false;
-		this.falling = false;		
+
 		this.timer = 0;
 		this.slideAway = 0;
-		this.playerCanMove = true;
 	},
 	create: function() {
 		/***** BG, BGM, AND SOUND EFFECTS *****/
@@ -52,7 +55,7 @@ Level4.prototype = {
 		this.switches.enableBody = true;
 
 		// Creates the button for the switch, only if elevator not activated
-		if(!elevatorActivated){
+		if(!this.elevatorActivated){
 			this.switch = new Switch(game, 'assets', 'switch-button', 650, 270); 
 			this.switches.add(this.switch);
 			this.switch.body.immovable = true;
@@ -92,7 +95,6 @@ Level4.prototype = {
 
 		/***** ELEVATOR ROOM (BG2) *****/
 		// Creates an elevator that brings player down to bottom floor, starts closed and unpowered 
-		
 		// If global var elevatorActivated, then always create the elevator sprite as powered and open instead of unpowered and closed
 		if(elevatorActivated){
 			this.elevator = this.elevators.create(310, 320, 'lvl3', 'elevator3'); 
@@ -640,13 +642,8 @@ Level4.prototype = {
 
 		/***** FALLING PLATFORM STUFF *****/
 		if(this.hitFallingPlatform){
-			this.falling = true;
-		}	
-
-		// When touched, platform drops off the bottom edge
-		if(this.falling){
-			this.fallingPlatform.y += 10;
-		}			
+			this.fallingPlatform.body.velocity.y = 10;
+		}		
 
 		/***** LEVER STUFF *****/
 		// When activated, the bar will rotate down the lever holder
