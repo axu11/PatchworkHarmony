@@ -47,19 +47,19 @@ Patches.prototype.update = function() {
 	// Enable Phaser's Keyboard Manager
 	this.cursors = game.input.keyboard.createCursorKeys();
 
+	this.body.velocity.x = 0;
  	// If nothing pressed, velocity = 0
  	if(!self.cutscenePlaying){
- 		this.body.velocity.x = 0;
  	
 	 	// Move left and right with arrow keys
-	 	if(this.cursors.left.isDown && !inElevator) {
+	 	if(this.cursors.left.isDown && !inElevator && !self.cutscenePlaying) {
 			this.body.velocity.x = -this.VELOCITY_X; // Move left
 			// this.player.animations.play('left');
 			this.animations.play('moveLeft');
 			this.facing = "LEFT";
 		}
 
-		else if(this.cursors.right.isDown && !inElevator) {
+		else if(this.cursors.right.isDown && !inElevator && !self.cutscenePlaying) {
 			this.body.velocity.x = this.VELOCITY_X; // Move right
 			// this.player.animations.play('right');
 			this.animations.play('moveRight');
@@ -67,7 +67,7 @@ Patches.prototype.update = function() {
 		}
 
 		else { // Stand "still"
-			//this.body.velocity.x = 0;
+			this.body.velocity.x = 0;
 			// this.player.animations.stop();
 			if(this.facing == 'RIGHT') {
 				this.animations.play('idleRight');

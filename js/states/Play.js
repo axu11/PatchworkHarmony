@@ -251,6 +251,7 @@ Play.prototype = {
 
 	update: function() {
 		// console.log('play: ' + this.pauseMenuOpen);
+		console.log(this.cutscenePlaying);
 		/***** COLLISIONS *****/
 		this.hitPlatform = game.physics.arcade.collide(this.player, this.platforms);   				// player vs platforms
 		this.hitCreatedPlatform = game.physics.arcade.collide(this.player, this.createdPlatforms); 	// player vs created platforms

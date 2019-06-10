@@ -95,7 +95,7 @@ Credits.prototype = {
 	creditsScene: function () {
 		this.fadeIn = 0.01;
 		game.camera.resetFX();
-	}
+	},
 
 	transitionToMainMenu: function (){
 		this.bgm.destroy();
