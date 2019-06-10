@@ -16,6 +16,7 @@ Level4.prototype = {
 
 		this.bookTop = true;
 		this.bookTop2 = true;
+		this.platformFallingPlayed = false;
 
 		this.timer = 0;
 		this.slideAway = 0;
@@ -61,6 +62,9 @@ Level4.prototype = {
 
 		// Creates sound effect for music block locking into place
 		this.lockAudio = game.add.audio('locking', 1, false);
+
+		// Creates sound effect for falling platform
+		this.platformFalling = game.add.audio('platform-break', 0.5, false);
 
 		/***** SWITCH MECHANIC *****/
 		this.switches = game.add.group();
@@ -601,6 +605,7 @@ Level4.prototype = {
 
 			// Drop the spring by pressing SHIFT
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SHIFT).justPressed()) {
+				this.drop.play();
 				this.holdingSpring = false;
 				this.spring.body.checkCollision.none = false;
 			}
@@ -613,10 +618,12 @@ Level4.prototype = {
 			// When picked up from left of spring...
 			if(game.input.keyboard.addKey(this.player.facing == 'RIGHT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x + this.player.width/2) - (this.spring.x - this.spring.width/2)) <= 5) {
 				this.holdingSpring = true;
+				this.pickup.play();
 			}
 			// When picked up from right of spring... 
 			if(game.input.keyboard.addKey(this.player.facing == 'LEFT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x - this.player.width/2) - (this.spring.x + this.spring.width/2)) <= 5) {
 				this.holdingSpring = true;
+				this.pickup.play();
 			}
 		}
 
@@ -628,9 +635,10 @@ Level4.prototype = {
 			}
 
 		/***** FALLING PLATFORM STUFF *****/
-		if(this.hitFallingPlatform){
-
+		if(this.hitFallingPlatform && !this.platformFallingPlayed){
 			this.fallingPlatform.body.velocity.y = 1000;
+			this.platformFalling.play();
+			this.platformFallingPlayed = true;
 		}		
 
 		/***** LEVER STUFF *****/
