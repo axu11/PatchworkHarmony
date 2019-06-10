@@ -57,6 +57,7 @@ Load.prototype = {
 		this.load.atlas('pausemenu', 'img/pause-menu.png', 'img/pause-menu.json');
 
 		// Music
+		game.load.audio('intro-short', 'audio/mp3/intro-short.mp3');
 		game.load.audio('intro', 'audio/mp3/intro-music.mp3');
 		game.load.audio('menu', 'audio/mp3/menu-music.mp3');
 		game.load.audio('lvl1', 'audio/ogg/level-1.ogg');
@@ -64,6 +65,8 @@ Load.prototype = {
 		game.load.audio('lvl3', 'audio/ogg/level-3.ogg');
 
 		// Sound Effects
+		game.load.audio('pickup', 'audio/ogg/pickup.ogg');
+		game.load.audio('drop', 'audio/ogg/drop.ogg');
 		game.load.audio('collectGear', 'audio/ogg/collect-gear.ogg');
 		game.load.audio('collision', 'audio/ogg/collision.ogg');
 		game.load.audio('jump', 'audio/ogg/jump.ogg');
@@ -79,6 +82,9 @@ Load.prototype = {
 		game.load.audio('switch-trigger', 'audio/ogg/switch-trigger.ogg');
 		game.load.audio('trampoline', 'audio/ogg/trampoline.ogg');
 		game.load.audio('locking', 'audio/ogg/locking.ogg');
+		game.load.audio('options-open', 'audio/ogg/options-open.ogg');
+		game.load.audio('options-close', 'audio/ogg/options-close.ogg');
+		game.load.audio('elevator', 'audio/ogg/elevator-moving.ogg');
 	},
 
 	create: function() {

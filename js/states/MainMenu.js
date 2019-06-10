@@ -27,6 +27,9 @@ MainMenu.prototype = {
 		this.bgm = game.add.audio('menu', 0.2, true);
 		this.bgm.play();
 
+		// Add game start sfx
+		this.optionsOpen = game.add.audio('options-open', 0.5, false);
+
 		// this.title = game.add.text(game.world.centerX, 200, 'PATCHWORK HARMONY', textStyle2);
 		// this.title.anchor.set(0.5);
 		// this.description = game.add.text(game.world.centerX, 270, 'You are a toy bunny! Reunite the magic music box with its owner!', textStyle3);
@@ -55,6 +58,7 @@ MainMenu.prototype = {
 			// this.bgm.destroy();
 			// game.state.start('Level7', true, false, false, 3, 0);
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+			this.optionsOpen.play();
 			game.camera.fade(0x000000, 4000);
 			game.time.events.add(Phaser.Timer.SECOND * 4, this.transitionToCutscenes, this);
 			

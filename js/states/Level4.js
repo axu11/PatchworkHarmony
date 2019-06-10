@@ -37,17 +37,28 @@ Level4.prototype = {
 			this.bgmOn = true;
 		}
 
+		// Create menu sfx
+		this.optionsOpen = game.add.audio('options-open', 0.5, false);
+		this.optionsClose = game.add.audio('options-close', 0.5, false);
+
+		// Create sound effect for pickup/drop item
+		this.pickup = game.add.audio('pickup', 0.5, false);
+		this.drop = game.add.audio('drop', 0.5, false);
+
 		// Create sound effects for when a music block platform is created
-		this.platform1audio = game.add.audio('platform1audio');
-		this.platform2audio = game.add.audio('platform2audio');
-		this.platform3audio = game.add.audio('platform3audio');
-		this.platform4audio = game.add.audio('platform4audio');
+		this.platform1audio = game.add.audio('platform1audio', 0.5, false);
+		this.platform2audio = game.add.audio('platform2audio', 0.5, false);
+		this.platform3audio = game.add.audio('platform3audio', 0.5, false);
+		this.platform4audio = game.add.audio('platform4audio', 0.5, false);
 
 		// Creates sound effect for triggering the switch
 		this.switchTrigger = game.add.audio('switchTrigger');
 
 		// Create bounce sound for spring
 		this.bounce = game.add.audio('trampoline', 0.1, false);
+
+		// Create sound effect for elevator
+		this.elevatorNoise = game.add.audio('elevator', 0.5, false);
 
 		// Creates sound effect for music block locking into place
 		this.lockAudio = game.add.audio('locking', 1, false);
@@ -502,6 +513,7 @@ Level4.prototype = {
 
 				// Drop the box by pressing SHIFT
 				if(game.input.keyboard.addKey(Phaser.KeyCode.SHIFT).justPressed()) {
+					this.drop.play();
 					this.attached = false;
 					this.box.body.checkCollision.none = false;
 				}
@@ -513,10 +525,12 @@ Level4.prototype = {
 
 				// When picked up from left of box...
 				if(game.input.keyboard.addKey(this.player.facing == 'RIGHT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x + this.player.width/2) - (this.box.x - this.box.width/2)) <= 5) {
+					this.pickup.play();
 					this.attached = true;
 				}
 				// When picked up from right of box... 
 				if(game.input.keyboard.addKey(this.player.facing == 'LEFT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x - this.player.width/2) - (this.box.x + this.box.width/2)) <= 5) {
+					this.pickup.play();
 					this.attached = true;
 				}
 			}
@@ -770,6 +784,9 @@ Level4.prototype = {
 
 				this.closedElevator.body.velocity.y = 75;
 
+				// Play sound effect
+				this.elevatorNoise.play();
+
 				// Fade out effect
 				if(inElevator){
 					game.camera.fade(0x000000, 4000);
@@ -829,10 +846,12 @@ Level4.prototype = {
 	},
 
 	openMenu: function() {
+		this.optionsOpen.play();
 		this.pauseMenuOpen = true;
 	},
 
 	closeMenu: function() {
+		this.optionsClose.play();
 		this.pauseMenuOpen = false;
 	},
 
