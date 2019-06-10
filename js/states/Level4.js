@@ -60,6 +60,9 @@ Level4.prototype = {
 		// Create bounce sound for spring
 		this.bounce = game.add.audio('trampoline', 0.1, false);
 
+		// Create sound effect for elevator
+		this.elevatorNoise = game.add.audio('elevator', 0.5, false);
+
 		// Creates sound effect for music block locking into place
 		this.lockAudio = game.add.audio('locking', 1, false);
 
@@ -799,6 +802,9 @@ Level4.prototype = {
 				this.closedElevator.scale.setTo(0.5);
 
 				this.closedElevator.body.velocity.y = 75;
+
+				// Play sound effect
+				this.elevatorNoise.play();
 
 				// Fade out effect
 				if(inElevator){

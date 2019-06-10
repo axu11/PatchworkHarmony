@@ -56,6 +56,9 @@ Level5.prototype = {
 		// Creates sound effect for gear collection
 		this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
 
+		// Create sound effect for elevator
+		this.elevatorNoise = game.add.audio('elevator', 0.5, false);
+
 		// Creates sound effect for music block locking into place
 		this.lockAudio = game.add.audio('locking', 1, false);
 
@@ -503,6 +506,9 @@ Level5.prototype = {
 
 				// Elevator zooooooooooooooms up
 				this.elevator.body.velocity.y = -75;
+
+				// Play sound effect
+				this.elevatorNoise.play();
 
 				// Fade out effect, 4000 ms
 				if(inElevator){
