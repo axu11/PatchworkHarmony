@@ -38,11 +38,20 @@ Level5.prototype = {
 			this.bgm.play();
 			this.bgmOn = true;
 		}
+
+		// Create menu sfx
+		this.optionsOpen = game.add.audio('options-open', 0.5, false);
+		this.optionsClose = game.add.audio('options-close', 0.5, false);
+
+		// Create sound effect for pickup/drop item
+		this.pickup = game.add.audio('pickup', 0.5, false);
+		this.drop = game.add.audio('drop', 0.5, false);
+
 		// Create sound effects for when a music block platform is created
-		this.platform1audio = game.add.audio('platform1audio');
-		this.platform2audio = game.add.audio('platform2audio');
-		this.platform3audio = game.add.audio('platform3audio');
-		this.platform4audio = game.add.audio('platform4audio');
+		this.platform1audio = game.add.audio('platform1audio', 0.5, false);
+		this.platform2audio = game.add.audio('platform2audio', 0.5, false);
+		this.platform3audio = game.add.audio('platform3audio', 0.5, false);
+		this.platform4audio = game.add.audio('platform4audio', 0.5, false);
 	
 		// Creates sound effect for gear collection
 		this.gearAudio = game.add.audio('collect-gear', 0.25, false);	
@@ -190,7 +199,7 @@ Level5.prototype = {
 		this.libraryCutscene = game.add.image(800, 0, 'cutscene6');
 		this.libraryCutscene.alpha = 0;
 
-		this.spacebar = game.add.sprite(400, 270, 'instructions', 'spacebar1');
+		this.spacebar = game.add.sprite(390, 270, 'instructions', 'spacebar1');
 		this.spacebar.scale.setTo(0.33);
 		this.spacebar.anchor.setTo(0.5, 0);
 		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3, '', 1), 4, true);
@@ -225,6 +234,10 @@ Level5.prototype = {
 
 		if(game.input.keyboard.addKey(Phaser.KeyCode.W).justPressed()){
 			reactivateCamera();
+		}
+
+		if(inElevator){
+			this.spacebar.destroy();
 		}
 
 		if(!inElevator){
@@ -334,6 +347,7 @@ Level5.prototype = {
 
 				// Drop the box by pressing SHIFT
 				if(game.input.keyboard.addKey(Phaser.KeyCode.SHIFT).justPressed()) {
+					this.drop.play();
 					this.attached = false;
 					this.box.body.checkCollision.none = false;
 				}
@@ -345,10 +359,12 @@ Level5.prototype = {
 
 				// When picked up from left of box...
 				if(game.input.keyboard.addKey(this.player.facing == 'RIGHT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x + this.player.width/2) - (this.box.x - this.box.width/2)) <= 5) {
+					this.pickup.play();
 					this.attached = true;
 				}
 				// When picked up from right of box... 
 				if(game.input.keyboard.addKey(this.player.facing == 'LEFT' && Phaser.KeyCode.SHIFT).justPressed() && this.hitPlatform && Math.abs((this.player.x - this.player.width/2) - (this.box.x + this.box.width/2)) <= 5) {
+					this.pickup.play();
 					this.attached = true;
 				}
 			}
@@ -478,6 +494,8 @@ Level5.prototype = {
 				this.player.destroy();
 				this.box.destroy();
 				this.elevators.removeAll(true);
+				this.spacebar.destroy();
+				this.cutscenePlaying = true;
 
 				// Creates a new elevator sprite with its doors closed, but active
 				this.elevator = this.elevators.create(310, 330, 'lvl3', 'elevator2'); 
@@ -538,10 +556,12 @@ Level5.prototype = {
 	},
 
 	openMenu: function() {
+		this.optionsOpen.play();
 		this.pauseMenuOpen = true;
 	},
 
 	closeMenu: function() {
+		this.optionsClose.play();
 		this.pauseMenuOpen = false;
 	},
 
@@ -559,6 +579,8 @@ Level5.prototype = {
 
 	skipLevel: function() {
 		this.bgm.destroy();
+		hasThirdGear = true;
+		wallShifted = true;
 		game.state.start('Level4', true, false, false, 3, 0);
 	}
 }
