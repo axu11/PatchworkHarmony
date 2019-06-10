@@ -238,6 +238,8 @@ Play.prototype = {
 		this.downArrow.animations.add('arrowAni', Phaser.Animation.generateFrameNames('down', 1, 4), 10, true);
 		this.downArrow.animations.play('arrowAni');
 		this.downArrow.alpha = 0;
+		
+		// this.pauseMenu = new PauseMenu('assets', 'gear', 650, 50, this);
 	},
 
 	update: function() {

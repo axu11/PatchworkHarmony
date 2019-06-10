@@ -33,9 +33,10 @@ Platform.prototype.update = function() {
 		this.decaying = true;
 	}
 	
-	if((self.level == 4 || self.level == 5) && (!keySolved || !wallShifted)){
+	if((self.level == 4 || self.level == 5) && (!self.keySolved || !wallShifted)){
 		if(this.x >= self.key1.x - this.keyLeniency && this.x <= self.key1.x + this.keyLeniency && this.y >= self.key1.y - this.keyLeniency && this.y <= self.key1.y + this.keyLeniency) {
 			//console.log('filled 1');
+			self.key1Lock = true;
 			self.key1.destroy();
 			if(!self.keySolved)
 				this.decaying = false;
