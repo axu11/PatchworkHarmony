@@ -149,13 +149,13 @@ Level4.prototype = {
 			this.shiftingWall1.body.immovable = true;
 		}
 
-		// if(!wallShifted){
-		// 	// Creates the right bookshelf that goes up last gear is obtained 
-		// 	this.shiftingWall2 = platforms.create(700, 50, 'lvl3', 'bookshelf2'); 
-		// 	this.shiftingWall2.scale.setTo(1, 1);
-		// 	game.physics.arcade.enable(this.shiftingWall2);
-		// 	this.shiftingWall2.body.immovable = true;	
-		// }
+		if(!wallShifted){
+			// Creates the right bookshelf that goes up last gear is obtained 
+			this.shiftingWall2 = platforms.create(700, 50, 'lvl3', 'bookshelf2'); 
+			this.shiftingWall2.scale.setTo(1, 1);
+			game.physics.arcade.enable(this.shiftingWall2);
+			this.shiftingWall2.body.immovable = true;	
+		}
 
 		/***** FLYING BOOKS ROOM (BG1) *****/
 		this.bookshelf = platforms.create(-800, 260, 'lvl3', 'bookshelf3'); 
@@ -772,6 +772,7 @@ Level4.prototype = {
 				this.box.destroy();
 				this.elevators.removeAll(true);
 				this.spacebar.destroy();
+				this.cutscenePlaying = true;
 
 
 				// Creates a new elevator sprite with its doors closed, but active

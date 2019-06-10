@@ -482,6 +482,7 @@ Level5.prototype = {
 				this.box.destroy();
 				this.elevators.removeAll(true);
 				this.spacebar.destroy();
+				this.cutscenePlaying = true;
 
 				// Creates a new elevator sprite with its doors closed, but active
 				this.elevator = this.elevators.create(310, 330, 'lvl3', 'elevator2'); 

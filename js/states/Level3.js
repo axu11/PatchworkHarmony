@@ -123,7 +123,7 @@ Level3.prototype = {
 		this.pauseMenu = new PauseMenu(game);
 	},
 	update: function() {
-		game.debug.body(this.ladder);
+		// game.debug.body(this.ladder);
 		/***** CAMERA, TRANSITIONS, AND CUTSCENES *****/
    		// When player gets to the ladder, go to level 4 (library top floor)
 
