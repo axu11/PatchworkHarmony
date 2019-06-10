@@ -29,7 +29,7 @@ Intro.prototype = {
 		// Spacebar indicators for all the cutscenes
 		this.spacebar = game.add.sprite(650, 550, 'instructions', 'spacebar1');
 		this.spacebar.scale.setTo(0.33);
-		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3, "", 1), 4, true);
+		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3, '', 1), 4, true);
 		this.spacebar.animations.play('spacebarAni');
 		this.spacebar.alpha = 0;
 	},

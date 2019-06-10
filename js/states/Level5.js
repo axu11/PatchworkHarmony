@@ -22,6 +22,7 @@ Level5.prototype = {
 		this.playedCutscene6 = false;
 		this.lockAudioPlayed = false;
 		this.platformAdded  = false;
+		this.pauseMenuOpen = false;
 	},
 	create: function() {
 		/***** BG, BGM, AND SOUND EFFECTS *****/
@@ -189,43 +190,11 @@ Level5.prototype = {
 		this.libraryCutscene = game.add.image(800, 0, 'cutscene6');
 		this.libraryCutscene.alpha = 0;
 
-		this.spacebar = game.add.sprite(325, 270, 'spacebar', 'spacebar1');
+		this.spacebar = game.add.sprite(325, 270, 'instructions', 'spacebar1');
 		this.spacebar.scale.setTo(0.33);
-		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 'spacebar', 1, 4), 4, true);
+		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3, '', 1), 4, true);
 		this.spacebar.animations.play('spacebarAni');
 		this.spacebar.alpha = 0;
-
-		this.pauseMenuButton = game.add.button(750, 50, 'assets', this.openMenu, this, 'gear', 'gear', 'gear', 'gear');
-		this.pauseMenuButton.anchor.set(0.5);
-		this.pauseMenuButton.alpha = 1;
-		this.pauseMenuButton.fixedToCamera = true;
-		this.pauseMenuOpen = false;
-
-		this.menuBg = game.add.sprite(400, 300, 'atlas', 'sky');
-		this.menuBg.anchor.set(0.5);
-		this.menuBg.scale.setTo(5, 3.5);
-		this.menuBg.alpha = 0;
-		this.menuBg.fixedToCamera = true;
-
-		this.resumeButton = game.add.button(300, 350, 'assets', this.closeMenu, this, 'gear', 'gear', 'gear', 'gear');
-		this.resumeButton.anchor.set(0.5);
-		this.resumeButton.alpha = 0;
-		this.resumeButton.fixedToCamera = true;
-
-		this.mainMenuButton = game.add.button(300, 450, 'assets', this.goToMainMenu, this, 'gear', 'gear', 'gear', 'gear');
-		this.mainMenuButton.anchor.set(0.5);
-		this.mainMenuButton.alpha = 0;
-		this.mainMenuButton.fixedToCamera = true;
-
-		this.restartLevelButton = game.add.button(500, 350, 'assets', this.restartLevel, this, 'gear', 'gear', 'gear', 'gear');
-		this.restartLevelButton.anchor.set(0.5);
-		this.restartLevelButton.alpha = 0;
-		this.restartLevelButton.fixedToCamera = true;
-
-		this.skipLevelButton = game.add.button(500, 450, 'assets', this.skipLevel, this, 'gear', 'gear', 'gear', 'gear');
-		this.skipLevelButton.anchor.set(0.5);
-		this.skipLevelButton.alpha = 0;
-		this.skipLevelButton.fixedToCamera = true;
 
 		this.pauseMenu = new PauseMenu(game);
 	},
@@ -576,6 +545,7 @@ Level5.prototype = {
 	},
 
 	goToMainMenu: function() {
+		console.log('prss');
 		game.state.start('MainMenu');
 	},
 

@@ -19,7 +19,8 @@ function PauseMenu(game) {
 
 		this.menuBg = self.game.add.sprite(400, 300, 'pausemenu', 'menu-bg');
 		this.menuBg.anchor.set(0.5);
-		this.menuBg.scale.setTo(5, 3.5);
+		this.menuBg.scale.set(1.33);
+		this.menuBg.tint = 0xffffcc;
 		this.menuBg.alpha = 0;
 		this.menuBg.fixedToCamera = true;
 
@@ -94,7 +95,7 @@ PauseMenu.prototype.closeMenu = function() {
 	self.closeMenu();
 },
 
-PauseMenu.prototype.gotToMainMenu = function() {
+PauseMenu.prototype.goToMainMenu = function() {
 	self.goToMainMenu();
 },
 

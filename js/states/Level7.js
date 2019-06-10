@@ -82,7 +82,7 @@ Level7.prototype = {
 			this.player.animations.stop('moveRight');
 			this.player.animations.play('idleRight');
 			game.camera.fade(0x000000, 2000);
-			game.time.events.add(Phaser.Timer.SECOND * 2.0, transitionToCutscene8, this);
+			game.time.events.add(Phaser.Timer.SECOND * 2.0, this.transitionToCutscene8, this);
 		}
 
 		// If not touching the bench, animate moving right
@@ -97,9 +97,9 @@ Level7.prototype = {
 
 		// Play the hop sounds as patches jumps in the animation
 		if(this.bg0.alpha > 1){
-			game.time.events.add(Phaser.Timer.SECOND, playHop, this);
-			game.time.events.add(Phaser.Timer.SECOND * 3.25, playHop, this);
-			game.time.events.add(Phaser.Timer.SECOND * 5.1, playHop, this);
+			game.time.events.add(Phaser.Timer.SECOND, this.playHop, this);
+			game.time.events.add(Phaser.Timer.SECOND * 3.25, this.playHop, this);
+			game.time.events.add(Phaser.Timer.SECOND * 5.1, this.playHop, this);
 			this.bg0.alpha = 1;
 		}
 
@@ -124,7 +124,7 @@ Level7.prototype = {
 		this.bg1.alpha = 1;
 		this.bg0.alpha = 0;
 		game.camera.fade(0x000000, 4000);
-		game.time.events.add(Phaser.Timer.SECOND * 6.0, transitionToCredits, this);
+		game.time.events.add(Phaser.Timer.SECOND * 6.0, this.transitionToCredits, this);
 	},
 
 	// Goes the credits

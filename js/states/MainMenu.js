@@ -2,6 +2,14 @@
 var MainMenu = function(game) {};
 MainMenu.prototype = {
 	create: function() {
+		var elevatorActivated = false;
+		var inElevator = false;
+		var leverActivated = false;
+		var cutscenePlaying = false;
+		var wallShifted = false;
+		var playedCutscene5 = false;
+		var playedCutscene6 = false;
+		var hasThirdGear = false;
 		// Temp background and placeholder text instructions
 		//game.stage.backgroundColor = "#facade";
 		
@@ -37,7 +45,7 @@ MainMenu.prototype = {
 
 	update: function() {
 		// Go to Play state once SPACEBAR pressed
-		// game.state.start('Play', true, false, false, 0, 0);
+		game.state.start('Play', true, false, false, 0, 0);
 			// game.state.start('Level2', true, false, false, 1, 0);
 			// game.state.start('Level3', true, false, false, 2, 0);
 			// game.state.start('Level4', true, false, false, 2, 0);
