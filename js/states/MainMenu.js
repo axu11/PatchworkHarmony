@@ -42,9 +42,10 @@ MainMenu.prototype = {
 			// game.state.start('Level3', true, false, false, 2);
 
 			// game.state.start('Level4', true, false, 2);
-			game.state.start('Level5', true, false, 2);
+			// game.state.start('Level5', true, false, 2);
 			this.bgm.destroy();
-			// game.state.start('Level7', true, false, 3);
+			game.state.start('Level7', true, false, 3);
+			// game.state.start('Credits');
 		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
 			game.camera.fade(0x000000, 4000);
 			game.time.events.add(Phaser.Timer.SECOND * 4, transitionToCutscenes, this);

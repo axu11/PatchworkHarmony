@@ -16,7 +16,7 @@ Level4.prototype = {
 		this.levelScale = 1.0;
 		this.numPlatforms = maxPlatforms;
 
-		this.inElevator = false;
+		inElevator = false;
 		this.cutscenePlaying = false;
 
 		this.bookTop = true;
