@@ -190,8 +190,9 @@ Level5.prototype = {
 		this.libraryCutscene = game.add.image(800, 0, 'cutscene6');
 		this.libraryCutscene.alpha = 0;
 
-		this.spacebar = game.add.sprite(325, 270, 'instructions', 'spacebar1');
+		this.spacebar = game.add.sprite(400, 270, 'instructions', 'spacebar1');
 		this.spacebar.scale.setTo(0.33);
+		this.spacebar.anchor.setTo(0.5, 0);
 		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3, '', 1), 4, true);
 		this.spacebar.animations.play('spacebarAni');
 		this.spacebar.alpha = 0;

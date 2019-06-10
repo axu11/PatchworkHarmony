@@ -282,7 +282,7 @@ Level3.prototype = {
 
 	// Function called to transition to next level and kill bgm
 	transitionToLibrary: function(){
-		game.state.start('Level4', true, false, false, this.numPlatforms, this.reloadOnGround);
+		game.state.start('Level4', true, false, false, 2, 0);
 		this.bgm.destroy();
 	},
 

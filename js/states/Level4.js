@@ -321,7 +321,7 @@ Level4.prototype = {
 		this.box.body.drag = 0.5;
 		this.attached = true; 
 
-		this.spacebar = game.add.sprite(300, 260, 'instructions', 'spacebar1');
+		this.spacebar = game.add.sprite(400, 260, 'instructions', 'spacebar1');
 		this.spacebar.anchor.setTo(0.5, 0);
 		this.spacebar.scale.setTo(0.33);
 		this.spacebar.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('spacebar', 1, 3, '', 1), 4, true);
