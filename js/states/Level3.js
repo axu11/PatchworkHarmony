@@ -2,14 +2,13 @@
 var Level3 = function(game) {};
 Level3.prototype = {
 
-	init: function(bgmOn, maxPlatforms) {
-		maxPlatforms = 2;
-		reloadOnGround = 0;
+	init: function(bgmOn, numPlatforms, reloadOnGround) {
+		this.reloadOnGround = reloadOnGround;
 		self = this;
 
 		this.level = 3;						// current level is 1
 		this.levelScale = 0.6;				// levelScale that affects the sizing of assets in prefabs
-		this.numPlatforms = maxPlatforms	// current platforms set to maxPlatforms
+		this.numPlatforms = numPlatforms;	// current platforms set to maxPlatforms
 		this.bgmOn = bgmOn;
 
 		this.carryingPlatform = false;		// used in Platform prefab to check if the music block is holding a platform
@@ -150,7 +149,7 @@ Level3.prototype = {
 
    		// Reset state when player falls
 		if(this.player.y + this.player.height/2 >= this.world.height - 1) {			
-			game.state.start('Level3', true, false, true, maxPlatforms);
+			game.state.start('Level3', true, false, this.bgmOn, 2, 0);
 		}
 
 		/***** COLLISIONS *****/
@@ -172,6 +171,8 @@ Level3.prototype = {
 				this.droppedPlatform.y = 245;
 		}
 
+
+
 		/***** BOX STUFF *****/
 		this.box.body.velocity.x = 0; // Box won't glide when pushed by player
 
@@ -192,10 +193,10 @@ Level3.prototype = {
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0) {
 				// Kills all current sounds set to play before playing the music note sounds in order
 				game.time.events.removeAll();
-				game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
-				game.time.events.add(Phaser.Timer.SECOND * 0.5, platformSound2, this);
-				game.time.events.add(Phaser.Timer.SECOND * 1.0, platformSound3, this);
-				game.time.events.add(Phaser.Timer.SECOND * 1.5, platformSound4, this);
+				game.time.events.add(Phaser.Timer.SECOND * 0.0, this.platformSound1, this);
+				game.time.events.add(Phaser.Timer.SECOND * 0.5, this.platformSound2, this);
+				game.time.events.add(Phaser.Timer.SECOND * 1.0, this.platformSound3, this);
+				game.time.events.add(Phaser.Timer.SECOND * 1.5, this.platformSound4, this);
 
 				this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
 				this.createdPlatforms.add(this.createdPlatform); 
@@ -226,9 +227,9 @@ Level3.prototype = {
 		}
 
 		// this.numPlatforms doesn't refresh until the player hits the ground
-		if(reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
+		if(this.reloadOnGround > 0 && this.player.body.touching.down && (this.hitPlatform)) {
 			this.numPlatforms++;
-			reloadOnGround--;	
+			this.reloadOnGround--;	
 		}
 
 		// Top-left number updates with this.numPlatforms
@@ -267,11 +268,49 @@ Level3.prototype = {
 			this.number3.scale.set(0);
 			this.number4.scale.set(0.5);
 		}
-	}
-}
+	},
 
-// Function called to transition to next level and kill bgm
-function transitionToLibrary(){
-	game.state.start('Level4', true, false, false, maxPlatforms);
-	this.bgm.destroy();
+	// Functions for playing the platform audio sounds
+	platformSound1: function(){
+		this.platform1audio.play();
+	},
+
+	platformSound2: function(){
+		this.platform2audio.play();
+	},
+
+	platformSound3: function(){
+		this.platform3audio.play();
+	},
+
+	platformSound4: function(){
+		this.platform4audio.play();
+	},
+	
+	// Function called to transition to next level and kill bgm
+	transitionToLibrary: function(){
+		game.state.start('Level4', true, false, false, this.numPlatforms, this.reloadOnGround);
+		this.bgm.destroy();
+	},
+
+	openMenu: function() {
+		this.pauseMenuOpen = true;
+	},
+
+	closeMenu: function() {
+		this.pauseMenuOpen = false;
+	},
+
+	goToMainMenu: function() {
+		game.state.start('MainMenu');
+	},
+
+	restartLevel: function() {
+		game.state.start('Level3', true, false, this.bgmOn, 2, 0);
+	},
+
+	skipLevel: function() {
+		game.state.start('Level4', true, false, false, 2, 0);
+		this.bgm.destroy();
+	}
 }

@@ -2,14 +2,13 @@
 var Level2 = function(game) {};
 Level2.prototype = {
 
-	init: function(bgmOn, maxPlatforms) {
-		maxPlatforms = 1;	
-		reloadOnGround = 0;
+	init: function(bgmOn, numPlatforms, reloadOnGround) {
+		this.reloadOnGround = reloadOnGround;
 		self = this;
 
 		this.level = 2;						// current level is 2
 		this.levelScale = 0.45;				// levelScale that affects the sizing of assets in prefabs
-		this.numPlatforms = maxPlatforms;	// current platforms set to maxPlatforms
+		this.numPlatforms = numPlatforms;	// current platforms set to maxPlatforms
 		this.bgmOn = bgmOn;
 		
 		this.cutscenePlaying = false;		// var for whether or not there is a cutscene playing, essentially pauses game state
@@ -20,6 +19,8 @@ Level2.prototype = {
 
 		this.timer = 0;						// timer for cutscenes, ticks up 
 		this.TIMER_VALUE = 40;				// modify this here depending on how long the delay should be before spacebar can be pressed
+	
+		this.platformAdded = false;
 	},
 
 	create: function() {
@@ -186,7 +187,7 @@ Level2.prototype = {
 				this.spacebar.destroy();
 				this.cutscenePlaying = false;
 				this.playedCutscene5 = true;
-				game.time.events.add(Phaser.Timer.SECOND * 1, allowCreate, this);
+				game.time.events.add(Phaser.Timer.SECOND * 1, this.allowCreate, this);
 			}
 		}
 
@@ -195,7 +196,7 @@ Level2.prototype = {
 
 		// Reset state when player falls
 		if(this.player.y + this.player.height/2 >= this.world.height - 1) {
-			game.state.start('Level2', true, false, this.bgmOn, maxPlatforms);
+			game.state.start('Level2', true, false, this.bgmOn, 1, 0);
 		}
 
 		/***** COLLISIONS *****/
@@ -204,7 +205,7 @@ Level2.prototype = {
 		this.hitBox = game.physics.arcade.collide(this.player, this.box);         // player vs box
 		this.hitPlatformBox = game.physics.arcade.collide(this.box, platforms);   // box vs platforms
 		this.hitTrampoline = game.physics.arcade.collide(this.player, this.trampoline);
-		game.physics.arcade.overlap(this.player, this.gear, collectSecondGear, null, this);
+		game.physics.arcade.overlap(this.player, this.gear, this.collectSecondGear, null, this);
 		
 		// Trampoline bounce logic
 		if((this.player.x + this.player.width/2 >= (this.trampoline.x - this.trampoline.width/2 - 2) && this.player.x - this.player.width/2 <= (this.trampoline.x + this.trampoline.width/2 + 2)) &&
@@ -239,10 +240,10 @@ Level2.prototype = {
 			if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && this.numPlatforms > 0 && this.canCreate) {
 				// Kills all current sounds set to play before playing the music note sounds in order
 				game.time.events.removeAll();
-				game.time.events.add(Phaser.Timer.SECOND * 0.0, platformSound1, this);
-				game.time.events.add(Phaser.Timer.SECOND * 0.5, platformSound2, this);
-				game.time.events.add(Phaser.Timer.SECOND * 1.0, platformSound3, this);
-				game.time.events.add(Phaser.Timer.SECOND * 1.5, platformSound4, this);
+				game.time.events.add(Phaser.Timer.SECOND * 0.0, this.platformSound1, this);
+				game.time.events.add(Phaser.Timer.SECOND * 0.5, this.platformSound2, this);
+				game.time.events.add(Phaser.Timer.SECOND * 1.0, this.platformSound3, this);
+				game.time.events.add(Phaser.Timer.SECOND * 1.5, this.platformSound4, this);
 
 				this.createdPlatform = new Platform(game, 'assets', 'music-block', this.player.x, this.player.y + this.player.height/2 + 30 * this.levelScale, this.levelScale);
 				this.createdPlatforms.add(this.createdPlatform); 
@@ -320,23 +321,63 @@ Level2.prototype = {
 		if(this.player.x + Math.abs(this.player.width/2) > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
 			// Stop music and go to crane level
 			this.bgm.stop();
-			game.state.start('Level3', true, false, false, maxPlatforms);	
+			game.state.start('Level3', true, false, false, this.numPlatforms, this.reloadOnGround);	
 		} 
+	},
+
+	// Functions for playing the platform audio sounds
+	platformSound1: function(){
+		this.platform1audio.play();
+	},
+
+	platformSound2: function(){
+		this.platform2audio.play();
+	},
+
+	platformSound3: function(){
+		this.platform3audio.play();
+	},
+
+	platformSound4: function(){
+		this.platform4audio.play();
+	},
+	
+	// Function for collecting "gears"
+	collectSecondGear: function(Patches, gear){
+		if(!this.platformAdded) {
+			this.numPlatforms++;
+			this.platformAdded = true;
+		}
+		this.cutscenePlaying = true;
+		this.hasSecondGear = true;
+		this.gearAudio.play();
+		gear.kill();
+		game.camera.flash(0xffffff, 1000);
+	},
+
+	// Function for allowing user to create music note blocks, used to pause music note creation during cutscenes via delay
+	allowCreate: function(){
+		this.canCreate = true;
+	},
+
+	openMenu: function() {
+		this.pauseMenuOpen = true;
+	},
+
+	closeMenu: function() {
+		this.pauseMenuOpen = false;
+	},
+
+	goToMainMenu: function() {
+		game.state.start('MainMenu');
+	},
+
+	restartLevel: function() {
+		game.state.start('Level2', true, false, this.bgmOn, 1, 0);
+	},
+
+	skipLevel: function() {
+		game.state.start('Level3', true, false, false, 2, 0);
+		this.bgm.destroy();
 	}
-}
-
-// Function for collecting "gears"
-function collectSecondGear(Patches, gear){
-	maxPlatforms = 2;
-	this.numPlatforms++;
-	this.cutscenePlaying = true;
-	this.hasSecondGear = true;
-	this.gearAudio.play();
-	gear.kill();
-	game.camera.flash(0xffffff, 1000);
-}
-
-// Function for allowing user to create music note blocks, used to pause music note creation during cutscenes via delay
-function allowCreate(){
-	this.canCreate = true;
 }

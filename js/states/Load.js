@@ -56,7 +56,7 @@ Load.prototype = {
 		this.load.atlas('spacebar', 'img/spacebar.png', 'img/spacebar.json');
 		this.load.atlas('instructions', 'img/instructions.png', 'img/instructions.json');
 		this.load.atlas('cutscene8', 'img/cutscene8.png', 'img/cutscene8.json');
-
+		this.load.atlas('pausemenu', 'img/pause-menu.png', 'img/pause-menu.json');
 
 		// Music
 		game.load.audio('intro', 'audio/mp3/intro-music.mp3');

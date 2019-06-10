@@ -1,7 +1,10 @@
 var Level7 = function(game) {};
 Level7.prototype = {
 
-	init: function() {
+	init: function(bgmOn, numPlatforms, reloadOnGround) {
+		this.numPlatforms = numPlatforms;
+		this.reloadOnGround = reloadOnGround;
+		this.bgmOn = bgmOn;
 		this.cutscenePlaying = true;
 		self = this;
 	},
@@ -19,8 +22,11 @@ Level7.prototype = {
 		game.world.setBounds(0, 0, 800, 800);
 		
 		// Create bgm for game, looped and played
-		this.bgm = game.add.audio('intro', 0.25, true);
-		this.bgm.play();
+		if(this.bgmOn == false) {
+			this.bgm = game.add.audio('intro', 0.25, true);
+			this.bgm.play();
+			this.bgmOn = true;
+		}
 
 		// Sound effect for jumping
 		this.hop = game.add.audio('jump', 0.25, false);;
@@ -64,6 +70,7 @@ Level7.prototype = {
 
 	update: function() {
 
+		// Collisions
 		this.hitPlatform = game.physics.arcade.collide(this.player, this.platforms);   	// player vs platforms
 		this.hitBench = game.physics.arcade.collide(this.player, this.bench);			// player vs bench
 
@@ -99,31 +106,56 @@ Level7.prototype = {
 		this.box.y = this.player.y + 17;
 		this.box.body.gravity.y = 0;
 		this.box.body.checkCollision.none = true;
-	}
+	},
+
+	// Function for playing the hop sounda and elevating player
+	playHop: function() {
+		this.hop.play();
+		this.player.body.velocity.y = -550;
+	},
+
+	// Resets the fade to go to credits
+	transitionToCutscene8: function() {
+		game.camera.resetFX();
+		this.player.alpha = 0;
+		this.box.alpha = 0;
+		this.bg1.alpha = 1;
+		this.bg0.alpha = 0;
+		game.camera.fade(0x000000, 4000);
+		game.time.events.add(Phaser.Timer.SECOND * 6.0, transitionToCredits, this);
+	},
+
+	// Goes the credits
+	transitionToCredits: function() {
+		game.state.start('Credits', true, false, this.bgm);
+	},
+
+	openMenu: function() {
+		this.pauseMenuOpen = true;
+	},
+
+	closeMenu: function() {
+		this.pauseMenuOpen = false;
+	},
+
+	goToMainMenu: function() {
+		game.state.start('MainMenu');
+	},
+
+	restartLevel: function() {
+		game.state.start('Level7', true, false, this.bgmOn, 3, 0);
+	},
+
+	skipLevel: function() {
+		game.state.start('Credits', true, false, this.bgm);
+	}	
 }
 
-// Function for playing the hop sounda and elevating player
-function playHop(){
-	this.hop.play();
-	this.player.body.velocity.y = -550;
-}
 
-// Resets the fade to go to credits
-function transitionToCutscene8(){
-	game.camera.resetFX();
-	this.player.alpha = 0;
-	this.box.alpha = 0;
-	this.bg1.alpha = 1;
-	this.bg0.alpha = 0;
-	game.camera.fade(0x000000, 4000);
-	game.time.events.add(Phaser.Timer.SECOND * 6.0, transitionToCredits, this);
-}
-
-// Goes the credits
-function transitionToCredits(){
-	game.state.start('Credits', true, false, this.bgm);
-}
 	
+
+	
+
 
 	
 
