@@ -28,6 +28,10 @@ Level7.prototype = {
 			this.bgmOn = true;
 		}
 
+		// Create menu sfx
+		this.optionsOpen = game.add.audio('options-open', 0.5, false);
+		this.optionsClose = game.add.audio('options-close', 0.5, false);
+
 		// Sound effect for jumping
 		this.hop = game.add.audio('jump', 0.25, false);;
 
@@ -133,10 +137,12 @@ Level7.prototype = {
 	},
 
 	openMenu: function() {
+		this.optionsOpen.play();
 		this.pauseMenuOpen = true;
 	},
 
 	closeMenu: function() {
+		this.optionsClose.play();
 		this.pauseMenuOpen = false;
 	},
 
