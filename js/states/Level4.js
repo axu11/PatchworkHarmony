@@ -330,13 +330,13 @@ Level4.prototype = {
 		this.spacebar.alpha = 0;
 
 		this.shift = game.add.sprite(-1520, 100, 'instructions', 'shift1');
-		this.shift.scale.setTo(0.15);
+		this.shift.scale.setTo(0.33);
 		this.shift.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('shift', 1, 4), 4, true);
 		this.shift.animations.play('spacebarAni');
 		this.shift.alpha = 0;
 
-		this.downArrow = game.add.sprite(1500, 200, 'instructions', 'down1');
-		this.downArrow.scale.setTo(0.15);
+		this.downArrow = game.add.sprite(1480, 200, 'instructions', 'down1');
+		this.downArrow.scale.setTo(0.33);
 		this.downArrow.animations.add('spacebarAni', Phaser.Animation.generateFrameNames('down', 1, 4), 4, true);
 		this.downArrow.animations.play('spacebarAni');
 		this.downArrow.alpha = 0;
@@ -361,13 +361,10 @@ Level4.prototype = {
 				}
 			}
 		}
+
+		//game.debug.body(this.leverHandle);
 		if(!inElevator){
-			if(this.player.overlap(this.leverHandle) && !elevatorActivated){
-	    		this.shift.alpha = 1;
-		    }
-		    else{
-		    	this.shift.alpha = 0;
-		    }
+			
 			
 
 			if(this.player.overlap(this.elevators) && !inElevator && elevatorActivated){
@@ -377,14 +374,22 @@ Level4.prototype = {
 		    	this.spacebar.alpha = 0;
 		    }
 
-			if(this.player.overlap(this.door)){
-		    	this.downArrow.alpha = 1;
-		    }
-		    else{
-		    	this.downArrow.alpha = 0;
-		    }
+
+		}
+
+		if(this.player.overlap(this.leverHandle)){//} && !elevatorActivated){
+	    	this.shift.alpha = 1;
+		}
+		else{
+		    this.shift.alpha = 0;
 		}
 		
+		if(this.player.overlap(this.door)){
+		 	this.downArrow.alpha = 1;
+		}
+		else{
+	    	this.downArrow.alpha = 0;
+		}
 
 		// CheckCamBounds will be disabled while the panning process is occuring
 		if(!leverActivated){

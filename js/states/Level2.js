@@ -319,7 +319,7 @@ Level2.prototype = {
 		if(this.player.x + Math.abs(this.player.width/2) > game.width + game.camera.x && !this.player.body.blocked.right && this.player.facing === "RIGHT") {
 			// Stop music and go to crane level
 			this.bgm.stop();
-			game.state.start('Level3', true, false, false, this.numPlatforms, this.reloadOnGround);	
+			game.state.start('Level3', true, false, false, 2, this.reloadOnGround);	
 		} 
 	},
 

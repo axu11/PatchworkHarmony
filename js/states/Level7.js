@@ -124,7 +124,7 @@ Level7.prototype = {
 		this.bg1.alpha = 1;
 		this.bg0.alpha = 0;
 		game.camera.fade(0x000000, 4000);
-		game.time.events.add(Phaser.Timer.SECOND * 6.0, transitionToCredits, this);
+		game.time.events.add(Phaser.Timer.SECOND * 6.0, this.transitionToCredits, this);
 	},
 
 	// Goes the credits

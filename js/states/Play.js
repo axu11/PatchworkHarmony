@@ -270,7 +270,7 @@ Play.prototype = {
         	this.player.alpha += 0.01;
         	this.box.alpha += 0.01;
         	this.instructions1.alpha += 0.01;
-        	this.timer = 0;
+        	this.timer = 20;
         }
 
    		// When player gets to the window, go to level 2 (town scene 1)
