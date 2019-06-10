@@ -648,6 +648,7 @@ Play.prototype = {
 	},
 
 	goToMainMenu: function() {
+		this.bgm.destroy();
 		game.state.start('MainMenu');
 	},
 
