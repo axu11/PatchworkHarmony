@@ -14,7 +14,7 @@ MainMenu.prototype = {
 
 		// Temp background and placeholder text instructions
 		//game.stage.backgroundColor = "#facade";
-		
+		this.optionSoundPlayed = false;
 		// Add background
 		this.bg = game.add.image(0, 0, 'bg0');
 		this.bg.alpha = 0.9;
@@ -57,8 +57,9 @@ MainMenu.prototype = {
 			// game.state.start('Level5', true, false, false, 2, 0);
 			// this.bgm.destroy();
 			// game.state.start('Level7', true, false, false, 3, 0);
-		if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+		if(game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed() && !this.optionSoundPlayed) {
 			this.optionsOpen.play();
+			this.optionSoundPlayed = true;
 			game.camera.fade(0x000000, 4000);
 			game.time.events.add(Phaser.Timer.SECOND * 4, this.transitionToCutscenes, this);
 			
