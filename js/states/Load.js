@@ -84,6 +84,8 @@ Load.prototype = {
 		game.load.audio('locking', 'audio/ogg/locking.ogg');
 		game.load.audio('options-open', 'audio/ogg/options-open.ogg');
 		game.load.audio('options-close', 'audio/ogg/options-close.ogg');
+		game.load.audio('platform-break', 'audio/ogg/platform-break.ogg');
+		game.load.audio('crane-fall', 'audio/ogg/crane-fall.ogg');
 		game.load.audio('elevator', 'audio/ogg/elevator-moving.ogg');
 	},
 
