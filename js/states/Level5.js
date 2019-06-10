@@ -257,6 +257,10 @@ Level5.prototype = {
 			reactivateCamera();
 		}
 
+		if(inElevator){
+			this.spacebar.destroy();
+		}
+
 		if(!inElevator){
 			if(this.player.overlap(this.elevators) && !inElevator && elevatorActivated){
 		    	this.spacebar.alpha = 1;
@@ -508,6 +512,7 @@ Level5.prototype = {
 				this.player.destroy();
 				this.box.destroy();
 				this.elevators.removeAll(true);
+				this.spacebar.destroy();
 
 				// Creates a new elevator sprite with its doors closed, but active
 				this.elevator = this.elevators.create(310, 330, 'lvl3', 'elevator2'); 

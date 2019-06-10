@@ -68,7 +68,7 @@ Credits.prototype = {
 		this.end.y--;
 		if(this.end.y == 300){
 			game.camera.fade(0x000000, 6000);
-			game.time.events.add(Phaser.Timer.SECOND * 7, creditsScene, this);
+			game.time.events.add(Phaser.Timer.SECOND * 7, this.creditsScene, this);
 		}
 		if(this.bg0.alpha < 1){
 			this.bg0.alpha += this.fadeIn;
@@ -84,7 +84,7 @@ Credits.prototype = {
 			// If spacebar showing and you press space, proceed to second instruction bubble
 			if(this.spacebar.alpha == 1 && game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR).justPressed()){
 				game.camera.fade(0x000000, 4000);
-				game.time.events.add(Phaser.Timer.SECOND * 4, transitionToMainMenu, this);
+				game.time.events.add(Phaser.Timer.SECOND * 4, this.transitionToMainMenu, this);
 				this.bgm.fadeOut(4000);
 				this.spacebar.alpha = 0;
 				this.timer = -200;

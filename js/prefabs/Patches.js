@@ -47,7 +47,6 @@ Patches.prototype.update = function() {
 	// Enable Phaser's Keyboard Manager
 	this.cursors = game.input.keyboard.createCursorKeys();
 
-	this.body.velocity.x = 0;
  	// If nothing pressed, velocity = 0
 
  	if(!self.cutscenePlaying && !self.pauseMenuOpen){
